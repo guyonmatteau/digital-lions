@@ -1,0 +1,2 @@
+[start]
+cmd = 'streamlit run app/main.py'
