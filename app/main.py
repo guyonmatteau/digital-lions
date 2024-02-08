@@ -4,7 +4,7 @@ from datetime import datetime
 
 import streamlit as st
 
-st.title("Big Hippo Attendance")
+st.title("Big Hippo")
 
 
 @dataclass
@@ -12,12 +12,13 @@ class Form:
     name: str = None
     community: str = None
     datetime: datetime = datetime.today()
-    date: datetime = datetime.today().strftime("%A %d %B %Y")
+    date: datetime = datetime.today().strftime("%A %-d %B %Y")
 
 
 form = Form()
 
 with st.form("form"):
+    st.header("Workshop attendance")
     st.write(f"You are filling in the form for {form.date}")
     name = st.text_input("What is your name?")  # to be replaced with login
     community = st.selectbox(
@@ -29,6 +30,6 @@ with st.form("form"):
     submitted = st.form_submit_button("Submit")
 
     if submitted:
-        st.write("Name", name)
-        st.write("Community", community)
+        st.write("Name:", name)
+        st.write("Community:", community)
         st.write("Cancelled?", cancelled)
