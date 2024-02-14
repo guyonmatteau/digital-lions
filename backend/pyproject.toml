@@ -5,7 +5,7 @@ description = ""
 authors = ["Anne Lohmeijer <a.lohmeijer@hotmail.com>"]
 readme = "README.md"
 packages = [
-    { include = "app", from = "." }
+    { include = "app"}
 ]
 
 [tool.poetry.dependencies]
@@ -13,7 +13,7 @@ python = "^3.10"
 fastapi = "^0.109.2"
 
 [tool.poetry.scripts]
-start = "app.main:start"
+start = "python run app.main:start"
 
 [build-system]
 requires = ["poetry-core"]
