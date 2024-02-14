@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "big-hippo"
+version = "0.1.0"
+description = ""
+authors = ["Anne Lohmeijer <a.lohmeijer@hotmail.com>"]
+readme = "README.md"
+packages = [
+    { include = "app", from = "." }
+]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.109.2"
+
+[tool.poetry.scripts]
+start = "app.main:start"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
