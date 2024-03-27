@@ -1,0 +1,15 @@
+# python
+*.pyc
+__pycache__/*
+__pycache__
+.ruff_cache/
+.ruff_cache
+.mypy_cache
+.env*
+.venv
+venv/
+dist
+
+
+db/data/*   
+db/logfile
