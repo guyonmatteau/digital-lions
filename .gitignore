@@ -11,3 +11,5 @@ venv/
 dist
 
 
+db/data/*   
+db/logfile

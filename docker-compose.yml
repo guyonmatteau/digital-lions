@@ -1,0 +1,16 @@
+version: "3.1"
+
+services:
+  db: 
+    build:
+      context: ./db
+    ports:
+      - 5432:5432
+  backend:
+    image: "${DOCKER_IMAGE:-littlelionbackend}:${DOCKER_TAG:-latest}"
+    build:
+      context: ./backend
+    volumes:
+      - ./app:/app
+    ports:
+      - 8080:8000
