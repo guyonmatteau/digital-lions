@@ -1,0 +1,48 @@
+from dataclasses import dataclass
+from datetime import datetime
+import streamlit as st
+
+st.set_page_config(page_title="Workshop attendance")
+st.title("Workshop attendance")
+
+
+if 'stage' not in st.session_state:
+    st.session_state.stage = 0
+ 
+def set_stage(stage):
+    st.session_state.stage = stage
+
+
+@dataclass
+class Form:
+    name: str = None
+    community: str = None
+    datetime: datetime = datetime.today()
+    date: datetime = datetime.today().strftime("%A %-d %B %Y")
+
+
+form = Form()
+
+with st.form("workshop_cancelled"):
+    st.write(f"You are filling in the form for {form.date}")
+    name = st.text_input("What is your name?")  # to be replaced with login
+    community = st.selectbox(
+        label="Which community are you from?",
+        options=["Community A", "Community B", "Community C"],
+    )
+    cancelled = st.checkbox("Is this workshop cancelled due to weather?")
+
+    submitted = st.form_submit_button("Next", on_click=set_stage, args=(1,))
+
+    if submitted:
+        st.write("Name:", name)
+        st.write("Community:", community)
+        st.write("Cancelled?", cancelled)
+
+     
+    # submit_button = st.form_submit_button('Submit', on_click=set_stage, args=(1,))
+ 
+if st.session_state.stage > 0:
+    part = st.text_input("Next participant")
+     
+    st.button('Submit', on_click=set_stage, args=(2,))

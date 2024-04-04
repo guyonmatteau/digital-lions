@@ -1,6 +1,2 @@
 [start]
-cmd = 'streamlit run app/main.py --server.port 80'
-
-[variables]
-PORT = 80
-NODE_ENV = 'production'
+cmd = 'streamlit run app/main.py'
