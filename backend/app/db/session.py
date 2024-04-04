@@ -4,7 +4,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-from urllib.parse import quote_plus
 
 POSTGRES_DATABASE_URL = os.environ.get("POSTGRES_DATABASE_URL")
 
