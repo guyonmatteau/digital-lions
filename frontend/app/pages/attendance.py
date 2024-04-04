@@ -22,6 +22,7 @@ class Form:
 
 
 form = Form()
+cancelled = True
 
 with st.form("workshop_cancelled"):
     st.write(f"You are filling in the form for {form.date}")
@@ -32,17 +33,13 @@ with st.form("workshop_cancelled"):
     )
     cancelled = st.checkbox("Is this workshop cancelled due to weather?")
 
-    submitted = st.form_submit_button("Next", on_click=set_stage, args=(1,))
+    submitted = st.form_submit_button("Next")
 
-    if submitted:
-        st.write("Name:", name)
-        st.write("Community:", community)
-        st.write("Cancelled?", cancelled)
 
-     
-    # submit_button = st.form_submit_button('Submit', on_click=set_stage, args=(1,))
- 
-if st.session_state.stage > 0:
-    part = st.text_input("Next participant")
-     
-    st.button('Submit', on_click=set_stage, args=(2,))
+if not cancelled:
+    with st.form("attendance"):
+        st.write("This is the form for submitting the attendance")
+        submitted_attendance = st.form_submit_button("Submit", on_click=set_stage, args=(2,))
+
+if st.session_state.stage > 1:
+    st.write("Thanks for submitting the form")
