@@ -15,13 +15,6 @@ def get_db():
 
 router = APIRouter(prefix="/attendances", tags=["attendance"])
 
-def row2dict(row):
-    d = {}
-    for column in row.__table__.columns:
-        d[column.name] = str(getattr(row, column.name))
-
-    return d
-
 
 
 @router.post("")
@@ -41,7 +34,7 @@ async def get_attendances(db: Session = Depends(get_db)):
     attendances = db.query(schemas.Attendance).all()
     return JSONResponse(
         status_code=status.HTTP_200_OK,
-        content = {"attendances": [row2dict(attendance) for attendance in attendances]}
+        content = {"attendances": [attendance.as_dict() for attendance in attendances]}
     )
 
 
