@@ -18,4 +18,12 @@ CREATE TABLE children (
       created_at TIMESTAMP DEFAULT NOW()
 );
 
+CREATE TABLE attendance (
+    id SERIAL PRIMARY KEY,
+    day VARCHAR NOT NULL,
+    community VARCHAR(255) NOT NULL,
+    child VARCHAR(255),
+    cycle INTEGER NOT NULL,
+    attendance BOOLEAN
+);
 

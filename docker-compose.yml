@@ -10,6 +10,8 @@ services:
     image: "${DOCKER_IMAGE:-littlelionbackend}:${DOCKER_TAG:-latest}"
     build:
       context: ./backend
+    environment:
+      - POSTGRES_DATABASE_URL=${POSTGRES_DATABASE_URL}
     volumes:
       - ./app:/app
     ports:
