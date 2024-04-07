@@ -1,18 +1,38 @@
 version: "3.1"
 
+volumes:
+  pgdata:
+
 services:
   db: 
-    build:
-      context: ./db
     ports:
       - 5432:5432
+    image: postgres
+    #restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} 
+      POSTGRES_DB: ${POSTGRES_DB:-digitallions}
+      PGDATA: /var/lib/postgresql/data/digitallions
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
   backend:
-    image: "${DOCKER_IMAGE:-littlelionbackend}:${DOCKER_TAG:-latest}"
+    image: "digitallionsbackend:latest"
     build:
       context: ./backend
     environment:
-      - POSTGRES_DATABASE_URL=${POSTGRES_DATABASE_URL}
-    volumes:
-      - ./app:/app
+      POSTGRES_DATABASE_URL: ${POSTGRES_DATABASE_URL}
+    #volumes:
+      #- ./app:/app
     ports:
       - 8080:8000
+
+  frontend: 
+    image: "digitallionsfrontend:latest"
+    build: 
+      context: ./frontend
+    environment:
+      API_URL: ${API_URL}
+    ports:
+      - 8501:8501

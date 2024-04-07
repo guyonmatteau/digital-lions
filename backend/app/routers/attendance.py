@@ -26,7 +26,7 @@ async def add_attendances(
     db.commit()
     return JSONResponse(
         status_code=status.HTTP_201_CREATED,
-        content = {"message": "Attendances added successfully"}
+        content = {"message": "Attendance(s) added successfully"}
     )
 
 @router.get("")

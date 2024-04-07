@@ -5,9 +5,11 @@ import streamlit as st
 
 st.set_page_config(page_title="Digital Lions")
 st.title("Workshop attendance")
-st.write("On this page you can submit the attendance for a workshop.")
+st.write("On this page you can cancel or submit the attendance for a workshop.")
 
 children = ["Pietje", "Klaasje", "Jantje"]
+coaches = ["Anne", "Stijn", "Nomfundo"]
+communities = ["Community A", "Community B", "Community C"]
 
 # this is for debugging purposes
 "st.session_state object:", st.session_state
@@ -27,16 +29,19 @@ if "workshop_cancelled" not in st.session_state:
 if "community" not in st.session_state:
     st.session_state.community = None
 
+if "name" not in st.session_state:
+    st.session_state.name = None
+
 def update_state(state):
     st.session_state.stage = state
 
 if st.session_state["stage"] == "base_form":
     with st.form("base_form"):
         st.write(f"Today is {st.session_state.date}")
-        name = st.text_input("What is your name?", key='name')
+        st.selectbox(label="What is your name?", options=coaches, key='name')
         st.selectbox(
             label="Which community are you from?",
-            options=["Community A", "Community B", "Community C"],
+            options=communities,
             key='community'
         )
         
@@ -48,7 +53,7 @@ elif st.session_state.stage == "base_submitted" and st.session_state.workshop_ca
     with st.form("submit_attendance"):
         community = st.session_state.community
         
-        st.write("Please tick the children that attended the workshop today")
+        st.write(f"Please tick the children that attended the workshop in {st.session_state.community} today.")
 
         for child in children:
             st.checkbox(label=child, key=f"attendance_{child}")
@@ -58,7 +63,7 @@ elif st.session_state.stage == "base_submitted" and st.session_state.workshop_ca
         
 
 elif st.session_state.stage == "attendance_submitted" or st.session_state.workshop_cancelled is True:
-    st.write("You have successfully cancelled the workshop for today.")
+    st.write(f"You have successfully cancelled the workshop in {st.session_state.community} for {st.session_state.date}.")
     st.write("You can now close this tab.")
  
 elif st.session_state.stage == "attendance_submitted" and st.session_state.workshop_cancelled is False:

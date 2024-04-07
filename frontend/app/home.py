@@ -7,7 +7,7 @@ st.title("Digital Lions")
 st.write("Welcome to the Digital Lions app! This app is to track attendance of workshops, collect feedback and more.")
 
 st.markdown("""
-    Currently you can do two things with the app: 
+    Currently you can do the following things with the app: 
     - Submit the attendance of a workshop for a community 
     - Create or update children in a class
             """)

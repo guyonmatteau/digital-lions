@@ -26,4 +26,3 @@ CREATE TABLE attendance (
     cycle INTEGER NOT NULL,
     attendance BOOLEAN
 );
-
