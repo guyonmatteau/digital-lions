@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from db.session import SessionLocal
 from fastapi import Depends
 from sqlalchemy.orm import Session
-
+from db import schemas
 
 router = APIRouter(prefix="/health")
 
@@ -23,7 +23,7 @@ async def get_health(request: Request, db: Session = Depends(get_db)):
 
     try:
         # to check database we will execute raw query
-        db.execute('SELECT 1')
+        db.query(schemas.Attendance).one()
         return JSONResponse(status_code=status.HTTP_200_OK, content={"status": "ok"})
     except Exception as exc:
         output = str(exc)

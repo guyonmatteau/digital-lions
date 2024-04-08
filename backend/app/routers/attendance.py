@@ -4,6 +4,7 @@ from db.session import SessionLocal
 from sqlalchemy.orm import Session
 from db import schemas
 from models import Attendance
+from typing import List
 
 def get_db():
     db = SessionLocal()
@@ -19,7 +20,7 @@ router = APIRouter(prefix="/attendances", tags=["attendance"])
 
 @router.post("")
 async def add_attendances(
-    attendances: list[Attendance], db: Session = Depends(get_db)
+    attendances: List[Attendance], db: Session = Depends(get_db)
 ):
     new_attendances = [schemas.Attendance(**attendance.dict()) for attendance in attendances]
     db.bulk_save_objects(new_attendances)
