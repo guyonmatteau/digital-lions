@@ -2,8 +2,8 @@ from sqlalchemy import Boolean, Column, Integer, String
 
 from db.session import Base
 
-class Serializer:
 
+class Serializer:
     def as_dict(self):
         d = {}
         for column in self.__table__.columns:
@@ -19,4 +19,3 @@ class Attendance(Base, Serializer):
     child = Column(String)
     cycle = Column(Integer)
     attendance = Column(Boolean)
-
