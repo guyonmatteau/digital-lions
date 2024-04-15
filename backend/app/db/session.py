@@ -17,17 +17,13 @@ def postgres_url() -> str:
     host = os.environ.get("POSTGRES_HOST")
     if host is None:
         raise ValueError("POSTGRES_HOST is not set")
+    port = os.environ.get("POSTGRES_PORT")
+    if port is None:
+        raise ValueError("POSTGRES_PORT is not set")
     database = "digitallions"
-    url = URL.create(
-        drivername=scheme,
-        username=username,
-        password=password,
-        host=host,
-        port=5432,
-        database=database,
-    )
-    return url
 
+    url = f"postgresql://{username}:{password}@{host}:{port}/{database}"
+    return url
 
 engine = create_engine(postgres_url())
 

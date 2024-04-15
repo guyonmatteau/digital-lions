@@ -2,6 +2,7 @@ from fastapi import FastAPI
 
 from routers.workshop import router as workshop_router
 from routers.user import router as user_router
+from routers.children import router as child_router
 from routers.health import router as health_router
 from routers.attendance import router as attendance_router
 
@@ -11,6 +12,7 @@ app.include_router(health_router, tags=["health"])
 app.include_router(workshop_router, tags=["workshop"])
 app.include_router(user_router, tags=["users"])
 app.include_router(attendance_router, tags=["attendances"])
+app.include_router(child_router, tags=["children"])
 
 
 @app.on_event("startup")

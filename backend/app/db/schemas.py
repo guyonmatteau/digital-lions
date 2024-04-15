@@ -19,3 +19,11 @@ class Attendance(Base, Serializer):
     child = Column(String)
     cycle = Column(Integer)
     attendance = Column(Boolean)
+
+class Child(Base, Serializer):
+    __tablename__ = "children"
+    id = Column(Integer, primary_key=True)
+    first_name = Column(String)
+    last_name = Column(String)
+    # dob = Column(Integer)
+    community = Column(String)

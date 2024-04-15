@@ -11,11 +11,13 @@ CREATE TABLE children (
       id SERIAL PRIMARY KEY,
       first_name VARCHAR(255) NOT NULL,
       last_name VARCHAR(255) NOT NULL,
-      dob VARCHAR(255),
-      consent BOOLEAN,
-      allergies TEXT,
-      created_by INTEGER REFERENCES users(id) ON DELETE CASCADE,
-      created_at TIMESTAMP DEFAULT NOW()
+      community VARCHAR(255) NOT NULL,
+      -- dob VARCHAR(255),
+      -- consent BOOLEAN,
+      -- allergies TEXT,
+      -- created_by INTEGER REFERENCES users(id) ON DELETE CASCADE,
+      created_at TIMESTAMP DEFAULT NOW(),
+      active BOOLEAN DEFAULT TRUE
 );
 
 CREATE TABLE attendance (

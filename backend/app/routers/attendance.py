@@ -4,18 +4,16 @@ from db.session import get_db
 from sqlalchemy.orm import Session
 from db import schemas
 from models import Attendance
-from typing import List
+from typing import List, Optional
 
 
-router = APIRouter(prefix="/attendances")
+router = APIRouter(prefix="/attendance")
 
 
-@router.post("")
-async def add_attendances(attendances: List[Attendance], db: Session = Depends(get_db)):
-    new_attendances = [
-        schemas.Attendance(**attendance.dict()) for attendance in attendances
-    ]
-    db.bulk_save_objects(new_attendances)
+@router.post("", summary="Add attendance of child to a workshop")
+async def add_attendances(attendance: Attendance, db: Session = Depends(get_db)):
+    new_attendance = schemas.Attendance(**attendance.dict())
+    db.add(new_attendances)
     db.commit()
     return JSONResponse(
         status_code=status.HTTP_201_CREATED,
@@ -23,10 +21,10 @@ async def add_attendances(attendances: List[Attendance], db: Session = Depends(g
     )
 
 
-@router.get("")
-async def get_attendances(db: Session = Depends(get_db)):
+@router.get("", summary="Get attendances of children to workshops")
+async def get_attendances(id: Optional[int] = None, db: Session = Depends(get_db)):
     attendances = db.query(schemas.Attendance).all()
     return JSONResponse(
         status_code=status.HTTP_200_OK,
-        content={"attendances": [attendance.as_dict() for attendance in attendances]},
+        content={"attendance": [attendance.as_dict() for attendance in attendances]},
     )
