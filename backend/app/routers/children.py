@@ -4,7 +4,7 @@ from db.session import get_db
 from sqlalchemy.orm import Session
 from db import schemas
 from models import Child 
-from typing import List, Optional
+from typing import Optional
 
 
 router = APIRouter(prefix="/children")
