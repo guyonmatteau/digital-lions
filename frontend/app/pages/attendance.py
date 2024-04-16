@@ -3,6 +3,8 @@ from utils import API
 
 import streamlit as st
 
+st.session_state.update(st.session_state)
+
 api = API("http://localhost:8000")
 
 st.set_page_config(page_title="Digital Lions")

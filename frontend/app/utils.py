@@ -19,3 +19,6 @@ class API:
             f"{self.url}/attendances", data=json.dumps(data), headers=self.headers
         )
         return response
+
+api = API(url="http://localhost:8000/api/v1")
+communities = ["Community A", "Community B", "Community C"]
