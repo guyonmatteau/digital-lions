@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Digital Lions{% endblock %}</title>
+    <!-- Add your CSS links here -->
+</head>
+<body>
+    <div class="sidebar">
+        <ul>
+            <li><a href="{{ url_for('home') }}">Home</a></li>
+            <li><a href="{{ url_for('attendance') }}">Attendance</a></li>
+            <li><a href="{{ url_for('children') }}">Children</a></li>
+        </ul>
+    </div>
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+    <!-- Add your JavaScript links here -->
+</body>
+</html>
+
