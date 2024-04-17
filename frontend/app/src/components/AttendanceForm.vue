@@ -1,23 +1,54 @@
-<script setup>
-import { ref } from 'vue'
-
-const count = ref(0)
-</script>
 <template>
-    <form>
-      <div class="form-group">
-        <label for="exampleInputEmail1">Email address</label>
-        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-      </div>
-      <div class="form-group">
-        <label for="exampleInputPassword1">Password</label>
-        <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-      </div>
-      <div class="form-check">
-        <input type="checkbox" class="form-check-input" id="exampleCheck1">
-        <label class="form-check-label" for="exampleCheck1">Check me out</label>
-      </div>
-      <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
+  <div>
+    <h2>Attendance Form</h2>
+    <!-- Name dropdown -->
+    <div>
+      <label for="nameDropdown">What is your name?</label>
+      <select id="nameDropdown" v-model="selectedName">
+        <option value="Anne">Anne</option>
+        <option value="Stijn">Stijn</option>
+        <option value="Nomfundo">Nomfundo</option>
+      </select>
+    </div>
+
+    <!-- Community dropdown -->
+    <div>
+      <label for="communityDropdown">Which community are you from?</label>
+      <select id="communityDropdown" v-model="selectedCommunity">
+        <option value="Community A">Community A</option>
+        <option value="Community B">Community B</option>
+        <option value="Community C">Community C</option>
+      </select>
+    </div>
+
+    <!-- Cancelled checkbox -->
+    <div>
+      <input type="checkbox" id="cancelledCheckbox" v-model="isCancelled">
+      <label for="cancelledCheckbox">Is the workshop cancelled?</label>
+    </div>
+
+    <!-- Submit button -->
+    <button @click="submitForm">Submit</button>
+  </div>
 </template>
+<script lang="ts">
+export default {
+  name: 'AttendanceForm',
+  data() {
+    return {
+      selectedName: '',
+      selectedCommunity: '',
+      isCancelled: false
+    };
+  },
+  methods: {
+    submitForm() {
+      // Handle form submission logic here
+      console.log('Form submitted');
+      console.log('Name', this.selectedName);
+      console.log('Community', this.selectedCommunity);
+      console.log('Is cancelled', this.isCancelled);
+    }
+  }
+}
+</script>
