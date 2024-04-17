@@ -30,6 +30,11 @@ async def attendance(request: Request):
 async def children(request: Request):
     return templates.TemplateResponse("children.html", {"request": request})
 
+@app.get("/clicked")
+async def clicked(request: Request):
+    return {"x": 2}
+
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)
