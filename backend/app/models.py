@@ -11,6 +11,8 @@ class Attendance(BaseModel):
 class Child(BaseModel):
     first_name: str
     last_name: str
-    # dob: int
     community: str
+
+class Community(BaseModel):
+    name: str
 

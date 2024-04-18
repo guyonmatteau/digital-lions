@@ -27,3 +27,10 @@ class Child(Base, Serializer):
     last_name = Column(String)
     # dob = Column(Integer)
     community = Column(String)
+
+class Community(Base, Serializer):
+    __tablename__ = "communities"
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    created_at = Column(String)
+    active = Column(Boolean)

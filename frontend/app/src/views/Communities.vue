@@ -1,13 +1,13 @@
 <script lang="ts">
 import Navigation from '../components/Navigation.vue'
-import CreateChild from '../components/CreateChild.vue'
+import CreateCommunity from '../components/CreateCommunity.vue'
 export default {
     name: 'App',
-    components: { Navigation, CreateChild }
+    components: { Navigation, CreateCommunity }
 }
 </script>
 <template>
-  <CreateChild/>
+  <CreateCommunity/>
 </template>
 
 

@@ -10,6 +10,7 @@
             <router-link to="/home" class="nav-item nav-link">Home</router-link>
             <router-link to="/attendance" class="nav-item nav-link">Workshop Attendance</router-link>
             <router-link to="/children" class="nav-link">Children</router-link>
+            <router-link to="/communities" class="nav-link">Communities</router-link>
         </div>
     </div>
 </nav>

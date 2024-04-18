@@ -29,4 +29,11 @@ CREATE TABLE attendance (
     attendance BOOLEAN
 );
 
+CREATE TABLE communities (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    active BOOLEAN DEFAULT TRUE
+);
+
 

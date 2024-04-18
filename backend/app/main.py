@@ -1,18 +1,30 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from routers.workshop import router as workshop_router
 from routers.user import router as user_router
 from routers.children import router as child_router
 from routers.health import router as health_router
 from routers.attendance import router as attendance_router
+from routers.communities import router as community_router
 
-app = FastAPI(title="Digital Lion API", version="0.1.0", prefix="/api/v1")
+app = FastAPI(title="Digital Lion API", version="0.1.0")
+
+origins = [
+    "http://localhost:5173",
+]
+methods = ["GET", "POST", "PUT", "DELETE"]
+
+app.add_middleware(
+    CORSMiddleware, allow_origins=origins, allow_methods=methods, allow_headers=["*"]
+)
 
 app.include_router(health_router, tags=["health"])
-app.include_router(workshop_router, tags=["workshop"])
-app.include_router(user_router, tags=["users"])
+# app.include_router(workshop_router, tags=["workshop"])
+# app.include_router(user_router, tags=["users"])
 app.include_router(attendance_router, tags=["attendances"])
 app.include_router(child_router, tags=["children"])
+app.include_router(community_router, tags=["communities"])
 
 
 @app.on_event("startup")
