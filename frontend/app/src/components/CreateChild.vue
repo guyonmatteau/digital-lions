@@ -24,12 +24,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
 const communities = ref([]);
 
 // Define the API endpoint URL for fetching communities
 const COMMUNITIES_API_URL = 'http://127.0.0.1:8000/communities';
+const CHILDREN_API_URL = 'http://127.0.0.1:8000/children';
 
 // Define the child object with firstName, lastName, and community properties
 const child = ref({
@@ -38,9 +39,16 @@ const child = ref({
   community: ''
 });
 
-// Define a ref to store the fetched communities
-/*const communities = ref([]);*/
-
+// Define the function to map the properties
+function mapChildProperties(child) {
+  return computed(() => {
+    return {
+      first_name: child.value.firstName,
+      last_name: child.value.lastName,
+      community: child.value.community
+    };
+  });
+}
 // Fetch communities from the backend API endpoint
 const fetchCommunities = async () => {
   try {
@@ -57,9 +65,16 @@ onMounted(() => {
   fetchCommunities();
 });
 
-// Submit form function
+// Submit form function and create child
 const submitForm = () => {
-  console.log('Submitted Child Information:', child.value);
+
+  const mappedChild = mapChildProperties(child);
+  try {
+    axios.post(CHILDREN_API_URL, mappedChild.value);
+    console.log('Submitted Child Information:', child.value);
+  } catch (error) {
+    console.error('Error submitting child information:', error);
+  }
   // Add logic to submit child information to backend API here
 };
 </script>
