@@ -28,13 +28,23 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
-const communities = ref([])
+interface Community {
+  id: number
+  name: string
+}
+const communities = ref<Community[]>([])
 
 // Define the API endpoint URL for fetching communities
 const COMMUNITIES_API_URL = 'http://127.0.0.1:8000/communities'
 const CHILDREN_API_URL = 'http://127.0.0.1:8000/children'
 
 // Define the child object with firstName, lastName, and community properties
+interface Child {
+  firstName: string
+  lastName: string
+  community: string
+}
+
 const child = ref({
   firstName: '',
   lastName: '',
@@ -42,12 +52,12 @@ const child = ref({
 })
 
 // Define the function to map the properties
-function mapChildProperties(child) {
+function mapChildProperties(child: Child) {
   return computed(() => {
     return {
-      first_name: child.value.firstName,
-      last_name: child.value.lastName,
-      community: child.value.community
+      first_name: child.firstName,
+      last_name: child.lastName,
+      community: child.community
     }
   })
 }
@@ -56,7 +66,7 @@ const fetchCommunities = async () => {
   try {
     const response = await axios.get(COMMUNITIES_API_URL)
     communities.value = response.data.communities
-  } catch (error) {}
+  } catch (error: any) {}
 }
 
 // Fetch communities when the component is mounted
@@ -66,7 +76,7 @@ onMounted(() => {
 
 // Submit form function and create child
 const submitForm = () => {
-  const mappedChild = mapChildProperties(child)
+  const mappedChild = mapChildProperties(child.value)
   try {
     axios.post(CHILDREN_API_URL, mappedChild.value)
     console.log('Submitted Child Information:', child.value)

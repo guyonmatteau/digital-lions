@@ -1,48 +1,41 @@
 <template>
-  <div>
-    <h2>Attendance Form for Children</h2>
-    <!-- Attendance list -->
-    <div v-for="(child, index) in children" :key="index">
-      <label>{{ child }}</label>
-      <input type="radio" v-model="selectedAttendance[child]" :value="'Present'" />
-      <label>Present</label>
-      <input type="radio" v-model="selectedAttendance[child]" :value="'Absent'" />
-      <label>Absent</label>
-      <input type="radio" v-model="selectedAttendance[child]" :value="'Cancelled'" />
-      <label>Cancelled</label>
+  <form @submit.prevent="handleChildrenAttendance">
+    <div v-for="child in children" :key="child.id">
+      <p>{{ child.first_name }} {{ child.last_name }}</p>
+      <label>
+        <input type="radio" v-model="child.attendance" value="present" required />Present
+      </label>
+      <label>
+        <input type="radio" v-model="child.attendance" value="absent" required />Absent
+      </label>
+      <label>
+        <input type="radio" v-model="child.attendance" value="cancelled" required />Cancelled
+      </label>
     </div>
-
-    <!-- Submit button -->
-    <button @click="submitForm">Submit</button>
-  </div>
+    <button type="submit">Submit attendance</button>
+  </form>
 </template>
 
 <script lang="ts">
+interface Child {
+  id: number;
+  first_name: string;
+  last_name: string;
+  community: string,
+  attendance: string;
+}
 export default {
-  name: 'AttendanceFormChildren',
   props: {
     children: {
-      type: Array,
+      type: Array as () => Child[],
       required: true
     }
   },
-  data() {
-    // Initialize selectedAttendance as an empty object
-    return {
-      selectedAttendance: {}
-    }
-  },
   methods: {
-    submitForm() {
-      // Log form data to the console
-      console.log('Attendance:', this.selectedAttendance)
-
-      // Add any additional form submission logic here
+    handleChildrenAttendance() {
+      // emit submitted data to parent component
+      this.$emit('attendance-submit', this.children)
     }
   }
 }
 </script>
-
-<style scoped>
-/* Component-specific styles */
-</style>

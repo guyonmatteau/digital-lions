@@ -20,7 +20,10 @@ async def get_health(request: Request, db: Session = Depends(get_db)):
         db.query(schemas.Attendance).first()
         return JSONResponse(status_code=status.HTTP_200_OK, content={"status": "ok"})
     except Exception as exc:
-        output = str(exc)
+        if "psycopg2.OperationalError" in str(exc):
+            output = "Database connection error"
+        else:
+            output = str(exc)
         return JSONResponse(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             content={"status": "error", "message": output},

@@ -1,9 +1,17 @@
 <template>
   <div>
     <Navigation />
-    <AttendanceForm :communities="communities" @form-submit="handleFirstFormSubmit" />
+    <AttendanceForm
+      :communities="communities"
+      v-if="showFirstForm"
+      @form-submit="handleFirstFormSubmit"
+    />
     <!-- Second form is only shown when showSecondForm is true -->
-    <AttendanceFormChildren :children="children" v-if="showSecondForm" @form-submit="handleSecondFormSubmit" />
+    <AttendanceFormChildren
+      :children="children"
+      v-if="showSecondForm"
+      @attendance-submit="handleChildrenAttendance"
+    />
   </div>
 </template>
 
@@ -47,11 +55,12 @@ export default {
   },
   data() {
     return {
+      showFirstForm: true,
       showSecondForm: false
     }
   },
   methods: {
-    handleFirstFormSubmit(formData) {
+    handleFirstFormSubmit(formData: any) {
       // Handle data from the first form
       console.log('Selected name:', formData.selectedName)
       console.log('Selected community:', formData.selectedCommunity)
@@ -80,13 +89,13 @@ export default {
             console.error('Error fetching children:', error)
           })
 
+        this.showFirstForm = false
         this.showSecondForm = true
       }
     },
-
-    handleSecondFormSubmit(children) {
+    handleChildrenAttendance(submittedAttendance: any) {
       // Handle data from the second form
-      console.log('Data from second form:', formData)
+      console.log('Data from second form:', submittedAttendance)
     }
   }
 }

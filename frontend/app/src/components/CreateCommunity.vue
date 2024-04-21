@@ -39,7 +39,7 @@ const submitForm = async () => {
     } else {
       errorMessage.value = 'Failed to create community. Please try again later.'
     }
-  } catch (error) {
+  } catch (error: any) {
     // Check if the error response indicates that the community already exists
     if (error.response && error.response.status === 409) {
       errorMessage.value = 'Community already exists.'

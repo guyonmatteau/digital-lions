@@ -16,7 +16,7 @@
         <label for="communitySelect">Community:</label>
         <select id="communitySelect" v-model="selectedCommunity" requird>
           <option value="">Select</option>
-          <option v-for="community in communities" :value="community.name" :key="community.value">
+          <option v-for="community in communities" :value="community.name" :key="community.id">
             {{ community.name }}
           </option>
         </select>
@@ -32,7 +32,11 @@
     </form>
   </div>
 </template>
-<script>
+<script lang="ts">
+interface Community {
+  id: number,
+  name: string
+}
 export default {
   data() {
     return {
@@ -43,7 +47,7 @@ export default {
   },
   props: {
     communities: {
-      type: Array,
+      type: Array as () => Community[],
       default: () => []
     }
   },
