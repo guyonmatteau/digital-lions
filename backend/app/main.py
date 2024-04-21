@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import os
 
 from routers.workshop import router as workshop_router
 from routers.user import router as user_router
@@ -10,13 +11,13 @@ from routers.communities import router as community_router
 
 app = FastAPI(title="Digital Lion API", version="0.1.0")
 
-origins = [
-    "http://127.0.0.1:5173",
-]
+ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS").split(",")
+
+
 methods = ["GET", "POST", "PUT", "DELETE"]
 
 app.add_middleware(
-    CORSMiddleware, allow_origins=origins, allow_methods=methods, allow_headers=["*"]
+    CORSMiddleware, allow_origins=ALLOWED_ORIGINS, allow_methods=methods, allow_headers=["*"]
 )
 
 app.include_router(health_router, tags=["health"])
