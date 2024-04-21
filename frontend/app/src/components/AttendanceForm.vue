@@ -4,7 +4,7 @@
     <form @submit.prevent="submitForm">
       <div>
         <label for="nameSelect">What is your name?</label>
-        <select id="nameSelect" v-model="selectedName">
+        <select id="nameSelect" v-model="selectedName" required>
           <option value="">Select</option>
           <option value="Stijn">Stijn</option>
           <option value="Nomfundo">Nomfundo</option>
@@ -14,63 +14,43 @@
       </div>
       <div>
         <label for="communitySelect">Community:</label>
-        <select id="communitySelect" v-model="selectedCommunity">
+        <select id="communitySelect" v-model="selectedCommunity" requird>
           <option value="">Select</option>
-          <option v-for="community in communities" :value="community.id" :key="community.id">{{ community.name }}</option>
+          <option v-for="community in communities" :value="community.name" :key="community.value">
+            {{ community.name }}
+          </option>
         </select>
       </div>
       <div>
         <label>Workshop cancelled?</label>
         <div>
-          <label>
-            <input type="radio" v-model="workshopCancelled" value="yes"> Yes
-          </label>
-          <label>
-            <input type="radio" v-model="workshopCancelled" value="no"> No
-          </label>
+          <label> <input type="radio" v-model="workshopCancelled" :value="true" /> Yes </label>
+          <label> <input type="radio" v-model="workshopCancelled" :value="false" /> No </label>
         </div>
       </div>
-      <button type="submit">Submit</button>
+      <button type="submit">Next</button>
     </form>
   </div>
 </template>
 <script>
-const COMMUNITIES_API_URL = 'http://127.0.0.1:8000/communities';
 export default {
   data() {
     return {
       selectedName: '',
       selectedCommunity: '',
-      communities: [], // Array to store communities fetched from API
       workshopCancelled: '' // Variable to store workshop cancellation status
-    };
+    }
   },
-  mounted() {
-    // Assuming you have a method to fetch communities from the API
-    this.fetchCommunities();
+  props: {
+    communities: {
+      type: Array,
+      default: () => []
+    }
   },
   methods: {
-    fetchCommunities() {
-      // Assuming you have a method to fetch communities from the API
-      // Replace this with your actual API call
-      // For example:
-      fetch(COMMUNITIES_API_URL)
-        .then(response => response.json())
-        .then(data => {
-          this.communities = data.communities;
-        })
-        .catch(error => {
-          console.error('Error fetching communities:', error);
-        });
-    },
     submitForm() {
-      // Handle form submission
-      console.log('Form submitted!');
-      console.log('Selected name:', this.selectedName);
-      console.log('Selected community:', this.selectedCommunity);
-      console.log('Workshop cancelled?', this.workshopCancelled);
-      // You can perform further actions here, such as sending data to the server
+      this.$emit('form-submit', this)
     }
   }
-};
+}
 </script>
