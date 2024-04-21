@@ -1,6 +1,7 @@
 FROM node:lts-alpine
 
 RUN npm install -g http-server typescript
+ENV API_URL=
 
 WORKDIR /app
 

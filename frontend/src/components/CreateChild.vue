@@ -35,8 +35,9 @@ interface Community {
 const communities = ref<Community[]>([])
 
 // Define the API endpoint URL for fetching communities
-const COMMUNITIES_API_URL = 'http://127.0.0.1:8000/communities'
-const CHILDREN_API_URL = 'http://127.0.0.1:8000/children'
+const API_URL = process.env.API_URL
+const COMMUNITIES_API_URL = API_URL + '/communities'
+const CHILDREN_API_URL = API_URL + '/children'
 
 // Define the child object with firstName, lastName, and community properties
 interface Child {

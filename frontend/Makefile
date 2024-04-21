@@ -1,10 +1,12 @@
-
+.PHONY: build run format
 
 build:
 	docker build -t frontend:latest .
 
-#lint:
-
 run:
-	docker run -d -p 8080:80 frontend:latest
+	docker run -p 5173:5173 frontend:latest
+
+format:
+	npx prettier --write .
+
 

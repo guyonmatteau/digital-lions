@@ -34,7 +34,7 @@
 </template>
 <script lang="ts">
 interface Community {
-  id: number,
+  id: number
   name: string
 }
 export default {

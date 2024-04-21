@@ -23,7 +23,7 @@ import Navigation from '@/components/Navigation.vue'
 import AttendanceForm from '@/components/AttendanceForm.vue'
 import AttendanceFormChildren from '@/components/AttendanceFormChildren.vue'
 
-const API_URL = 'http://127.0.0.1:8000'
+const API_URL = process.env.API_URL
 
 const COMMUNITIES_API_URL = API_URL + '/communities'
 const communities = ref([])
@@ -44,7 +44,7 @@ onMounted(() => {
 </script>
 
 <script lang="ts">
-const API_URL = 'http://127.0.0.1:8000'
+const API_URL = process.env.API_URL
 const children = ref([])
 
 export default {

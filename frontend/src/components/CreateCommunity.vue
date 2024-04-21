@@ -25,11 +25,14 @@ const communityName = ref('')
 const successMessage = ref('')
 const errorMessage = ref('')
 
+const API_URL = process.env.API_URL
+const COMMUNITIES_ENDPOINT = API_URL + '/communities'
+
 // Function to submit the form
 const submitForm = async () => {
   try {
     // Make API call to create the community
-    const response = await axios.post('http://127.0.0.1:8000/communities', {
+    const response = await axios.post(COMMUNITIES_ENDPOINT, {
       name: communityName.value
     })
 
