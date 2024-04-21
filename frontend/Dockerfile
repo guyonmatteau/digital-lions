@@ -6,7 +6,6 @@ WORKDIR /app
 
 # copy both 'package.json' and 'package-lock.json' (if available)
 COPY package*.json ./
-COPY tsconfig.json ./
 
 # install project dependencies
 RUN npm install
@@ -21,4 +20,4 @@ RUN tsc
 RUN npm run build
 
 EXPOSE 5173
-#CMD [ "npm", "run", "dev"]
+CMD [ "npm", "run", "dev", "--", "--host", "--port", "5173"]
