@@ -8,6 +8,7 @@ class Attendance(BaseModel):
     cycle: int
     attendance: bool
 
+
 class Child(BaseModel):
     first_name: str
     last_name: str
@@ -15,4 +16,3 @@ class Child(BaseModel):
 
 class Community(BaseModel):
     name: str
-

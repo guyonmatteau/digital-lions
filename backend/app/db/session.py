@@ -1,6 +1,8 @@
 import os
+import logging
 
 from sqlalchemy import create_engine
+from sqlalchemy_utils import database_exists, create_database
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -24,10 +26,15 @@ def postgres_url() -> str:
     url = f"postgresql://{username}:{password}@{host}:{port}/{database}"
     return url
 
+
 engine = create_engine(postgres_url())
+if not database_exists(engine.url):
+    logging.info("Creating database")
+    create_database(engine.url)
+else:
+    logging.info("Database already exists")
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
 Base = declarative_base()
 
 

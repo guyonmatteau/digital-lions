@@ -1,4 +1,5 @@
-from sqlalchemy import Boolean, Column, Integer, String
+from sqlalchemy import Boolean, Column, Integer, String, DateTime
+from sqlalchemy.sql import func
 
 from db.session import Base
 
@@ -15,22 +16,27 @@ class Attendance(Base, Serializer):
     __tablename__ = "attendance"
     id = Column(Integer, primary_key=True)
     day = Column(String)
-    community = Column(String)
-    child = Column(String)
-    cycle = Column(Integer)
+    community = Column(String, nullable=False)
+    child = Column(String, nullable=False)
+    cycle = Column(Integer, nullable=True)
     attendance = Column(Boolean)
+
 
 class Child(Base, Serializer):
     __tablename__ = "children"
     id = Column(Integer, primary_key=True)
-    first_name = Column(String)
-    last_name = Column(String)
-    # dob = Column(Integer)
-    community = Column(String)
+    first_name = Column(String, nullable=False)
+    last_name = Column(String, nullable=False)
+    dob = Column(Integer, nullable=True)
+    community = Column(String, nullable=False)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
 
 class Community(Base, Serializer):
     __tablename__ = "communities"
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    created_at = Column(String)
-    active = Column(Boolean)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    active = Column(Boolean, default=True)

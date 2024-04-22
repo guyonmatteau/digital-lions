@@ -3,7 +3,8 @@ from fastapi.responses import JSONResponse
 from fastapi import Depends
 from sqlalchemy.orm import Session
 from db import schemas
-from db.session import get_db
+from db.session import get_db, engine
+
 
 router = APIRouter(prefix="/health")
 

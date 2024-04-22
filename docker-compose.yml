@@ -8,7 +8,6 @@ services:
     ports:
       - 5432:5432
     image: postgres
-    #restart: always
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} 
@@ -16,7 +15,6 @@ services:
       PGDATA: /var/lib/postgresql/data/digitallions
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./db/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
   backend:
     image: "digitallionsbackend:latest"
     build:
@@ -24,13 +22,12 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} 
-      POSTGRES_DATABASE: ${POSTGRES_DATABASE:-digitallions}
+      POSTGRES_DB: ${POSTGRES_DB:-digitallions}
       POSTGRES_PORT: ${POSTGRES_PORT:-5432}
-      POSTGRES_HOST: ${POSTGRES_HOST:-localhost}
+      POSTGRES_HOST: ${POSTGRES_HOST:-digital-lions-db-1}
       ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
     ports:
       - 8000:8000
-
   frontend: 
     image: "digitallionsfrontend:latest"
     build: 

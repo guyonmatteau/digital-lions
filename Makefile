@@ -8,5 +8,4 @@ backend:
 frontend:
 	docker-compose up --build frontend
 
-app:
-	python -m streamlit run app/main.py --server.port 80
+

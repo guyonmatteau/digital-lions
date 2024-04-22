@@ -13,7 +13,7 @@ router = APIRouter(prefix="/attendance")
 @router.post("", summary="Add attendance of child to a workshop")
 async def add_attendances(attendance: Attendance, db: Session = Depends(get_db)):
     new_attendance = schemas.Attendance(**attendance.dict())
-    db.add(new_attendances)
+    db.add(new_attendance)
     db.commit()
     return JSONResponse(
         status_code=status.HTTP_201_CREATED,
