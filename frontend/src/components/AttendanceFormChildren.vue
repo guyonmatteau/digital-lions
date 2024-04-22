@@ -17,13 +17,8 @@
 </template>
 
 <script lang="ts">
-interface Child {
-  id: number
-  first_name: string
-  last_name: string
-  community: string
-  attendance: string
-}
+
+
 export default {
   props: {
     children: {

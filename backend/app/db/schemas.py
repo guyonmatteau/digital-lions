@@ -19,7 +19,7 @@ class Attendance(Base, Serializer):
     community = Column(String, nullable=False)
     child = Column(String, nullable=False)
     cycle = Column(Integer, nullable=True)
-    attendance = Column(Boolean)
+    attendance = Column(String)
 
 
 class Child(Base, Serializer):

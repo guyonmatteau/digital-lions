@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h2>Form</h2>
     <form @submit.prevent="submitForm">
       <div>
         <label for="nameSelect">What is your name?</label>

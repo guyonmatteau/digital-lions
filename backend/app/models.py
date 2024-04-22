@@ -6,7 +6,7 @@ class Attendance(BaseModel):
     community: str
     child: str
     cycle: int
-    attendance: bool
+    attendance: str
 
 
 class Child(BaseModel):
