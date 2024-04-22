@@ -8,6 +8,12 @@ from sqlalchemy.orm import sessionmaker
 
 
 def postgres_url() -> str:
+    database_url = os.environ.get("POSTGRES_DATABASE_URL")
+    if database_url is not None:
+        logging.info(f"Using database URL from environment: {database_url}")
+        return database_url
+
+    logging.info("Building database URL from environment variables")
     scheme = "postgresql"
     username = os.environ.get("POSTGRES_USER")
     if username is None:
@@ -36,7 +42,6 @@ else:
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
-
 
 def get_db():
     db = SessionLocal()
