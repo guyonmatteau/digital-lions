@@ -27,8 +27,7 @@ services:
       POSTGRES_DATABASE: ${POSTGRES_DATABASE:-digitallions}
       POSTGRES_PORT: ${POSTGRES_PORT:-5432}
       POSTGRES_HOST: ${POSTGRES_HOST:-localhost}
-    #volumes:
-      #- ./app:/app
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
     ports:
       - 8000:8000
 
@@ -37,6 +36,6 @@ services:
     build: 
       context: ./frontend
     environment:
-      API_URL: ${API_URL:-"https://localhost:8000/api/v1"}
+      API_URL: ${API_URL:-"http://localhost:8000"}
     ports:
-      - 8501:8501
+      - 5173:5173

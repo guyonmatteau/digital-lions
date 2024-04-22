@@ -12,8 +12,6 @@ from routers.communities import router as community_router
 app = FastAPI(title="Digital Lion API", version="0.1.0")
 
 ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS").split(",")
-
-
 methods = ["GET", "POST", "PUT", "DELETE"]
 
 app.add_middleware(
