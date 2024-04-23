@@ -1,23 +1,3 @@
-<template>
-  <h2>Attendance Form</h2>
-  <div>
-      Today is {{ todayFormatted }}
-  </div>
-  <div>
-    <AttendanceForm
-      :communities="communities"
-      v-if="showFirstForm"
-      @form-submit="handleFirstFormSubmit"
-    />
-    <!-- Second form is only shown when showSecondForm is true -->
-    <AttendanceFormChildren
-      :children="children"
-      v-if="showSecondForm"
-      @attendance-submit="handleChildrenAttendance"
-    />
-  </div>
-</template>
-
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
@@ -134,3 +114,20 @@ export default {
   }
 }
 </script>
+<template>
+  <div>
+    <Navigation />
+    <AttendanceForm
+      :communities="communities"
+      v-if="showFirstForm"
+      @form-submit="handleFirstFormSubmit"
+    />
+    <AttendanceFormChildren
+      :children="children"
+      v-if="showSecondForm"
+      @attendance-submit="handleChildrenAttendance"
+    />
+  </div>
+</template>
+
+
