@@ -1,7 +1,9 @@
 <template>
   <div>
-    <h2>Child Information Form</h2>
+    <h2>Children</h2>
+    <div>Here you can add new children to the system.</div>
 
+    <h3>Information</h3>
     <!-- Child information form -->
     <form @submit.prevent="submitForm">
       <div>

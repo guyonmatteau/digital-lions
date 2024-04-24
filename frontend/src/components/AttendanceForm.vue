@@ -1,13 +1,16 @@
 <template>
+  <h2>Workshop attendance</h2>
+  <div>On this page you can fill in the attendance for the workshop, or cancel it.</div>
+  <h3>Workshop details</h3>
   <div>
     <form @submit.prevent="submitForm">
       <div>
         <label for="nameSelect">What is your name?</label>
         <select id="nameSelect" v-model="selectedName" required>
           <option value="">Select</option>
-          <option value="Stijn">Stijn</option>
-          <option value="Nomfundo">Nomfundo</option>
-          <option value="Alice">Alice</option>
+          <option value="Stijn">Coach 1</option>
+          <option value="Nomfundo">Coach 2</option>
+          <option value="Alice">Coach 3</option>
           <!-- Add more hardcoded options if necessary -->
         </select>
       </div>

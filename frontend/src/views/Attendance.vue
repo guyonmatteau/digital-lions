@@ -116,7 +116,6 @@ export default {
 </script>
 <template>
   <div>
-    <Navigation />
     <AttendanceForm
       :communities="communities"
       v-if="showFirstForm"
