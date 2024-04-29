@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Request, status
 from fastapi.responses import JSONResponse
 from fastapi import Depends
-from sqlalchemy.orm import Session
-from db import schemas
+from sqlmodel import Session
+from db.models import Attendance
 from db.session import get_db, engine
 
 
@@ -18,7 +18,7 @@ router = APIRouter(prefix="/health")
 async def get_health(request: Request, db: Session = Depends(get_db)):
     try:
         # to check database we will execute raw query
-        db.query(schemas.Attendance).first()
+        db.query(Attendance).first()
         return JSONResponse(status_code=status.HTTP_200_OK, content={"status": "ok"})
     except Exception as exc:
         if "psycopg2.OperationalError" in str(exc):

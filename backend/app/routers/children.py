@@ -1,9 +1,8 @@
 from fastapi import APIRouter, status, Depends
 from fastapi.responses import JSONResponse
 from db.session import get_db
-from sqlalchemy.orm import Session
-from db import schemas
-from models import Child
+from sqlmodel import Session
+from db.models import Child 
 from typing import Optional
 
 
@@ -18,10 +17,10 @@ async def get_children(
 ):
     filters = []
     if child_id is not None:
-        filters.append(schemas.Child.id == child_id)
+        filters.append(Child.id == child_id)
     if community is not None:
-        filters.append(schemas.Child.community == community)
-    children = db.query(schemas.Child).filter(*filters).all()
+        filters.append(Child.community == community)
+    children = db.query(Child).filter(*filters).all()
 
     return JSONResponse(
         status_code=status.HTTP_200_OK,
@@ -32,10 +31,10 @@ async def get_children(
 @router.post("", summary="Add a child")
 async def add_child(child: Child, db: Session = Depends(get_db)):
     if (
-        db.query(schemas.Child)
+        db.query(Child)
         .filter(
-            schemas.Child.first_name == child.first_name,
-            schemas.Child.last_name == child.last_name,
+            Child.first_name == child.first_name,
+            Child.last_name == child.last_name,
         )
         .first()
     ):
@@ -46,7 +45,7 @@ async def add_child(child: Child, db: Session = Depends(get_db)):
             },
         )
 
-    new_child = schemas.Child(**child.dict())
+    new_child = Child(**child.dict())
     db.add(new_child)
     db.commit()
     return JSONResponse(
@@ -57,7 +56,7 @@ async def add_child(child: Child, db: Session = Depends(get_db)):
 
 @router.put("/{child_id}", summary="Update a child")
 async def update_child(child_id: int, child: Child, db: Session = Depends(get_db)):
-    db_child = db.query(schemas.Child).filter(schemas.Child.id == child_id).first()
+    db_child = db.query(Child).filter(Child.id == child_id).first()
     if db_child is None:
         return JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,

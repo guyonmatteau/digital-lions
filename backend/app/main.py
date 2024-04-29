@@ -1,7 +1,6 @@
 import os
 
-from db import schemas
-from db.session import engine, get_db
+from db.session import engine, create_db_and_tables
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers.attendance import router as attendance_router
@@ -39,4 +38,4 @@ app.include_router(community_router, tags=["communities"])
 @app.on_event("startup")
 async def startup_db_client():
     """On startup, ping the connection to the database"""
-    schemas.Base.metadata.create_all(bind=engine)
+    create_db_and_tables()

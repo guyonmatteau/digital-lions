@@ -1,9 +1,8 @@
 from fastapi import APIRouter, status, Depends
 from fastapi.responses import JSONResponse
 from db.session import get_db
-from sqlalchemy.orm import Session
-from db import schemas
-from models import Attendance
+from sqlmodel import Session
+from db.models import Attendance
 from typing import Optional
 
 
@@ -12,7 +11,7 @@ router = APIRouter(prefix="/attendance")
 
 @router.post("", summary="Add attendance of child to a workshop")
 async def add_attendances(attendance: Attendance, db: Session = Depends(get_db)):
-    new_attendance = schemas.Attendance(**attendance.dict())
+    new_attendance = Attendance(**attendance.dict())
     db.add(new_attendance)
     db.commit()
     return JSONResponse(
