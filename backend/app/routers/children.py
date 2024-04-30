@@ -1,15 +1,20 @@
-from fastapi import APIRouter, status, Depends
-from fastapi.responses import JSONResponse
-from db.session import get_db
-from sqlmodel import Session
-from db.models import Child 
 from typing import Optional
 
+from db.models import Child, Community
+from db.session import get_db
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import JSONResponse
+from sqlmodel import Session
 
 router = APIRouter(prefix="/children")
 
 
-@router.get("", summary="Get children")
+@router.get(
+    "",
+    summary="Get children",
+    response_model=list[Child],
+    status_code=status.HTTP_200_OK,
+)
 async def get_children(
     child_id: Optional[int] = None,
     community: Optional[str] = None,
@@ -21,14 +26,12 @@ async def get_children(
     if community is not None:
         filters.append(Child.community == community)
     children = db.query(Child).filter(*filters).all()
-
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content={"children": [child.as_dict() for child in children]},
-    )
+    return children
 
 
-@router.post("", summary="Add a child")
+@router.post(
+    "", summary="Add a child", status_code=status.HTTP_201_CREATED, response_model=Child
+)
 async def add_child(child: Child, db: Session = Depends(get_db)):
     if (
         db.query(Child)
@@ -38,35 +41,39 @@ async def add_child(child: Child, db: Session = Depends(get_db)):
         )
         .first()
     ):
-        return JSONResponse(
+        raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            content={
-                "message": "There already exists a child with the same first and last name."
-            },
+            detail="There already exists a child with the same first and last name.",
         )
 
-    new_child = Child(**child.dict())
-    db.add(new_child)
+    if not db.get(Community, child.community_id):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Community with ID {child.community_id} not found",
+        )
+
+    db.add(child)
     db.commit()
-    return JSONResponse(
-        status_code=status.HTTP_201_CREATED,
-        content=new_child.as_dict(),
-    )
+    db.refresh(child)
+    return child
 
 
-@router.put("/{child_id}", summary="Update a child")
+@router.put(
+    "/{child_id}",
+    summary="Update a child",
+    response_model=Child,
+    status_code=status.HTTP_200_OK,
+)
 async def update_child(child_id: int, child: Child, db: Session = Depends(get_db)):
-    db_child = db.query(Child).filter(Child.id == child_id).first()
-    if db_child is None:
+    db_child = db.get(Child, child_id)
+    if not db_child:
         return JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,
-            content={"message": "Child not found"},
+            content={"message": f"Child with ID {child_id} not found"},
         )
-
-    for key, value in child.dict().items():
-        setattr(db_child, key, value)
+    child_data = child.model_dump(exclude_unset=True)
+    db_child.sqlmodel_update(child_data)
+    db.add(db_child)
     db.commit()
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content=db_child.as_dict(),
-    )
+    db.refresh(db_child)
+    return db_child

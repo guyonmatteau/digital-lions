@@ -1,10 +1,10 @@
-from fastapi import APIRouter, status, Depends
-from fastapi.responses import JSONResponse
-from db.session import get_db
-from sqlmodel import Session
-from db.models import Attendance
 from typing import Optional
 
+from db.models import Attendance
+from db.session import get_db
+from fastapi import APIRouter, Depends, status
+from fastapi.responses import JSONResponse
+from sqlmodel import Session
 
 router = APIRouter(prefix="/attendance")
 
@@ -22,7 +22,7 @@ async def add_attendances(attendance: Attendance, db: Session = Depends(get_db))
 
 @router.get("", summary="Get attendances of children to workshops")
 async def get_attendances(id: Optional[int] = None, db: Session = Depends(get_db)):
-    attendances = db.query(schemas.Attendance).all()
+    attendances = db.query(Attendance).all()
     return JSONResponse(
         status_code=status.HTTP_200_OK,
         content={"attendance": [attendance.as_dict() for attendance in attendances]},

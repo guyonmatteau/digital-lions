@@ -1,61 +1,64 @@
-from fastapi import APIRouter, status, Depends
-from fastapi.responses import JSONResponse
-from db.session import get_db
-from sqlalchemy.orm import Session
-from db.models import Community
 from typing import Optional
 
+from db.models import Community
+from db.session import get_db
+from fastapi import APIRouter, Depends, status
+from fastapi.responses import JSONResponse
+from sqlalchemy.orm import Session
+from sqlmodel import Field, Session, SQLModel, create_engine, select
 
 router = APIRouter(prefix="/communities")
 
 
-@router.get("", summary="Get communities")
+@router.get(
+    "",
+    summary="Get communities",
+    status_code=status.HTTP_200_OK,
+    response_model=Optional[list[Community]],
+)
 async def get_communities(db: Session = Depends(get_db)):
     communities = db.query(Community).all()
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content={"communities": [community.as_dict() for community in communities]},
-    )
+    return communities
 
 
-@router.post("", summary="Add a community")
+@router.post(
+    "",
+    summary="Add a community",
+    status_code=status.HTTP_201_CREATED,
+    response_model=Community,
+)
 async def add_community(community: Community, db: Session = Depends(get_db)):
-    if (
-        db.query(Community)
-        .filter(Community.name == community.name)
-        .first()
-    ):
+    if db.query(Community).filter(Community.name == community.name).first():
         return JSONResponse(
             status_code=status.HTTP_409_CONFLICT,
-            content={"message": "There already exists a community with the same name."},
+            content={
+                "message": f"There already exists a community with name {community.name}"
+            },
         )
-
-    new_community = Community(**community.dict())
-    db.add(new_community)
+    db.add(community)
     db.commit()
-    return JSONResponse(
-        status_code=status.HTTP_201_CREATED,
-        content=new_community.as_dict(),
-    )
+    db.refresh(community)
+    return community
 
 
-@router.put("/{community_id}", summary="Update a community")
+@router.put(
+    "/{community_id}",
+    summary="Update a community",
+    response_model=Community,
+    status_code=status.HTTP_200_OK,
+)
 async def update_community(
     community_id: int, community: Community, db: Session = Depends(get_db)
 ):
-    db_community = (
-        db.query(Community).filter(Community.id == community_id).first()
-    )
-    if db_community is None:
+    db_community = db.get(Community, community_id)
+    if not db_community:
         return JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,
-            content={"message": "community not found"},
+            content={"message": f"Community with ID {community_id} not found"},
         )
-
-    for key, value in community.dict().items():
-        setattr(db_community, key, value)
+    community_data = community.model_dump(exclude_unset=True)
+    db_community.sqlmodel_update(community_data)
+    db.add(db_community)
     db.commit()
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content=db_community.as_dict(),
-    )
+    db.refresh(db_community)
+    return db_community

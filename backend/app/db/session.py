@@ -1,15 +1,12 @@
-import os
 import logging
+import os
 
-from sqlmodel import SQLModel, create_engine, Session
-
-from . import models
-
-
-
-from sqlalchemy_utils import database_exists, create_database
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy_utils import create_database, database_exists
+from sqlmodel import Session, SQLModel, create_engine
+
+from . import models
 
 
 def postgres_url() -> str:
@@ -39,6 +36,7 @@ def postgres_url() -> str:
 
 
 engine = create_engine(postgres_url())
+
 
 def create_db_and_tables():
     """Setup db and create tables"""

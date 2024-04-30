@@ -1,6 +1,8 @@
+import logging
+import logging.config
 import os
 
-from db.session import engine, create_db_and_tables
+from db.session import create_db_and_tables, engine
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers.attendance import router as attendance_router
@@ -9,8 +11,6 @@ from routers.communities import router as community_router
 from routers.health import router as health_router
 from routers.user import router as user_router
 from routers.workshop import router as workshop_router
-import logging
-import logging.config
 
 logging_conf = "logging.conf"
 logging.config.fileConfig(logging_conf, disable_existing_loggers=False)  # type: ignore

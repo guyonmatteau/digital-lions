@@ -1,10 +1,8 @@
-from fastapi import APIRouter, Request, status
+from db.models import Community
+from db.session import engine, get_db
+from fastapi import APIRouter, Depends, Request, status
 from fastapi.responses import JSONResponse
-from fastapi import Depends
 from sqlmodel import Session
-from db.models import Attendance
-from db.session import get_db, engine
-
 
 router = APIRouter(prefix="/health")
 
@@ -18,7 +16,7 @@ router = APIRouter(prefix="/health")
 async def get_health(request: Request, db: Session = Depends(get_db)):
     try:
         # to check database we will execute raw query
-        db.query(Attendance).first()
+        db.query(Community).first()
         return JSONResponse(status_code=status.HTTP_200_OK, content={"status": "ok"})
     except Exception as exc:
         if "psycopg2.OperationalError" in str(exc):
