@@ -2,9 +2,10 @@ import logging
 import logging.config
 import os
 
-from db.session import create_db_and_tables, engine
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+from db.session import create_db_and_tables, engine
 from routers.attendance import router as attendance_router
 from routers.children import router as child_router
 from routers.communities import router as community_router

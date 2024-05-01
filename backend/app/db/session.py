@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils import create_database, database_exists
 from sqlmodel import Session, SQLModel, create_engine
 
-from . import models
+from models import attendance, child, user
 
 
 def postgres_url() -> str:

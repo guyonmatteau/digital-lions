@@ -1,12 +1,23 @@
 from typing import Optional
 
-from db.models import Child, Community
-from db.session import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.responses import JSONResponse
 from sqlmodel import Session
 
+from db.session import get_db
+from models.child import Child, ChildCreate
+from models.community import Community
+
 router = APIRouter(prefix="/children")
+
+@router.get("/{child_id}", summary="Get a child", response_model=Child)
+async def get_child(child_id: int, db: Session = Depends(get_db)):
+    child = db.get(Child, child_id)
+    if not child:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Child with ID {child_id} not found",
+        )
+    return child
 
 
 @router.get(
@@ -16,23 +27,19 @@ router = APIRouter(prefix="/children")
     status_code=status.HTTP_200_OK,
 )
 async def get_children(
-    child_id: Optional[int] = None,
-    community: Optional[str] = None,
+    community_id: Optional[str] = None,
     db: Session = Depends(get_db),
 ):
     filters = []
-    if child_id is not None:
-        filters.append(Child.id == child_id)
-    if community is not None:
-        filters.append(Child.community == community)
-    children = db.query(Child).filter(*filters).all()
-    return children
+    if community_id is not None:
+        filters.append(Child.community_id == community_id)
+    return db.query(Child).filter(*filters).all()
 
 
 @router.post(
     "", summary="Add a child", status_code=status.HTTP_201_CREATED, response_model=Child
 )
-async def add_child(child: Child, db: Session = Depends(get_db)):
+async def add_child(child: ChildCreate, db: Session = Depends(get_db)):
     if (
         db.query(Child)
         .filter(
@@ -51,11 +58,11 @@ async def add_child(child: Child, db: Session = Depends(get_db)):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Community with ID {child.community_id} not found",
         )
-
-    db.add(child)
+    new_child = Child.from_orm(child)
+    db.add(new_child)
     db.commit()
-    db.refresh(child)
-    return child
+    db.refresh(new_child)
+    return new_child
 
 
 @router.put(
@@ -67,9 +74,9 @@ async def add_child(child: Child, db: Session = Depends(get_db)):
 async def update_child(child_id: int, child: Child, db: Session = Depends(get_db)):
     db_child = db.get(Child, child_id)
     if not db_child:
-        return JSONResponse(
+        raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            content={"message": f"Child with ID {child_id} not found"},
+            detail=f"Child with ID {child_id} not found",
         )
     child_data = child.model_dump(exclude_unset=True)
     db_child.sqlmodel_update(child_data)
