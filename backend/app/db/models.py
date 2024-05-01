@@ -24,6 +24,8 @@ class Community(SQLModel, table=True):
     name: str = Field()
     created_at: datetime = datetime.now()
     is_active: bool = True
+    
+    workshops: list["Workshop"] = Relationship(back_populates="community")
 
     # TODO add updated_at default factory
     # updated_at: datetime = datetime.now()
@@ -50,11 +52,10 @@ class Workshop(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
     date: str  # format YYYY-MM-DD
     cycle: int = None
-    took_place: bool
+    cancelled: bool
     cancellation_reason: str = None
-
     community_id: int = Field(foreign_key="community.id")
-    # community: Community = Relationship(back_populates="workshop")
+    community: Community = Relationship(back_populates="workshops")
 
 
 class Attendance(SQLModel, table=True):

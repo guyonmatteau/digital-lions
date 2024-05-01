@@ -33,6 +33,7 @@ app.include_router(health_router, tags=["health"])
 app.include_router(attendance_router, tags=["attendances"])
 app.include_router(child_router, tags=["children"])
 app.include_router(community_router, tags=["communities"])
+app.include_router(workshop_router, tags=["workshop"])
 
 
 @app.on_event("startup")
