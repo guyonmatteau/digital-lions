@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import List, Optional
 
 from sqlmodel import Field, Relationship, SQLModel
+from pydantic import field_validator
 
 
 class User(SQLModel, table=True):
@@ -19,7 +20,6 @@ class User(SQLModel, table=True):
 
 class Community(SQLModel, table=True):
     """Community model."""
-
     id: int = Field(default=None, primary_key=True)
     name: str = Field()
     created_at: datetime = datetime.now()
@@ -28,6 +28,19 @@ class Community(SQLModel, table=True):
     # TODO add updated_at default factory
     # updated_at: datetime = datetime.now()
 
+
+class Child(SQLModel, table=True):
+    id: int = Field(default=None, primary_key=True)
+    first_name: str
+    last_name: str
+    age: Optional[int] = Field(
+        default=None, description="Age in years at the time of registration"
+    )
+    created_at: datetime = datetime.now()
+    is_active: bool = True
+
+    community_id: int = Field(foreign_key="community.id")
+    # updated_at: datetime = Field(sa_column=Column(DateTime(timezone=True), onupdate=func.now()))
 
 class Workshop(SQLModel, table=True):
     """Data model for workshops. A workshop is a session that took place
@@ -45,25 +58,19 @@ class Workshop(SQLModel, table=True):
 
 
 class Attendance(SQLModel, table=True):
+    """Data model for attenadance of a child in a workshop."""
     id: int = Field(primary_key=True)
     child_id: int = Field(foreign_key="child.id")
-    attendance: str = Field()
-    child_name: str
-    cycle: int = None
-
     workshop_id: int = Field(foreign_key="workshop.id")
+    attendance: str 
+    
+    @field_validator("attendance")
+    def validate_attendance(cls, v):
+        if v not in ["present", "absent", "cancelled"]:
+            raise ValueError("Attendance must be either 'present' or 'absent' or 'cancelled'")
+        return v
+
     # workshop: Workshop = Relationship(back_populates="attendance")
 
 
-class Child(SQLModel, table=True):
-    id: int = Field(default=None, primary_key=True)
-    first_name: str
-    last_name: str
-    age: Optional[int] = Field(
-        default=None, description="Age in years at the time of registration"
-    )
 
-    community_id: int = Field(foreign_key="community.id")
-    is_active: bool = True
-    # created_at: datetime = Field(sa_column=Column(DateTime(timezone=True), server_default=func.now()))
-    # updated_at: datetime = Field(sa_column=Column(DateTime(timezone=True), onupdate=func.now()))

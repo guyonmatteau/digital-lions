@@ -16,7 +16,6 @@ ruff = "^0.3.4"
 isort = "^5.13.2"
 sqlalchemy = "^2.0.29"
 psycopg2-binary = "2.9.5"
-jupyter = "^1.0.0"
 sqlalchemy-utils = "^0.41.2"
 sqlmodel = "^0.0.16"
 
