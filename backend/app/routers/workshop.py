@@ -1,12 +1,11 @@
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.responses import JSONResponse
 from sqlmodel import Session
 
 from db.session import get_db
 from models.community import Community
-from models.workshop import Workshop
+from models.workshop import Workshop, WorkshopCreate
 
 router = APIRouter(prefix="/workshop")
 
@@ -17,7 +16,7 @@ router = APIRouter(prefix="/workshop")
     status_code=status.HTTP_201_CREATED,
     response_model=Workshop,
 )
-async def add_workshop(workshop: Workshop, db: Session = Depends(get_db)):
+async def add_workshop(workshop: WorkshopCreate, db: Session = Depends(get_db)):
     if not db.query(Community).filter(Community.id == workshop.community_id).first():
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

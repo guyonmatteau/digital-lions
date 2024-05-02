@@ -1,9 +1,7 @@
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
-from sqlmodel import Field, Session, SQLModel, create_engine, select
 
 from db.session import get_db
 from models.community import Community, CommunityCreate
@@ -50,7 +48,7 @@ async def add_community(community: CommunityCreate, db: Session = Depends(get_db
     return new_community
 
 
-@router.put(
+@router.patch(
     "/{community_id}",
     summary="Update a community",
     response_model=Community,

@@ -1,12 +1,8 @@
 import logging
 import os
 
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy_utils import create_database, database_exists
 from sqlmodel import Session, SQLModel, create_engine
 
-from models import attendance, child, user
 
 
 def postgres_url() -> str:

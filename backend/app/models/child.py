@@ -1,7 +1,6 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import Optional
 
-from pydantic import field_validator
 from sqlmodel import Field, Relationship, SQLModel
 from models.community import Community, CommunityOut
 

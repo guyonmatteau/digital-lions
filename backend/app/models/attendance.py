@@ -1,8 +1,6 @@
-from datetime import datetime
-from typing import List, Optional
 
 from pydantic import field_validator
-from sqlmodel import Field, Relationship, SQLModel
+from sqlmodel import Field, SQLModel
 
 
 class Attendance(SQLModel, table=True):

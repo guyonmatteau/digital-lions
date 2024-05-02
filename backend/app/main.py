@@ -5,7 +5,7 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from db.session import create_db_and_tables, engine
+from db.session import create_db_and_tables
 from routers.attendance import router as attendance_router
 from routers.children import router as child_router
 from routers.communities import router as community_router
@@ -35,6 +35,7 @@ app.include_router(attendance_router, tags=["attendances"])
 app.include_router(child_router, tags=["children"])
 app.include_router(community_router, tags=["communities"])
 app.include_router(workshop_router, tags=["workshop"])
+app.include_router(user_router, tags=["users"])
 
 
 @app.on_event("startup")

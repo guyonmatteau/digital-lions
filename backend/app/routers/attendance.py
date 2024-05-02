@@ -1,7 +1,6 @@
 from typing import Optional
 
 from fastapi import APIRouter, Depends, status
-from fastapi.responses import JSONResponse
 from sqlmodel import Session
 
 from db.session import get_db

@@ -1,10 +1,26 @@
-from datetime import datetime
-from typing import List, Optional
+from typing import Optional
 
-from pydantic import field_validator
-from sqlmodel import Field, Relationship, SQLModel
+from sqlmodel import Field, SQLModel
 
-from models.community import Community
+# from models.attendance import AttendanceCreate
+
+
+class ChildAttendanceCreate(SQLModel):
+    child_id: int
+    attendance: str
+
+class WorkshopBase(SQLModel):
+    date: str = Field(description="The date of the workshop in the format YYYY-MM-DD")
+    cycle: int
+    cancelled: bool = Field(default=False, description="Whether the workshop was cancelled or not")
+    cancellation_reason: str = Field(default=None, description="The reason for the cancellation, if any")
+
+
+class WorkshopCreate(WorkshopBase):
+    community_id: int
+
+    attendance: Optional[list[ChildAttendanceCreate]] = None
+
 
 
 class Workshop(SQLModel, table=True):
