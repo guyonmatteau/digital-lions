@@ -4,7 +4,7 @@ from typing import List, Optional
 from pydantic import field_validator
 from sqlmodel import Field, Relationship, SQLModel
 
-from .community import Community
+from models.community import Community
 
 
 class Workshop(SQLModel, table=True):
@@ -17,5 +17,6 @@ class Workshop(SQLModel, table=True):
     cycle: int = None
     cancelled: bool
     cancellation_reason: str = None
+
     community_id: int = Field(foreign_key="community.id")
-    community: Community = Relationship(back_populates="workshops")
+    # community: Community | None = Relationship(back_populates="workshops")

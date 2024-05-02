@@ -3,29 +3,45 @@ from typing import List, Optional
 
 from pydantic import field_validator
 from sqlmodel import Field, Relationship, SQLModel
+from models.community import Community, CommunityOut
 
 
-class ChildCreate(SQLModel):
+class ChildBase(SQLModel):
+    """Base schema for child model."""
     first_name: str
     last_name: str
     age: Optional[int] = Field(
         default=None, description="Age in years at the time of registration"
     )
+
+
+class ChildCreate(ChildBase):
+    """Schema for creating a child."""
     community_id: int = Field(foreign_key="community.id")
-    community: ["community"] = Relationship(back_populates="children")
-    
-    @field_validator("age")
-    def validate_age(cls, v):
-        if v is not None and v <= 0:
-            raise ValueError("Negative age is invalid")
-        return v    
+
+class ChildUpdate(ChildCreate):
+    """Schema for updating a child."""
+    is_active: bool = True
+
+    # @field_validator("age")
+    # def validate_age(cls, v):
+        # if v is not None and v <= 0:
+            # raise ValueError("Negative age is invalid")
+        # return v    
 
 
-class Child(ChildCreate, table=True):
+class Child(ChildUpdate, table=True):
+    """Schema for child model in database."""
     id: int = Field(default=None, primary_key=True)
     created_at: datetime = datetime.now()
     is_active: bool = True
 
+    community: Community | None  = Relationship(back_populates="children")
+ 
+class ChildOut(ChildBase):
+    id: int
 
-# class ChildOutWithCommunity(Child):
-    # community: Community = None
+class ChildOutWithCommunity(ChildOut):
+    community: CommunityOut = None
+
+
