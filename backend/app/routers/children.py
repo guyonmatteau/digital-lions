@@ -9,6 +9,7 @@ from models.community import Community
 
 router = APIRouter(prefix="/children")
 
+
 @router.get("/{child_id}", summary="Get a child", response_model=ChildOutWithCommunity)
 async def get_child(child_id: int, db: Session = Depends(get_db)):
     child = db.get(Child, child_id)
@@ -37,7 +38,10 @@ async def get_children(
 
 
 @router.post(
-    "", summary="Add a child", status_code=status.HTTP_201_CREATED, response_model=ChildOutWithCommunity
+    "",
+    summary="Add a child",
+    status_code=status.HTTP_201_CREATED,
+    response_model=ChildOutWithCommunity,
 )
 async def add_child(child: ChildCreate, db: Session = Depends(get_db)):
     if (
@@ -71,7 +75,9 @@ async def add_child(child: ChildCreate, db: Session = Depends(get_db)):
     response_model=Child,
     status_code=status.HTTP_200_OK,
 )
-async def update_child(child_id: int, child: ChildUpdate, db: Session = Depends(get_db)):
+async def update_child(
+    child_id: int, child: ChildUpdate, db: Session = Depends(get_db)
+):
     db_child = db.get(Child, child_id)
     if not db_child:
         raise HTTPException(

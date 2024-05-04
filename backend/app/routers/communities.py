@@ -8,7 +8,13 @@ from models.community import Community, CommunityCreate
 
 router = APIRouter(prefix="/communities")
 
-@router.get("/{community_id}", response_model=Community, status_code=status.HTTP_200_OK, summary="Get a community")
+
+@router.get(
+    "/{community_id}",
+    response_model=Community,
+    status_code=status.HTTP_200_OK,
+    summary="Get a community",
+)
 async def get_community(community_id: int, db: Session = Depends(get_db)):
     community = db.get(Community, community_id)
     if not community:
@@ -17,6 +23,7 @@ async def get_community(community_id: int, db: Session = Depends(get_db)):
             detail=f"Community with ID {community_id} not found",
         )
     return community
+
 
 @router.get(
     "",
@@ -61,7 +68,8 @@ async def update_community(
     if not db_community:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Community with ID {community_id} not found")
+            detail=f"Community with ID {community_id} not found",
+        )
     community_data = community.model_dump(exclude_unset=True)
     db_community.sqlmodel_update(community_data)
     db.add(db_community)

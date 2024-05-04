@@ -4,7 +4,6 @@ import os
 from sqlmodel import Session, SQLModel, create_engine
 
 
-
 def postgres_url() -> str:
     database_url = os.environ.get("POSTGRES_DATABASE_URL")
     if database_url is not None:

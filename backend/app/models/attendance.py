@@ -1,14 +1,11 @@
-
 from pydantic import field_validator
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, SQLModel, Relationship
 
 
-class Attendance(SQLModel, table=True):
-    """Data model for attenadance of a child in a workshop."""
+class AttendanceBase(SQLModel):
+    """Base class for attendance model."""
 
-    id: int = Field(primary_key=True)
-    child_id: int = Field(foreign_key="child.id")
-    workshop_id: int = Field(foreign_key="workshop.id")
+    child_id: int
     attendance: str
 
     @field_validator("attendance")
@@ -19,4 +16,14 @@ class Attendance(SQLModel, table=True):
             )
         return v
 
-    # workshop: Workshop = Relationship(back_populates="attendance")
+
+class AttendanceCreate(AttendanceBase):
+    """Data model for creating an attendance."""
+
+    workshop_id: int
+
+
+class Attendance(AttendanceCreate, table=True):
+    """Data model for attenadance of a child in a workshop."""
+
+    id: int = Field(default=None, primary_key=True)
