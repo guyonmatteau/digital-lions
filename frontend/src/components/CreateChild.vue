@@ -16,8 +16,8 @@
       </div>
       <div>
         <label for="community">Community:</label>
-        <select id="community" v-model="child.community" required>
-          <option v-for="community in communities" :key="community.id" :value="community.name">
+        <select id="community" v-model="child.communityId" required>
+          <option v-for="community in communities" :key="community.id" :value="community.id">
             {{ community.name }}
           </option>
         </select>
@@ -45,13 +45,13 @@ const CHILDREN_API_URL = API_URL + '/children'
 interface Child {
   firstName: string
   lastName: string
-  community: string
+  communityId: string
 }
 
 const child = ref({
   firstName: '',
   lastName: '',
-  community: ''
+  communityId: ''
 })
 
 // Define the function to map the properties
@@ -60,7 +60,7 @@ function mapChildProperties(child: Child) {
     return {
       first_name: child.firstName,
       last_name: child.lastName,
-      community: child.community
+      community_id: child.communityId
     }
   })
 }
@@ -68,7 +68,7 @@ function mapChildProperties(child: Child) {
 const fetchCommunities = async () => {
   try {
     const response = await axios.get(COMMUNITIES_API_URL)
-    communities.value = response.data.communities
+    communities.value = response.data
   } catch (error: any) {}
 }
 
@@ -81,8 +81,8 @@ onMounted(() => {
 const submitForm = () => {
   const mappedChild = mapChildProperties(child.value)
   try {
+    console.log('Submitted Child Information:', mappedChild.value)
     axios.post(CHILDREN_API_URL, mappedChild.value)
-    console.log('Submitted Child Information:', child.value)
   } catch (error) {
     console.error('Error submitting child information:', error)
   }
