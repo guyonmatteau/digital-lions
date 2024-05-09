@@ -23,5 +23,4 @@ import { ref } from 'vue'
 const communityName = ref('')
 const successMessage = ref('')
 const errorMessage = ref('')
-
 </script>

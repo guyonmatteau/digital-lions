@@ -12,8 +12,8 @@ const API_URL = process.env.API_URL
 const COMMUNITIES_API_URL = API_URL + '/communities'
 const communities = ref([])
 const currentDate = new Date()
-const todayFormatted= format(currentDate, "eeee MMM dd yyyy")
-const databaseDate = format(currentDate, "yyyy-MM-dd")
+const todayFormatted = format(currentDate, 'eeee MMM dd yyyy')
+const databaseDate = format(currentDate, 'yyyy-MM-dd')
 
 // Fetch communities from the backend API endpoint
 const fetchCommunities = async () => {
@@ -32,12 +32,11 @@ onMounted(() => {
 
 <script lang="ts">
 const currentDate = new Date()
-const todayFormatted= format(currentDate, "eeee MMM dd yyyy")
-const databaseDate = format(currentDate, "yyyy-MM-dd")
-
+const todayFormatted = format(currentDate, 'eeee MMM dd yyyy')
+const databaseDate = format(currentDate, 'yyyy-MM-dd')
 
 interface Child {
-  id: number;
+  id: number
   first_name: string
   last_name: string
   community: string
@@ -60,7 +59,6 @@ export default {
   },
   methods: {
     handleFirstFormSubmit(formData: any) {
-
       // Update showSecondForm based on the data from the first form
       if (formData.workshopCancelled) {
         // If workshop is cancelled, show successfull cancellation message
@@ -97,7 +95,6 @@ export default {
       }
     },
     handleChildrenAttendance(submittedAttendance: any) {
-
       // First submit that the workshop took place
 
       // After that submit the attendance of each child
@@ -128,5 +125,3 @@ export default {
     />
   </div>
 </template>
-
-

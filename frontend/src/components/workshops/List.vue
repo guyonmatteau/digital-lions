@@ -1,12 +1,10 @@
 <template>
   <div>
-    <h2>Workshops</h2>
     <table>
       <thead>
         <tr>
           <th>Date</th>
           <th>Community</th>
-          <th>Workshop</th>
           <th>Cycle</th>
           <th>Cancelled</th>
         </tr>
@@ -14,8 +12,7 @@
       <tbody>
         <tr v-for="(workshop, index) in workshops" :key="index">
           <td>{{ workshop.date }}</td>
-          <td>{{ workshop.community }}</td>
-          <td>{{ workshop.type }}</td>
+          <td>{{ workshop.community_id }}</td>
           <td>{{ workshop.cycle }}</td>
           <td>{{ workshop.cancelled }}</td>
         </tr>

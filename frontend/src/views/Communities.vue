@@ -1,5 +1,5 @@
 <template>
-  <Create @createCommunity="createCommunityFromForm"/>
+  <Create @createCommunity="createCommunityFromForm" />
   <List :communities="communities" />
 </template>
 
@@ -29,7 +29,6 @@ const fetchCommunities = async () => {
   } catch (error: any) {}
 }
 
-
 function createCommunityFromForm(communityName: string) {
   createCommunity(communityName)
   fetchCommunities()
@@ -37,10 +36,11 @@ function createCommunityFromForm(communityName: string) {
 
 function createCommunity(name: string) {
   // Make API call to create the community
-  axios.post(COMMUNITIES_ENDPOINT, {
-    name: name
-  })
-    .then(response => {
+  axios
+    .post(COMMUNITIES_ENDPOINT, {
+      name: name
+    })
+    .then((response) => {
       // Check if the API call was successful
       if (response.status === 201) {
         statusMessage.value = 'Community created successfully!'
@@ -48,7 +48,7 @@ function createCommunity(name: string) {
         statusMessage.value = 'Failed to create community. Please try again later.'
       }
     })
-    .catch(error => {
+    .catch((error) => {
       // Check if the error response indicates that the community already exists
       if (error.response && error.response.status === 409) {
         statusMessage.value = 'Community already exists.'
@@ -61,6 +61,4 @@ function createCommunity(name: string) {
 onMounted(() => {
   fetchCommunities()
 })
-
 </script>
-

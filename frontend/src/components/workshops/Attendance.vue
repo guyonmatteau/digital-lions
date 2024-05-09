@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="handleChildrenAttendance">
+  <form @submit.prevent="$emit('submitAttendance', children)">
     <div v-for="child in children" :key="child.id">
       <p>{{ child.first_name }} {{ child.last_name }}</p>
       <label>
@@ -15,8 +15,7 @@
     <button type="submit">Submit attendance</button>
   </form>
 </template>
-
-<script lang="ts">
+<script setup lang="ts">
 interface Child {
   id: number
   first_name: string
@@ -24,18 +23,12 @@ interface Child {
   community: string
   attendance?: string
 }
-export default {
-  props: {
-    children: {
-      type: Array as () => Child[],
-      required: true
-    }
-  },
-  methods: {
-    handleChildrenAttendance() {
-      // emit submitted data to parent component
-      this.$emit('attendance-submit', this.children)
-    }
+defineProps({
+  children: {
+    type: Array as () => Child[],
+    required: true
   }
-}
+})
+
+defineEmits(['submitAttendance'])
 </script>
