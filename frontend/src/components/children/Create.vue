@@ -28,15 +28,20 @@
 </template>
 <script setup lang="ts">
 import { ref } from 'vue'
+interface Child {
+  firstName: string
+  lastName: string
+  communityId: string
+}
+interface Community {
+  id: string
+  name: string
+}
 defineProps({
   communities: {
-    type: Array,
+    type: Array as () => Community[],
     required: true
   }
 })
-const child = ref({
-  firstName: '',
-  lastName: '',
-  communityId: ''
-})
+const child = ref<Child>
 </script>

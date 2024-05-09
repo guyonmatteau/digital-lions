@@ -21,9 +21,15 @@
   </div>
 </template>
 <script setup lang="ts">
+interface Workshop {
+  date: string
+  community_id: string
+  cycle: string
+  cancelled: boolean
+}
 defineProps({
   workshops: {
-    type: Array,
+    type: Array as () => Workshop[],
     required: true
   }
 })

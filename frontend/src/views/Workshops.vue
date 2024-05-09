@@ -71,7 +71,7 @@ const fetchWorkshops = async () => {
   }
 }
 
-const fetchChildren = async (communityId) => {
+const fetchChildren = async (communityId: number) => {
   try {
     const response = await axios.get(CHILDREN_API_URL, { params: { community_id: communityId } })
     children.value = response.data
@@ -80,7 +80,7 @@ const fetchChildren = async (communityId) => {
   }
 }
 
-function submitWorkshopInDB(workshopData) {
+function submitWorkshopInDB(workshopData: Workshop) {
   axios
     .post(WORKSHOPS_API_URL, workshopData)
     .then((response) => {
@@ -92,7 +92,7 @@ function submitWorkshopInDB(workshopData) {
     })
 }
 
-function createNewWorkshop(workshopIn) {
+function createNewWorkshop(workshopIn: Workshop) {
   workshop.date = databaseDate
   workshop.community_id = workshopIn.communityId
   if (workshopIn.cancelled) {
@@ -105,7 +105,7 @@ function createNewWorkshop(workshopIn) {
   }
 }
 
-function submitAttendance(attendanceData) {
+function submitAttendance(attendanceData: Child[]) {
   const attendanceDataDB = attendanceData.map((child) => {
     return {
       child_id: child.id,

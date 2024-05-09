@@ -25,9 +25,13 @@
 </template>
 <script setup lang="ts">
 import { ref } from 'vue'
+interface Community {
+  id: string
+  name: string
+}
 defineProps({
   communities: {
-    type: Array,
+    type: Array as () => Community[],
     required: true
   },
   todayFormatted: {
