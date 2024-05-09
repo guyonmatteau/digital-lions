@@ -6,7 +6,7 @@
           <router-link to="/home" class="nav-item nav-link">Home</router-link>
         </div>
         <div class="navbar-nav mr-auto">
-          <router-link to="/attendance" class="nav-item nav-link">Workshop Attendance</router-link>
+          <router-link to="/workshops" class="nav-item nav-link">Workshops</router-link>
         </div>
         <div class="navbar-nav mr-auto">
           <router-link to="/children" class="nav-link">Children</router-link>
@@ -18,8 +18,5 @@
     </nav>
   </div>
 </template>
-<script lang="ts">
-export default {
-  // Component logic
-}
+<script setup lang="ts">
 </script>

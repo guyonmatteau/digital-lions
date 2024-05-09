@@ -18,7 +18,7 @@
 
 <script lang="ts">
 interface Child {
-  id: number;
+  id: number
   first_name: string
   last_name: string
   community: string
