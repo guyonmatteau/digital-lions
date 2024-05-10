@@ -8,4 +8,7 @@ backend:
 frontend:
 	docker-compose up --build frontend
 
+db: 
+	docker-compose up --build db
+
 
