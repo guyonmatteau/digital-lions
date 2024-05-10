@@ -16,10 +16,10 @@
   </div>
 </template>
 <script setup lang="ts">
+interface Community {
+  name: string
+}
 defineProps({
-  communities: {
-    type: Array,
-    required: true
-  }
+  communities: Array as () => Community[]
 })
 </script>

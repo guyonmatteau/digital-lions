@@ -22,8 +22,9 @@ interface Child {
 const API_URL = process.env.API_URL
 const COMMUNITIES_API_URL = API_URL + '/communities'
 const CHILDREN_API_URL = API_URL + '/children'
-const children = ref<Child[]>([])
-const communities = ref<Community[]>([])
+
+const children = ref([])
+const communities = ref([])
 
 function createChildFromForm(child: Child) {
   createChildInDB(child)

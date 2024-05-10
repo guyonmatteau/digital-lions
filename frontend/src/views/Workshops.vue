@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import List from '../components/workshops/List.vue'
 import WorkshopCancellation from '../components/workshops/Create.vue'
 import Attendance from '../components/workshops/Attendance.vue'
@@ -24,10 +24,10 @@ import { format } from 'date-fns'
 
 interface Workshop {
   date: string
-  cancelled: boolean
+  cancelled?: boolean
   cancellation_reason?: string
-  community_id: number
-  attendance?: [{ child_id: number; attendance: string }]
+  community_id?: number
+  attendance?: { child_id: number; attendance: string }[]
 }
 
 interface Child {
@@ -37,19 +37,25 @@ interface Child {
   community: string
   attendance?: string
 }
+
 const API_URL = process.env.API_URL
 
 const COMMUNITIES_API_URL = API_URL + '/communities'
 const WORKSHOPS_API_URL = API_URL + '/workshops'
 const CHILDREN_API_URL = API_URL + '/children'
-const communities = ref([])
-const workshops = ref([])
-const workshop = ref({} as Workshop)
-const children = ref([])
+
 const currentDate = new Date()
 const todayFormatted = format(currentDate, 'eeee MMM dd yyyy')
 const databaseDate = format(currentDate, 'yyyy-MM-dd')
 const step = ref(1)
+
+const communities = ref([])
+const workshops = ref([])
+const workshop = ref<Workshop>({
+  date: databaseDate
+})
+
+const children = ref([])
 
 // Fetch communities from the backend API endpoint
 const fetchCommunities = async () => {
@@ -92,28 +98,27 @@ function submitWorkshopInDB(workshopData: Workshop) {
     })
 }
 
-function createNewWorkshop(workshopIn: Workshop) {
-  workshop.date = databaseDate
-  workshop.community_id = workshopIn.communityId
+function createNewWorkshop(workshopIn: any) {
+  workshop.value.community_id = workshopIn.communityId
   if (workshopIn.cancelled) {
-    workshop.cancelled = true
-    submitWorkshopInDB(workshop)
+    workshop.value.cancelled = true
+    submitWorkshopInDB(workshop.value)
   } else {
-    workshop.cancelled = false
+    workshop.value.cancelled = false
     fetchChildren(workshopIn.communityId)
     step.value = 2
   }
 }
 
-function submitAttendance(attendanceData: Child[]) {
-  const attendanceDataDB = attendanceData.map((child) => {
+function submitAttendance(attendanceData: any) {
+  const attendanceDataDB = attendanceData.map((child: any) => {
     return {
       child_id: child.id,
       attendance: child.attendance
     }
   })
-  workshop.attendance = attendanceDataDB
-  submitWorkshopInDB(workshop)
+  workshop.value.attendance = attendanceDataDB
+  submitWorkshopInDB(workshop.value)
   fetchWorkshops()
 }
 

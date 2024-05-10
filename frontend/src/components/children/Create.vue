@@ -43,5 +43,10 @@ defineProps({
     required: true
   }
 })
-const child = ref<Child>
+
+const child = ref<Child>({
+  firstName: '',
+  lastName: '',
+  communityId: ''
+})
 </script>

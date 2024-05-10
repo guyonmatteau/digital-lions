@@ -20,10 +20,14 @@
   </div>
 </template>
 <script setup lang="ts">
-defineProps({
-  children: {
-    type: Array,
-    required: true
+interface Child {
+  first_name: string
+  last_name: string
+  community: {
+    name: string
   }
+}
+defineProps({
+  children: Array as () => Child[]
 })
 </script>
