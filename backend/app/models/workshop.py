@@ -3,6 +3,7 @@ from typing import Optional
 from sqlmodel import Field, SQLModel, Relationship
 
 from models.attendance import AttendanceBase
+from models.community import Community, CommunityOut
 
 
 class WorkshopBase(SQLModel):
@@ -33,4 +34,9 @@ class Workshop(WorkshopBase, table=True):
     id: int = Field(default=None, primary_key=True)
 
     community_id: int = Field(foreign_key="community.id")
-    # community: Community | None = Relationship(back_populates="workshops")
+    community: Community | None = Relationship(back_populates="workshops")
+
+
+class WorkshopOut(WorkshopBase):
+    id: int
+    community: CommunityOut = None

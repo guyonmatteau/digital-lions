@@ -4,14 +4,14 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from db.session import get_db
-from models.community import Community, CommunityCreate
+from models.community import Community, CommunityCreate, CommunityOut
 
 router = APIRouter(prefix="/communities")
 
 
 @router.get(
     "/{community_id}",
-    response_model=Community,
+    response_model=CommunityOut,
     status_code=status.HTTP_200_OK,
     summary="Get a community",
 )

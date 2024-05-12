@@ -7,7 +7,7 @@ from sqlmodel import Session
 from db.session import get_db
 from models.community import Community
 from routers.attendance import add_attendance
-from models.workshop import Workshop, WorkshopCreate
+from models.workshop import Workshop, WorkshopCreate, WorkshopOut
 from models.attendance import Attendance, AttendanceCreate
 from models.child import Child
 
@@ -18,7 +18,7 @@ router = APIRouter(prefix="/workshops")
     "",
     summary="Add workshop",
     status_code=status.HTTP_201_CREATED,
-    response_model=Workshop,
+    response_model=WorkshopOut,
 )
 async def add_workshop(workshop: WorkshopCreate, db: Session = Depends(get_db)):
     if (
@@ -66,7 +66,7 @@ async def add_workshop(workshop: WorkshopCreate, db: Session = Depends(get_db)):
     return new_workshop
 
 
-@router.get("/{workshop_id}", summary="Get workshop by ID", response_model=Workshop)
+@router.get("/{workshop_id}", summary="Get workshop by ID", response_model=WorkshopOut)
 async def get_workshop(workshop_id: int, db: Session = Depends(get_db)):
     workshop = db.get(Workshop, workshop_id)
     if workshop is None:
@@ -81,7 +81,7 @@ async def get_workshop(workshop_id: int, db: Session = Depends(get_db)):
     "",
     summary="Get workshops",
     status_code=status.HTTP_200_OK,
-    response_model=Optional[list[Workshop]],
+    response_model=Optional[list[WorkshopOut]],
 )
 async def get_workshops(
     community_id: Optional[int] = None,

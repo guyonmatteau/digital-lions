@@ -4,7 +4,7 @@ from sqlmodel import Field, Relationship, SQLModel
 
 
 class CommunityBase(SQLModel):
-    name: str = Field()
+    name: str
 
 
 class CommunityCreate(CommunityBase):
@@ -22,7 +22,7 @@ class Community(CommunityUpdate, table=True):
 
     id: int = Field(default=None, primary_key=True)
 
-    # workshops: list["Workshop"] | None = Relationship(back_populates="community")
+    workshops: list["Workshop"] | None = Relationship(back_populates="community")
     children: list["Child"] | None = Relationship(back_populates="community")
 
     created_at: datetime = datetime.now()
@@ -31,4 +31,5 @@ class Community(CommunityUpdate, table=True):
 
 
 class CommunityOut(CommunityBase):
+    # workshops and children should not be part of out
     id: int
