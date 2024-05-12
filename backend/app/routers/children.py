@@ -4,7 +4,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session
 
 from db.session import get_db
-from models.child import Child, ChildCreate, ChildUpdate, ChildOutWithCommunity
+from models.child import Child, ChildCreate, ChildUpdate
+from models.base import ChildOutWithCommunity
 from models.community import Community
 
 router = APIRouter(prefix="/children")

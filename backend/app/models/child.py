@@ -2,17 +2,8 @@ from datetime import datetime
 from typing import Optional
 
 from sqlmodel import Field, Relationship, SQLModel
-from models.community import Community, CommunityOut
-
-
-class ChildBase(SQLModel):
-    """Base schema for child model."""
-
-    first_name: str
-    last_name: str
-    age: Optional[int] = Field(
-        default=None, description="Age in years at the time of registration"
-    )
+from models.community import Community
+from models.base import ChildBase
 
 
 class ChildCreate(ChildBase):
@@ -41,11 +32,4 @@ class Child(ChildUpdate, table=True):
     is_active: bool = True
 
     community: Community | None = Relationship(back_populates="children")
-
-
-class ChildOut(ChildBase):
-    id: int
-
-
-class ChildOutWithCommunity(ChildOut):
-    community: CommunityOut = None
+    attendances: list["Attendance"] = Relationship(back_populates="child")

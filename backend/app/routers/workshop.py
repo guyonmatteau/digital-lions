@@ -7,7 +7,8 @@ from sqlmodel import Session
 from db.session import get_db
 from models.community import Community
 from routers.attendance import add_attendance
-from models.workshop import Workshop, WorkshopCreate, WorkshopOut
+from models.workshop import Workshop, WorkshopCreate
+from models.base import WorkshopOut
 from models.attendance import Attendance, AttendanceCreate
 from models.child import Child
 

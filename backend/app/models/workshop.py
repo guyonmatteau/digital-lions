@@ -2,28 +2,13 @@ from typing import Optional, List
 
 from sqlmodel import Field, SQLModel, Relationship
 
-from models.attendance import AttendanceBase
-from models.community import Community, CommunityOut
-
-
-class WorkshopBase(SQLModel):
-    date: str = Field(description="The date of the workshop in the format YYYY-MM-DD")
-    cycle: Optional[int] = Field(
-        default=None, description="The cycle of the workshop", nullable=True
-    )
-    cancelled: bool = Field(
-        default=False, description="Whether the workshop was cancelled or not"
-    )
-    cancellation_reason: Optional[str] = Field(
-        default=None,
-        description="The reason for the cancellation, if any",
-        nullable=True,
-    )
+from models.base import WorkshopBase, AttendanceBase
+from models.community import Community
 
 
 class WorkshopCreate(WorkshopBase):
     community_id: int
-    attendance: Optional[List[AttendanceBase]] = []
+    attendance: Optional[List[AttendanceBase]]
 
 
 class Workshop(WorkshopBase, table=True):
@@ -36,8 +21,4 @@ class Workshop(WorkshopBase, table=True):
     community_id: int = Field(foreign_key="community.id")
     community: Community | None = Relationship(back_populates="workshops")
 
-
-class WorkshopOut(WorkshopBase):
-    id: int
-    community: CommunityOut
-    attendance: List[AttendanceBase]
+    attendances: List["Attendance"] = Relationship(back_populates="workshop")

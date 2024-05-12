@@ -4,7 +4,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from db.session import get_db
-from models.community import Community, CommunityCreate, CommunityOut
+from models.community import Community, CommunityCreate
+from models.base import CommunityOut
 
 router = APIRouter(prefix="/communities")
 
