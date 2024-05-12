@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 from sqlmodel import Field, SQLModel, Relationship
 
@@ -23,7 +23,7 @@ class WorkshopBase(SQLModel):
 
 class WorkshopCreate(WorkshopBase):
     community_id: int
-    attendance: Optional[list[AttendanceBase]] = None
+    attendance: Optional[List[AttendanceBase]] = []
 
 
 class Workshop(WorkshopBase, table=True):
@@ -39,4 +39,5 @@ class Workshop(WorkshopBase, table=True):
 
 class WorkshopOut(WorkshopBase):
     id: int
-    community: CommunityOut = None
+    community: CommunityOut
+    attendance: List[AttendanceBase]

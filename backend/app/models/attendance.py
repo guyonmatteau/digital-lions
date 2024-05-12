@@ -5,7 +5,7 @@ from sqlmodel import Field, SQLModel, Relationship
 class AttendanceBase(SQLModel):
     """Base class for attendance model."""
 
-    child_id: int
+    child_id: int = Field(foreign_key="child.id")
     attendance: str
 
     @field_validator("attendance")
@@ -20,10 +20,13 @@ class AttendanceBase(SQLModel):
 class AttendanceCreate(AttendanceBase):
     """Data model for creating an attendance."""
 
-    workshop_id: int
+    workshop_id: int = Field(foreign_key="workshop.id")
+
 
 
 class Attendance(AttendanceCreate, table=True):
     """Data model for attenadance of a child in a workshop."""
 
     id: int = Field(default=None, primary_key=True)
+
+
