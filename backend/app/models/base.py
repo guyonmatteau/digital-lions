@@ -1,9 +1,10 @@
-# to avoid circular imports put all base models and out models
-# in this separate models. TO DO fix.
-from typing import Optional, List
+# to avoid circular imports we put all base models and Out models
+# in this separate module. Hence this module should NOT import
+# from other models.
+from typing import List, Optional
 
 from pydantic import field_validator
-from sqlmodel import Field, SQLModel, Relationship
+from sqlmodel import Field, Relationship, SQLModel
 
 
 class CommunityBase(SQLModel):
@@ -54,7 +55,6 @@ class WorkshopBase(WorkshopBaseBase):
 
 
 class CommunityOut(CommunityBase):
-    # workshops and children should not be part of out
     id: int
 
 
@@ -81,4 +81,4 @@ class ChildOutWithCommunity(ChildOut):
 
 class AttendanceOutWithChild(AttendanceBase):
     child: ChildOut
-    workshop: WorkshopOutForAttendance = []
+    workshop: WorkshopOutForAttendance

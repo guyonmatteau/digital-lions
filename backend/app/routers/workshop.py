@@ -1,16 +1,15 @@
 from typing import Optional
 
+from db.session import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
-from sqlmodel import Session
-
-from db.session import get_db
-from models.community import Community
-from routers.attendance import add_attendance
-from models.workshop import Workshop, WorkshopCreate
-from models.base import WorkshopOut
 from models.attendance import Attendance, AttendanceCreate
+from models.base import WorkshopOut
 from models.child import Child
+from models.community import Community
+from models.workshop import Workshop, WorkshopCreate
+from routers.attendance import add_attendance
+from sqlmodel import Session
 
 router = APIRouter(prefix="/workshops")
 

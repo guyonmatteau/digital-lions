@@ -1,8 +1,8 @@
-from pydantic import field_validator
-from sqlmodel import Field, SQLModel, Relationship
 from models.base import AttendanceBase
 from models.child import Child
 from models.workshop import Workshop
+from pydantic import field_validator
+from sqlmodel import Field, Relationship, SQLModel
 
 
 class AttendanceCreate(AttendanceBase):

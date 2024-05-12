@@ -1,12 +1,12 @@
-from typing import Optional, List
-
-from fastapi import APIRouter, Depends, status, HTTPException
-from sqlmodel import Session
+from typing import List, Optional
 
 from db.session import get_db
-from models.attendance import AttendanceBase, AttendanceCreate, Attendance
+from fastapi import APIRouter, Depends, HTTPException, status
+from models.attendance import Attendance, AttendanceBase, AttendanceCreate
 from models.base import AttendanceOutWithChild
+from models.child import Child
 from models.workshop import Workshop
+from sqlmodel import Session
 
 router = APIRouter(prefix="/attendance")
 

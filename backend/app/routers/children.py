@@ -1,12 +1,11 @@
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlmodel import Session
-
 from db.session import get_db
-from models.child import Child, ChildCreate, ChildUpdate
+from fastapi import APIRouter, Depends, HTTPException, status
 from models.base import ChildOutWithCommunity
+from models.child import Child, ChildCreate, ChildUpdate
 from models.community import Community
+from sqlmodel import Session
 
 router = APIRouter(prefix="/children")
 

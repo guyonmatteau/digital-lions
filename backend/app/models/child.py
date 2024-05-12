@@ -1,9 +1,9 @@
 from datetime import datetime
 from typing import Optional
 
-from sqlmodel import Field, Relationship, SQLModel
-from models.community import Community
 from models.base import ChildBase
+from models.community import Community
+from sqlmodel import Field, Relationship, SQLModel
 
 
 class ChildCreate(ChildBase):

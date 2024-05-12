@@ -1,8 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlmodel import Session
-
 from db.session import get_db
-from models.user import User, UserCreate, UserUpdate, UserOut
+from fastapi import APIRouter, Depends, HTTPException, status
+from models.user import User, UserCreate, UserOut, UserUpdate
+from sqlmodel import Session
 
 router = APIRouter(prefix="/users", tags=["users"])
 

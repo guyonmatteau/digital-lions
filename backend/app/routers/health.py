@@ -1,9 +1,8 @@
+from db.session import get_db
 from fastapi import APIRouter, Depends, Request, status
 from fastapi.responses import JSONResponse
-from sqlmodel import Session
-
-from db.session import get_db
 from models.community import Community
+from sqlmodel import Session
 
 router = APIRouter(prefix="/health")
 

@@ -1,9 +1,8 @@
-from typing import Optional, List
+from typing import List, Optional
 
-from sqlmodel import Field, SQLModel, Relationship
-
-from models.base import WorkshopBase, AttendanceBase
+from models.base import AttendanceBase, WorkshopBase
 from models.community import Community
+from sqlmodel import Field, Relationship, SQLModel
 
 
 class WorkshopCreate(WorkshopBase):
