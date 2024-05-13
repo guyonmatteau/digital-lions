@@ -12,7 +12,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(attendance, index) in attendance" :key="index">
+        <tr v-for="(attendance, index) in attendances" :key="index">
           <td>{{ attendance.workshop.date }}</td>
           <td>{{ attendance.workshop.community.name }}</td>
           <td>{{ attendance.child.first_name }}</td>
@@ -42,6 +42,6 @@ interface Attendance {
   }
 }
 defineProps({
-  attendance: Array as () => Attendance[]
+  attendances: Array as () => Attendance[]
 })
 </script>

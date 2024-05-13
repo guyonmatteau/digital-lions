@@ -1,5 +1,5 @@
 <template>
-  <List :attendance="attendances" />
+  <List :attendances="attendances" />
 </template>
 <script setup lang="ts">
 import List from '../components/attendance/List.vue'

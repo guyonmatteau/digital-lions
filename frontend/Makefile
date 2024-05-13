@@ -9,4 +9,7 @@ run:
 format:
 	npx prettier --write .
 
+lint: format
+	npx eslint .
+
 
