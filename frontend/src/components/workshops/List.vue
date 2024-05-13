@@ -12,7 +12,7 @@
       <tbody>
         <tr v-for="(workshop, index) in workshops" :key="index">
           <td>{{ workshop.date }}</td>
-          <td>{{ workshop.community_id }}</td>
+          <td>{{ workshop.community.name }}</td>
           <td>{{ workshop.cycle }}</td>
           <td>{{ workshop.cancelled }}</td>
         </tr>
@@ -23,8 +23,11 @@
 <script setup lang="ts">
 interface Workshop {
   date: string
-  community_id: string
-  cycle: string
+  community: {
+    name: string
+    id: number
+  }
+  cycle: number
   cancelled: boolean
 }
 defineProps({

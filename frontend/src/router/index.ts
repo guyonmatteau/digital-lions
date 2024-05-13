@@ -4,6 +4,7 @@ import Workshops from '../views/Workshops.vue'
 import Home from '../views/Home.vue'
 import Children from '../views/Children.vue'
 import Communities from '../views/Communities.vue'
+import Attendance from '../views/Attendance.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -31,6 +32,11 @@ const router = createRouter({
       path: '/communities',
       name: 'communities',
       component: Communities
+    },
+    {
+      path: '/attendance',
+      name: 'attendance',
+      component: Attendance
     }
   ]
 })
