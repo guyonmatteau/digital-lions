@@ -27,7 +27,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref } from 'vue'
+import { reactive } from 'vue'
 interface Child {
   firstName: string
   lastName: string
@@ -44,7 +44,7 @@ defineProps({
   }
 })
 
-const child = ref<Child>({
+const child = reactive<Child>({
   firstName: '',
   lastName: '',
   communityId: ''

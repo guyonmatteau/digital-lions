@@ -47,6 +47,7 @@ const fetchChildren = async () => {
   } catch (error: any) {}
 }
 
+// TODO rewrite this like communityCreate
 function createChildInDB(child: Child) {
   const apiChild = {
     first_name: child.firstName,
