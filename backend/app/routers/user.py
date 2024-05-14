@@ -3,7 +3,15 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from models.user import User, UserCreate, UserOut, UserUpdate
 from sqlmodel import Session
 
+import bcrypt
+
 router = APIRouter(prefix="/users", tags=["users"])
+
+def _hash_password(password: str) -> str:
+    """Hash password."""
+    salt = bcrypt.gensalt()
+    hashed = bcrypt.hashpw(bytes(password, 'utf-8'), salt)
+    return hashed
 
 
 @router.get(
@@ -24,14 +32,18 @@ async def read_users(db: Session = Depends(get_db)):
     summary="Create a new user",
 )
 async def create_user(user: UserCreate, db: Session = Depends(get_db)):
-    if db.query(User).filter(User.email == user.email).first():
+    if db.query(User).filter(User.email_address == user.email_address).first():
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered"
         )
-    db.add(user)
+
+    hashed_password = _hash_password(user.password)
+    extra_data = {"hashed_password": hashed_password}
+    db_user = User.model_validate(user, update=extra_data)
+    db.add(db_user)
     db.commit()
-    db.refresh(user)
-    return user
+    db.refresh(db_user)
+    return db_user
 
 
 @router.get(

@@ -1,5 +1,5 @@
 <template>
-  <Create :communities="communities" @createChild="createChildFromForm" />
+  <Create :communities="communities" @createChild="createChild" />
   <List :children="children" />
 </template>
 <script setup lang="ts">
@@ -26,10 +26,7 @@ const CHILDREN_API_URL = API_URL + '/children'
 const children = ref([])
 const communities = ref([])
 
-function createChildFromForm(child: Child) {
-  createChildInDB(child)
-  fetchChildren()
-}
+const statusMessage = ref<string>('')
 
 // Fetch communities from the backend API endpoint
 const fetchCommunities = async () => {
@@ -47,18 +44,32 @@ const fetchChildren = async () => {
   } catch (error: any) {}
 }
 
-// TODO rewrite this like communityCreate
-function createChildInDB(child: Child) {
-  const apiChild = {
+function createChild(child: Child) {
+   const apiChild = {
     first_name: child.firstName,
     last_name: child.lastName,
     community_id: child.communityId
   }
-  try {
-    axios.post(CHILDREN_API_URL, apiChild)
-  } catch (error) {
-    console.error('Error submitting child information:', error)
-  }
+  axios.post(CHILDREN_API_URL, apiChild)
+  .then((response) => {
+    // check if API call was successfull
+    if (response.status == 201) {
+      console.log("Child created successfully")
+      //Update list with children
+      fetchChildren()
+    } else {
+      console.log("Failed to create child")
+    }
+  })
+  .catch((error) => {
+    // Check if the error response indicates that the community already exists
+    if (error.response && error.response.status === 409) {
+      statusMessage.value = 'Child already exists.'
+    } else {
+      console.error('Error creating child:', error)
+      statusMessage.value = 'Failed to create child. Please try again later.'
+    }
+  })
 }
 
 onMounted(() => {
