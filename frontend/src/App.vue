@@ -1,9 +1,13 @@
+<script setup lang="ts">
+import Navigation from '@/components/Navigation.vue'
+</script>
 <template>
-  <img alt="Little Lions logo" src="./assets/logo.png" />
-    <p>
-      <strong>Current route path:</strong> {{ $route.fullPath }}
-    </p>
-  <router-view></router-view>
+  <header>
+    <Navigation />
+  </header>
+  <main>
+    <router-view />
+  </main>
 </template>
 <script setup lang="ts">
 import { onMounted } from 'vue'
