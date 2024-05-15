@@ -12,14 +12,20 @@
   </form>
 </template>
 <script setup lang="ts">
-import { ref, onMounted} from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
+
 const username = ref('')
 const password = ref('')
+
 const router = useRouter()
 
+const store = useStore()
 function login(username: string, password: string) {
-  console.log('Logging in with', username, password) // Login logic here
-  router.push({name: 'workshops'})
+  store.commit('login')
+  console.log(store.state.authenticated)
+
+  router.push({ name: 'workshops' })
 }
 </script>

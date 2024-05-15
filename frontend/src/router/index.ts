@@ -6,6 +6,7 @@ import Children from '../views/Children.vue'
 import Communities from '../views/Communities.vue'
 import Attendance from '../views/Attendance.vue'
 import Login from '../views/Login.vue'
+import store from '../stores'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -21,7 +22,7 @@ const router = createRouter({
         {
           path: 'workshops',
           name: 'workshops',
-          component: Workshops,
+          component: Workshops
         },
         {
           path: 'children',
@@ -40,12 +41,23 @@ const router = createRouter({
         }
       ]
     },
-    { 
-      path: '/login', 
-      name: 'login', 
-      component: Login 
+    {
+      path: '/login',
+      name: 'login',
+      component: Login
     }
   ]
+})
+
+router.beforeEach(function (to, from, next) {
+  console.log('beforeEach', to.path + ' - Auth: ' + store.state.authenticated)
+  if (to.path !== '/login' && to.path !== 'login' && !store.state.authenticated) {
+    next({ path: '/login' })
+  } else if ((to.path === '/login' || to.path === 'login') && store.state.authenticated) {
+    next({ path: '/' })
+  } else {
+    next()
+  }
 })
 
 export default router
