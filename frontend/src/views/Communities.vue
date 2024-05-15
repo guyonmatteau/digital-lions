@@ -12,7 +12,7 @@ import axios from 'axios'
 
 interface Community {
   id: number
-  name: string,
+  name: string
 }
 
 const communities = ref<Community[]>([])
@@ -44,7 +44,7 @@ function createCommunity(communityName: string) {
       } else {
         statusMessage.value = 'Failed to create community. Please try again later.'
       }
-    }) 
+    })
     .catch((error) => {
       // Check if the error response indicates that the community already exists
       if (error.response && error.response.status === 409) {
