@@ -12,28 +12,38 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
+      name: 'Home',
       component: Home
     },
     {
-      path: '/workshops',
-      name: 'workshops',
-      component: Workshops
+      path: '/',
+      children: [
+        {
+          path: 'workshops',
+          name: 'workshops',
+          component: Workshops,
+        },
+        {
+          path: 'children',
+          name: 'children',
+          component: Children
+        },
+        {
+          path: 'communities',
+          name: 'communities',
+          component: Communities
+        },
+        {
+          path: 'attendance',
+          name: 'attendance',
+          component: Attendance
+        }
+      ]
     },
-    {
-      path: '/children',
-      name: 'children',
-      component: Children
-    },
-    {
-      path: '/communities',
-      name: 'communities',
-      component: Communities
-    },
-    {
-      path: '/attendance',
-      name: 'attendance',
-      component: Attendance
+    { 
+      path: '/login', 
+      name: 'login', 
+      component: Login 
     }
   ]
 })

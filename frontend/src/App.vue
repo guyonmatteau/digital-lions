@@ -1,6 +1,3 @@
-<script setup lang="ts">
-import Navigation from '@/components/Navigation.vue'
-</script>
 <template>
   <header>
     <Navigation />
@@ -10,11 +7,7 @@ import Navigation from '@/components/Navigation.vue'
   </main>
 </template>
 <script setup lang="ts">
-import { onMounted } from 'vue'
-import LoginView from './views/Login.vue'
-onMounted(() => {
-  console.log('App component mounted')
-})
+import Navigation from '@/components/Navigation.vue'
 </script>
 <style>
 img {

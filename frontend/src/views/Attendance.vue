@@ -40,6 +40,5 @@ async function fetchAttendance() {
 
 onMounted(() => {
   fetchAttendance()
-  console.log(attendances.value)
 })
 </script>
