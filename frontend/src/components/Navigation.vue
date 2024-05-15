@@ -3,7 +3,7 @@
     <nav class="container navbar navbar-expand-lg navbar-light bg-light">
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <div class="navbar-nav mr-auto">
-          <router-link to="/home" class="nav-item nav-link">Home</router-link>
+          <router-link to="/" class="nav-item nav-link">Home</router-link>
         </div>
         <div class="navbar-nav mr-auto">
           <router-link to="/children" class="nav-link">Children</router-link>

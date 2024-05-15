@@ -1,9 +1,16 @@
 <template>
   <img alt="Little Lions logo" src="./assets/logo.png" />
-  <LoginView/>
+    <p>
+      <strong>Current route path:</strong> {{ $route.fullPath }}
+    </p>
+  <router-view></router-view>
 </template>
 <script setup lang="ts">
+import { onMounted } from 'vue'
 import LoginView from './views/Login.vue'
+onMounted(() => {
+  console.log('App component mounted')
+})
 </script>
 <style>
 img {
@@ -17,4 +24,3 @@ img {
   margin-top: 60px;
 }
 </style>
-
