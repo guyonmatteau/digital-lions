@@ -1,4 +1,5 @@
 <template>
+  <Home />
   <form name="login-form" @submit.prevent="login(username, password)">
     <div class="mb-3">
       <label for="username">Username: </label>
@@ -15,6 +16,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
+import Home from './Home.vue'
 
 const username = ref('')
 const password = ref('')

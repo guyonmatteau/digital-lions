@@ -1,3 +1,6 @@
+include .env
+export
+
 .PHONY: build run format
 
 build:
@@ -11,5 +14,9 @@ format:
 
 lint: format
 	npx eslint .
+
+dev:
+	set -o allexport && source .env
+	npm run dev
 
 
