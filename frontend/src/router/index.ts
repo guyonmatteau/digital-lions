@@ -21,36 +21,35 @@ const router = createRouter({
       children: [
         {
           path: 'workshops',
-          name: 'workshops',
+          name: 'Workshops',
           component: Workshops
         },
         {
           path: 'children',
-          name: 'children',
+          name: 'Children',
           component: Children
         },
         {
           path: 'communities',
-          name: 'communities',
+          name: 'Communities',
           component: Communities
         },
         {
           path: 'attendance',
-          name: 'attendance',
+          name: 'Attendance',
           component: Attendance
         }
       ]
     },
     {
       path: '/login',
-      name: 'login',
+      name: 'Login',
       component: Login
     }
   ]
 })
 
 router.beforeEach(function (to, from, next) {
-  console.log('beforeEach', to.path + ' - Auth: ' + store.state.authenticated)
   if (to.path !== '/login' && to.path !== 'login' && !store.state.authenticated) {
     next({ path: '/login' })
   } else if ((to.path === '/login' || to.path === 'login') && store.state.authenticated) {

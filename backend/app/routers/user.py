@@ -1,17 +1,46 @@
-from db.session import get_db
-from fastapi import APIRouter, Depends, HTTPException, status
-from models.user import User, UserCreate, UserOut, UserUpdate
-from sqlmodel import Session
+import logging
 
 import bcrypt
+from db.session import get_db
+from fastapi import APIRouter, Depends, HTTPException, status
+from models.user import User, UserCreate, UserLogin, UserOut, UserUpdate
+from sqlmodel import Session
+
+logger = logging.getLogger()
 
 router = APIRouter(prefix="/users", tags=["users"])
 
-def _hash_password(password: str) -> str:
+
+def _hash_password(password: str, salt: bytes = None) -> [bytes, bytes]:
     """Hash password."""
-    salt = bcrypt.gensalt()
-    hashed = bcrypt.hashpw(bytes(password, 'utf-8'), salt)
-    return hashed
+    salt = salt or bcrypt.gensalt()
+    logger.info(f"SALT: {salt}")
+    hashed_password = bcrypt.hashpw(bytes(password, "utf-8"), salt)
+    return hashed_password, salt
+
+
+@router.post(
+    "/login",
+    response_model=UserOut,
+    status_code=status.HTTP_200_OK,
+    summary="Login user",
+)
+async def login(user: UserLogin, db: Session = Depends(get_db)):
+    db_user = db.query(User).filter(User.email_address == user.email_address).first()
+    if not db_user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User {user.email_address} not found",
+        )
+    hashed_password, _ = _hash_password(user.password, db_user.salt)
+    logger.info(
+        f"db_user.hashed_password: {db_user.hashed_password}, hashed_password: {hashed_password}"
+    )
+    if db_user.hashed_password == hashed_password:
+        return db_user
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED, detail="User unauthorized"
+    )
 
 
 @router.get(
@@ -37,8 +66,8 @@ async def create_user(user: UserCreate, db: Session = Depends(get_db)):
             status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered"
         )
 
-    hashed_password = _hash_password(user.password)
-    extra_data = {"hashed_password": hashed_password}
+    hashed_password, salt = _hash_password(user.password)
+    extra_data = {"hashed_password": hashed_password, "salt": salt}
     db_user = User.model_validate(user, update=extra_data)
     db.add(db_user)
     db.commit()

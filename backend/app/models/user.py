@@ -1,10 +1,15 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import field_validator, EmailStr
-from sqlmodel import Field, SQLModel, AutoString
+from pydantic import BaseModel, EmailStr, field_validator
+from sqlmodel import AutoString, Field, SQLModel
 
 ROLES = ["admin", "partner", "community_owner", "coach"]
+
+
+class UserLogin(BaseModel):
+    email_address: EmailStr
+    password: str
 
 
 class UserBase(SQLModel):
@@ -31,7 +36,10 @@ class UserUpdate(UserCreate):
 class User(UserBase, table=True):
     created_at: datetime = datetime.now()
     id: int | None = Field(default=None, primary_key=True)
-    hashed_password: str = Field(description="Password hashed by backend")
+    hashed_password: bytes = Field(description="Hashed password in bytes")
+    salt: bytes = Field(
+        description="Random byte string with which the password is encrypted"
+    )
 
     # TODO add updated_at default factory
     # updated_at: datetime = datetime.now()
@@ -39,4 +47,3 @@ class User(UserBase, table=True):
 
 class UserOut(UserBase):
     id: int
-    hashed_password: str

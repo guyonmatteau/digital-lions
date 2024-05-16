@@ -20,14 +20,11 @@ import Home from './Home.vue'
 
 const username = ref('')
 const password = ref('')
-
 const router = useRouter()
-
 const store = useStore()
+
 function login(username: string, password: string) {
   store.commit('login')
-  console.log(store.state.authenticated)
-
-  router.push({ name: 'workshops' })
+  router.push({ name: 'Home' })
 }
 </script>

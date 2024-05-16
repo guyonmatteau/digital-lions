@@ -1,15 +1,17 @@
 <template>
   <Create @createCommunity="createCommunity" />
   <List :communities="communities" />
+  <Notification />
 </template>
 
 <script setup lang="ts">
 import Create from '../components/communities/Create.vue'
 import List from '../components/communities/List.vue'
-
+import Notification from '../components/Notification.vue'
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 
+import { useStore } from 'vuex'
 interface Community {
   id: number
   name: string
@@ -17,7 +19,7 @@ interface Community {
 
 const communities = ref<Community[]>([])
 const statusMessage = ref<string>('')
-
+const store = useStore()
 const API_URL = process.env.API_URL
 const COMMUNITIES_ENDPOINT = API_URL + '/communities'
 
@@ -38,20 +40,32 @@ function createCommunity(communityName: string) {
     .then((response) => {
       // Check if the API call was successful
       if (response.status === 201) {
-        statusMessage.value = 'Community created successfully!'
+        store.dispatch('triggerNotification', {
+          message: `Community ${communityName} created successfully`,
+          type: 'success'
+        })
+
         // Update list with communities
         fetchCommunities()
       } else {
-        statusMessage.value = 'Failed to create community. Please try again later.'
+        store.dispatch('triggerNotification', {
+          message: 'Failed to create community!',
+          type: 'error'
+        })
       }
     })
     .catch((error) => {
       // Check if the error response indicates that the community already exists
       if (error.response && error.response.status === 409) {
-        statusMessage.value = 'Community already exists.'
+        store.dispatch('triggerNotification', {
+          message: `Community ${communityName} already exists!`,
+          type: 'error'
+        })
       } else {
-        console.error('Error creating community:', error)
-        statusMessage.value = 'Failed to create community. Please try again later.'
+        store.dispatch('triggerNotification', {
+          message: 'Failed to create community!',
+          type: 'error'
+        })
       }
     })
 }

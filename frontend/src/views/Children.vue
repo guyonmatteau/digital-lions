@@ -1,12 +1,15 @@
 <template>
   <Create :communities="communities" @createChild="createChild" />
   <List :children="children" />
+  <Notification />
 </template>
 <script setup lang="ts">
 import Create from '../components/children/Create.vue'
 import List from '../components/children/List.vue'
+import Notification from '../components/Notification.vue'
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
+import { useStore } from 'vuex'
 
 interface Community {
   id: number
@@ -25,8 +28,7 @@ const CHILDREN_API_URL = API_URL + '/children'
 
 const children = ref([])
 const communities = ref([])
-
-const statusMessage = ref<string>('')
+const store = useStore()
 
 // Fetch communities from the backend API endpoint
 const fetchCommunities = async () => {
@@ -55,20 +57,33 @@ function createChild(child: Child) {
     .then((response) => {
       // check if API call was successfull
       if (response.status == 201) {
-        console.log('Child created successfully')
+
+        store.dispatch('triggerNotification', {
+          message: 'Child created successfully!',
+          type: 'success'
+        })
+
         //Update list with children
         fetchChildren()
       } else {
-        console.log('Failed to create child')
+
+        store.dispatch('triggerNotification', {
+          message: 'Failed to create child!',
+          type: 'error'
+        })
       }
     })
-    .catch((error) => {
       // Check if the error response indicates that the community already exists
       if (error.response && error.response.status === 409) {
-        statusMessage.value = 'Child already exists.'
+        store.dispatch('triggerNotification', {
+          message: 'There already exists a child with the same name!',
+          type: 'error'
+        })
       } else {
-        console.error('Error creating child:', error)
-        statusMessage.value = 'Failed to create child. Please try again later.'
+        store.dispatch('triggerNotification', {
+          message: 'Failed to create child! Please try again later.''
+          type: 'error'
+        })
       }
     })
 }

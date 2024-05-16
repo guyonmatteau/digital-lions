@@ -1,9 +1,18 @@
 import { createStore } from 'vuex'
 
+interface NotificationState {
+  message: string
+  type: 'success' | 'error' | ''
+}
+
 const store = createStore({
   state() {
     return {
-      authenticated: false
+      authenticated: false,
+      notification: {
+        message: '',
+        type: ''
+      }
     }
   },
   mutations: {
@@ -14,6 +23,23 @@ const store = createStore({
     logout(state) {
       state.authenticated = false
       console.log('Logging out')
+    },
+    setNotification(state, payload: NotificationState) {
+      state.notification = payload
+    },
+    clearNotification(state) {
+      state.notification = {
+        message: '',
+        type: ''
+      }
+    }
+  },
+  actions: {
+    triggerNotification({ commit }, payload: NotificationState) {
+      commit('setNotification', payload)
+      setTimeout(() => {
+        commit('clearNotification')
+      }, 3000)
     }
   }
 })

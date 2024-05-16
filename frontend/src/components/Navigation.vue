@@ -6,16 +6,24 @@
           <router-link to="/" class="nav-item nav-link">Home</router-link>
         </div>
         <div class="navbar-nav mr-auto">
-          <router-link v-if="store.state.authenticated" to="/children" class="nav-link">Children</router-link>
+          <router-link v-if="store.state.authenticated" to="/children" class="nav-link"
+            >Children</router-link
+          >
         </div>
         <div class="navbar-nav mr-auto">
-          <router-link v-if="store.state.authenticated" to="/communities" class="nav-link">Communities</router-link>
+          <router-link v-if="store.state.authenticated" to="/communities" class="nav-link"
+            >Communities</router-link
+          >
         </div>
         <div class="navbar-nav mr-auto">
-          <router-link v-if="store.state.authenticated" to="/workshops" class="nav-item nav-link">Workshops</router-link>
+          <router-link v-if="store.state.authenticated" to="/workshops" class="nav-item nav-link"
+            >Workshops</router-link
+          >
         </div>
         <div class="navbar-nav mr-auto">
-          <router-link v-if="store.state.authenticated" to="/attendance" class="nav-link">Attendance</router-link>
+          <router-link v-if="store.state.authenticated" to="/attendance" class="nav-link"
+            >Attendance</router-link
+          >
         </div>
       </div>
     </nav>
@@ -24,6 +32,4 @@
 <script setup lang="ts">
 import { useStore } from 'vuex'
 const store = useStore()
-
-
 </script>

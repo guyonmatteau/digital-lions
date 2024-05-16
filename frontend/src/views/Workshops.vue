@@ -9,7 +9,7 @@
   />
 
   <Attendance v-else-if="step === 2" :children="children" @submitAttendance="submitAttendance" />
-
+  <Notification />
   <h2>Workshops</h2>
   <List :workshops="workshops" />
 </template>
@@ -19,9 +19,11 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import List from '../components/workshops/List.vue'
 import WorkshopCancellation from '../components/workshops/Create.vue'
 import Attendance from '../components/workshops/Attendance.vue'
+import Notification from '../components/Notification.vue'
 import axios from 'axios'
 import { format } from 'date-fns'
 
+import { useStore } from 'vuex'
 interface Workshop {
   date: string
   cancelled?: boolean
@@ -56,6 +58,7 @@ const workshop = ref<Workshop>({
 })
 
 const children = ref([])
+const store = useStore()
 
 // Fetch communities from the backend API endpoint
 const fetchCommunities = async () => {
@@ -90,11 +93,17 @@ function submitWorkshopInDB(workshopData: Workshop) {
   axios
     .post(WORKSHOPS_API_URL, workshopData)
     .then((response) => {
-      console.log('Workshop created:', response.data)
+      store.dispatch('triggerNotification', {
+        message: `Successfully created a workshop for ${todayFormatted} in ${communityId}!`,
+        type: 'success'
+      })
       fetchWorkshops()
     })
     .catch((error) => {
-      console.error('Error creating workshop:', error)
+      store.dispatch('triggerNotification', {
+        message: 'Failed to create workhop!',
+        type: 'error'
+      })
     })
 }
 
@@ -119,7 +128,6 @@ function submitAttendance(attendanceData: any) {
   })
   workshop.value.attendance = attendanceDataDB
   submitWorkshopInDB(workshop.value)
-  fetchWorkshops()
 }
 
 // Fetch communities when the component is mounted
