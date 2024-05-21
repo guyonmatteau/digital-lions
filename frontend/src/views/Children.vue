@@ -57,7 +57,6 @@ function createChild(child: Child) {
     .then((response) => {
       // check if API call was successfull
       if (response.status == 201) {
-
         store.dispatch('triggerNotification', {
           message: 'Child created successfully!',
           type: 'success'
@@ -66,13 +65,13 @@ function createChild(child: Child) {
         //Update list with children
         fetchChildren()
       } else {
-
         store.dispatch('triggerNotification', {
           message: 'Failed to create child!',
           type: 'error'
         })
       }
     })
+    .catch((error) => {
       // Check if the error response indicates that the community already exists
       if (error.response && error.response.status === 409) {
         store.dispatch('triggerNotification', {
@@ -81,7 +80,7 @@ function createChild(child: Child) {
         })
       } else {
         store.dispatch('triggerNotification', {
-          message: 'Failed to create child! Please try again later.''
+          message: 'Failed to create child! Please try again later.',
           type: 'error'
         })
       }

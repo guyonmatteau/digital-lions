@@ -12,6 +12,10 @@ const store = createStore({
       notification: {
         message: '',
         type: ''
+      },
+      user: {
+        id: '',
+        role: ''
       }
     }
   },
