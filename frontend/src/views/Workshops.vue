@@ -94,7 +94,7 @@ function submitWorkshopInDB(workshopData: Workshop) {
     .post(WORKSHOPS_API_URL, workshopData)
     .then((response) => {
       store.dispatch('triggerNotification', {
-        message: `Successfully created a workshop for ${todayFormatted} in ${communityId}!`,
+        message: `Successfully created a workshop for ${todayFormatted}!`,
         type: 'success'
       })
       fetchWorkshops()
