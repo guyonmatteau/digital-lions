@@ -31,6 +31,7 @@ const API_URL = process.env.API_URL
 const LOGIN_API_URL = API_URL + '/users/login'
 
 function login(username: string, password: string) {
+  console.log(LOGIN_API_URL)
   axios
     .post(LOGIN_API_URL, { email_address: username, password: password })
     .then((response) => {

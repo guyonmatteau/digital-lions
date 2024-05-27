@@ -1,4 +1,4 @@
-include .env
+include .envrc
 export
 
 .PHONY: build run format
