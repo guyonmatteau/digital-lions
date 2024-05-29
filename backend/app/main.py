@@ -21,7 +21,7 @@ app = FastAPI(title="Digital Lion API", version="0.1.0")
 
 ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS").split(",")
 methods = ["GET", "POST", "PUT", "DELETE"]
-
+logger.info(f"CORSMiddleware allowed rigins: {ALLOWED_ORIGINS}")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
@@ -40,4 +40,5 @@ app.include_router(user_router, tags=["users"])
 @app.on_event("startup")
 async def startup_db_client():
     """On startup, ping the connection to the database"""
+    logger.info("Starting db client...")
     create_db_and_tables()
