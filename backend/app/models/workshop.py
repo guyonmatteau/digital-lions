@@ -1,7 +1,7 @@
 from typing import List, Optional
 
-from models.base import AttendanceBase, WorkshopBase
-from models.community import Community
+from app.models.base import AttendanceBase, WorkshopBase
+from app.models.community import Community
 from sqlmodel import Field, Relationship, SQLModel
 
 

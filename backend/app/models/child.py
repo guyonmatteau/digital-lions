@@ -1,8 +1,8 @@
 from datetime import datetime
 from typing import Optional
 
-from models.base import ChildBase
-from models.community import Community
+from app.models.base import ChildBase
+from app.models.community import Community
 from sqlmodel import Field, Relationship, SQLModel
 
 

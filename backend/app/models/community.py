@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from models.base import CommunityBase
+from app.models.base import CommunityBase
 from sqlmodel import Field, Relationship, SQLModel
 
 

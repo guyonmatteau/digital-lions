@@ -16,3 +16,6 @@ format:
 	isort --recursive app
 	poetry run black app
 
+check.db:
+	alembic check
+
