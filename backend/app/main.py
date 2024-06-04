@@ -2,7 +2,7 @@ import logging
 import logging.config
 import os
 
-from db.session import create_db_and_tables
+from db.session import create_db_and_tables, run_migrations
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers.attendance import router as attendance_router
@@ -42,3 +42,5 @@ async def startup_db_client():
     """On startup, ping the connection to the database"""
     logger.info("Starting db client...")
     create_db_and_tables()
+    logger.info("Running migrations...")
+    run_migrations()

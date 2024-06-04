@@ -2,9 +2,10 @@ from typing import Optional
 
 from db.session import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
-from models.base import CommunityOut
-from models.community import Community, CommunityCreate
 from sqlalchemy.orm import Session
+
+from app.models.base import CommunityOut
+from app.models.community import Community, CommunityCreate
 
 router = APIRouter(prefix="/communities")
 

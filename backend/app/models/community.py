@@ -1,7 +1,8 @@
 from datetime import datetime
 
-from app.models.base import CommunityBase
 from sqlmodel import Field, Relationship, SQLModel
+
+from app.models.base import CommunityBase
 
 
 class CommunityCreate(CommunityBase):

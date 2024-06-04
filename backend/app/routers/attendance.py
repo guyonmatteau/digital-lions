@@ -2,11 +2,12 @@ from typing import List, Optional
 
 from db.session import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
-from models.attendance import Attendance, AttendanceBase, AttendanceCreate
-from models.base import AttendanceOutWithChild
-from models.child import Child
-from models.workshop import Workshop
 from sqlmodel import Session
+
+from app.models.attendance import Attendance, AttendanceBase, AttendanceCreate
+from app.models.base import AttendanceOutWithChild
+from app.models.child import Child
+from app.models.workshop import Workshop
 
 router = APIRouter(prefix="/attendance")
 

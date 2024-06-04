@@ -1,25 +1,18 @@
-from logging.config import fileConfig
 import os
-
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
+from logging.config import fileConfig
 
 from alembic import context
+from sqlalchemy import engine_from_config, pool
+from app.settings import get_settings
+
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
 section = config.config_ini_section
 
-# replace envvar placeholders in alembic.ini
-for env_var in [
-    "POSTGRES_USER",
-    "POSTGRES_PASSWORD",
-    "POSTGRES_HOST",
-    "POSTGRES_DB",
-    "POSTGRES_PORT",
-]:
-    config.set_section_option(section, env_var, os.environ.get(env_var))
+settings = get_settings()
+config.set_main_option('sqlalchemy.url', settings.postgres_url)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -29,12 +22,12 @@ if config.config_file_name is not None:
 # add your model's MetaData object here
 # for 'autogenerate' support
 
-from sqlmodel import SQLModel 
+from sqlmodel import SQLModel
 
 from app.models.attendance import Attendance
-from app.models.user import User
 from app.models.child import Child
 from app.models.community import Community
+from app.models.user import User
 from app.models.workshop import Workshop
 
 target_metadata = SQLModel.metadata
