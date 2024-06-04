@@ -2,7 +2,9 @@ import logging
 import logging.config
 import os
 
-from db.session import create_db_and_tables, run_migrations
+from db.session import init_db, run_migrations
+# from app.alembic.env import run_online_migrations
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers.attendance import router as attendance_router
@@ -41,6 +43,6 @@ app.include_router(user_router, tags=["users"])
 async def startup_db_client():
     """On startup, ping the connection to the database"""
     logger.info("Starting db client...")
-    create_db_and_tables()
+    init_db()
     logger.info("Running migrations...")
     run_migrations()
