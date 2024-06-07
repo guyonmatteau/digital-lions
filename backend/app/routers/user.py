@@ -8,8 +8,7 @@ from exceptions import (
 )
 from fastapi import APIRouter, Depends, HTTPException, status
 from models.user import User, UserCreate, UserLogin, UserOut, UserUpdate
-
-from app.repositories.user import UserRepository
+from repositories.user import UserRepository
 
 logger = logging.getLogger()
 

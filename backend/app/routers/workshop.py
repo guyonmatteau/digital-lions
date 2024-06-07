@@ -3,14 +3,13 @@ from typing import Optional
 from db.session import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
+from models.attendance import Attendance, AttendanceCreate
+from models.base import WorkshopOut
+from models.child import Child
+from models.community import Community
+from models.workshop import Workshop, WorkshopCreate
 from routers.attendance import add_attendance
 from sqlmodel import Session
-
-from app.models.attendance import Attendance, AttendanceCreate
-from app.models.base import WorkshopOut
-from app.models.child import Child
-from app.models.community import Community
-from app.models.workshop import Workshop, WorkshopCreate
 
 router = APIRouter(prefix="/workshops")
 
@@ -92,8 +91,8 @@ async def get_workshops(
     """Get the Workshop of a child to a workshop."""
     filters = []
     if community_id is not None:
-        filters.append(Workshop.community_id == community_id)
+        filters.nd(Workshop.community_id == community_id)
     if date is not None:
-        filters.append(Workshop.date == date)
+        filters.nd(Workshop.date == date)
     workshops = db.query(Workshop).filter(*filters).all()
     return workshops

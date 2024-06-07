@@ -49,7 +49,7 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    print('OFFLINE')
+    print("OFFLINE")
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
@@ -69,7 +69,7 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
-    print('ONLINE')
+    print("ONLINE")
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",

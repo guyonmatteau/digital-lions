@@ -4,9 +4,8 @@ from functools import lru_cache
 
 from alembic import command
 from alembic.config import Config
+from settings import get_settings
 from sqlmodel import Session, SQLModel, create_engine
-
-from app.settings import get_settings
 
 
 @lru_cache()
@@ -26,7 +25,6 @@ def init_db():
 def run_migrations():
     """Run migrations with Alembic"""
     alembic_cfg = Config("alemibic.ini")
-    import pdb; pdb.set_trace()
     command.upgrade(alembic_cfg, "head")
 
 

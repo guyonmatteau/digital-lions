@@ -2,11 +2,10 @@ from typing import Optional
 
 from db.session import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
+from models.base import ChildOutWithCommunity
+from models.child import Child, ChildCreate, ChildUpdate
+from models.community import Community
 from sqlmodel import Session
-
-from app.models.base import ChildOutWithCommunity
-from app.models.child import Child, ChildCreate, ChildUpdate
-from app.models.community import Community
 
 router = APIRouter(prefix="/children")
 
