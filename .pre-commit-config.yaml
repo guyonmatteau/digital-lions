@@ -5,6 +5,16 @@ repos:
     -   id: black
         name: "Black formatting"
         args: [backend/app, --check]
+  # - repo: https://github.com/pre-commit/mirrors-eslint
+  #   rev: v9.4.0
+  #   hooks:
+  #     - id: eslint
+  #       name: eslint
+  #       entry: eslint
+  #       language: node
+  #       files: ^frontend/.*\.(js|vue)$
+  #       types: [file]
+  #       args: ["--fix"]
   # - repo: https://github.com/pre-commit/mirrors-mypy
   #   rev: v0.991
   #   hooks:
