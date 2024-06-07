@@ -14,4 +14,7 @@ db:
 connectdb:
 	psql -h $(POSTGRES_HOST) -U $(POSTGRES_USER) -d $(POSTGRES_DB)
 
+precommit:
+	pre-commit run --all-files
+
 
