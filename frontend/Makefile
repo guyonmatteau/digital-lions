@@ -1,4 +1,4 @@
-include .envrc
+include .env
 export
 
 .PHONY: build run format
@@ -10,13 +10,14 @@ run:
 	docker run -p 5173:5173 frontend:latest
 
 format:
-	npx prettier --write .
+	npx prettier --write src
 
 lint: format
-	npx eslint .
+	npx eslint src
 
-dev:
-	set -o allexport && source .env
+app:
 	npm run dev
 
+precommit: 
+	pre-commit run --all-files
 

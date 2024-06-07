@@ -1,1 +1,15 @@
+repos:
+  - repo: https://github.com/psf/black
+    rev: 22.10.0
+    hooks:
+    -   id: black
+        name: "Black formatting"
+        args: [backend/app]
+  # - repo: https://github.com/pre-commit/mirrors-mypy
+  #   rev: v0.991
+  #   hooks:
+  #   -   id: mypy
+  #       name: "Static type checking using mypy"
+  #       args: [backend/app]
+  #
 
