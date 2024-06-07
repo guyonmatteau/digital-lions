@@ -1,6 +1,6 @@
 include .env
 export 
-.PHONY: app backend frontend
+.PHONY: app backend frontend db precommit alembic
 
 backend:
 	docker-compose up --build backend
@@ -11,10 +11,13 @@ frontend:
 db: 
 	docker-compose up --build db
 
-connectdb:
+db.connect:
 	psql -h $(POSTGRES_HOST) -U $(POSTGRES_USER) -d $(POSTGRES_DB)
 
 precommit:
 	pre-commit run --all-files
+
+db.check:
+	$(MAKE) -C backend db.check
 
 

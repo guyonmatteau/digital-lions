@@ -17,6 +17,7 @@ class CommunityUpdate(CommunityCreate):
 class Community(CommunityUpdate, table=True):
     """Schema for community in database."""
 
+    __table_args__ = {"extend_existing": True}
     id: int = Field(default=None, primary_key=True)
 
     workshops: list["Workshop"] | None = Relationship(back_populates="community")

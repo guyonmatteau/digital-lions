@@ -27,6 +27,7 @@ class ChildUpdate(ChildCreate):
 class Child(ChildUpdate, table=True):
     """Schema for child model in database."""
 
+    __table_args__ = {"extend_existing": True}
     id: int = Field(default=None, primary_key=True)
     created_at: datetime = datetime.now()
     is_active: bool = True

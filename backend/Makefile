@@ -18,6 +18,7 @@ format:  shell
 	poetry run isort --recursive app
 	poetry run black app
 
-check.db:
-	alembic check
+db.check:
+	cd app; poetry run alembic check
+
 

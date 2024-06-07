@@ -4,7 +4,7 @@ repos:
     hooks:
     -   id: black
         name: "Black formatting"
-        args: [backend/app]
+        args: [backend/app, --check]
   # - repo: https://github.com/pre-commit/mirrors-mypy
   #   rev: v0.991
   #   hooks:

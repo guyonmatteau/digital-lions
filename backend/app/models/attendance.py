@@ -14,6 +14,8 @@ class AttendanceCreate(AttendanceBase):
 class Attendance(AttendanceCreate, table=True):
     """Data model for attenadance of a child in a workshop."""
 
+    __table_args__ = {"extend_existing": True}
+
     id: int = Field(default=None, primary_key=True)
     child: Child = Relationship(back_populates="attendances")
     workshop: Workshop = Relationship(back_populates="attendances")

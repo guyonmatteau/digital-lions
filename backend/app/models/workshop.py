@@ -15,6 +15,7 @@ class Workshop(WorkshopBase, table=True):
     on a given date in a given community. It can be cancelled, in that case
     there will exist a cancellation reason."""
 
+    __table_args__ = {"extend_existing": True}
     id: int = Field(default=None, primary_key=True)
 
     community_id: int = Field(foreign_key="community.id")
