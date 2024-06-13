@@ -1,7 +1,10 @@
 from datetime import datetime
 
-from models.base import CommunityBase
 from sqlmodel import Field, Relationship, SQLModel
+
+
+class CommunityBase(SQLModel):
+    name: str
 
 
 class CommunityCreate(CommunityBase):
@@ -21,7 +24,6 @@ class Community(CommunityUpdate, table=True):
     id: int = Field(default=None, primary_key=True)
 
     workshops: list["Workshop"] | None = Relationship(back_populates="community")
-    children: list["Child"] | None = Relationship(back_populates="community")
 
     created_at: datetime = datetime.now()
     # TODO add updated_at default factory

@@ -1,7 +1,6 @@
 from datetime import datetime
-from typing import Optional
 
-from pydantic import BaseModel, EmailStr, field_validator
+from pydantic import BaseModel, EmailStr
 from sqlmodel import AutoString, Field, SQLModel
 
 ROLES = ["admin", "partner", "community_owner", "coach"]
@@ -16,7 +15,7 @@ class UserBase(SQLModel):
     first_name: str
     last_name: str = Field(default=None)
     email_address: EmailStr = Field(unique=True, index=True, sa_type=AutoString)
-    role: Optional[str] = Field(default=None, description="User role on platform")
+    role: str | None = Field(default=None, description="User role on platform")
 
     # @field_validator("role")
     # def validate_role(cls, value):
@@ -43,7 +42,3 @@ class User(UserBase, table=True):
 
     # TODO add updated_at default factory
     # updated_at: datetime = datetime.now()
-
-
-class UserOut(UserBase):
-    id: int

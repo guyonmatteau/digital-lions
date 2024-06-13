@@ -1,5 +1,3 @@
-import logging
-import os
 from functools import lru_cache
 
 from alembic import command
@@ -8,7 +6,7 @@ from settings import get_settings
 from sqlmodel import Session, SQLModel, create_engine
 
 
-@lru_cache()
+@lru_cache
 def get_engine():
     settings = get_settings()
     return create_engine(settings.postgres_url)

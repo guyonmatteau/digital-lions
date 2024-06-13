@@ -1,9 +1,8 @@
-from typing import Annotated, Optional
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from models.base import ChildOutWithCommunity
 from models.child import Child, ChildCreate, ChildUpdate
-from models.community import Community
+from models.out import ChildOutWithCommunity
 from repositories.children import ChildrenRepository
 
 router = APIRouter(prefix="/children")
@@ -30,7 +29,7 @@ async def get_child(
 )
 async def get_children(
     children_repository: Annotated[ChildrenRepository, Depends()],
-    community_id: Optional[str] = None,
+    community_id: str | None = None,
 ):
     return children_repository.get_children(community_id=community_id)
 

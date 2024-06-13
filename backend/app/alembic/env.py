@@ -1,4 +1,3 @@
-import os
 from logging.config import fileConfig
 
 from alembic import context
@@ -23,12 +22,6 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 
 from sqlmodel import SQLModel
-
-from app.models.attendance import Attendance
-from app.models.child import Child
-from app.models.community import Community
-from app.models.user import User
-from app.models.workshop import Workshop
 
 target_metadata = SQLModel.metadata
 # other values from the config, defined by the needs of env.py,

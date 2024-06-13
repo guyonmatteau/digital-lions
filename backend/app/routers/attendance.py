@@ -1,10 +1,10 @@
-from typing import List, Optional
+from typing import Optional
 
 from db.session import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
-from models.attendance import Attendance, AttendanceBase, AttendanceCreate
-from models.base import AttendanceOutWithChild
+from models.attendance import Attendance, AttendanceCreate
 from models.child import Child
+from models.out import AttendanceOutWithChild
 from models.workshop import Workshop
 from sqlmodel import Session
 
@@ -47,7 +47,7 @@ async def add_attendance(attendance: AttendanceCreate, db: Session = Depends(get
 
 @router.get(
     "/{attendance_id}",
-    response_model=List[AttendanceOutWithChild],
+    response_model=list[AttendanceOutWithChild],
     summary="Get attendance of child to a workshop.",
 )
 async def get_attendance(attendance_id: int, db: Session = Depends(get_db)):
@@ -63,11 +63,11 @@ async def get_attendance(attendance_id: int, db: Session = Depends(get_db)):
     "",
     summary="Get attendances of children to workshops",
     status_code=status.HTTP_200_OK,
-    response_model=Optional[List[AttendanceOutWithChild]],
+    response_model=Optional[list[AttendanceOutWithChild]],
 )
 async def get_attendances(
-    child_id: Optional[int] = None,
-    community_id: Optional[int] = None,
+    child_id: int | None = None,
+    community_id: int | None = None,
     db: Session = Depends(get_db),
 ):
     """Get the attendance of a child to a workshop."""

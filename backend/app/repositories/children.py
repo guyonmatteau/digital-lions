@@ -1,9 +1,9 @@
 import logging
 
 from exceptions import ItemAlreadyExistsException, ItemNotFoundException
-from models.base import ChildOut, ChildOutWithCommunity
 from models.child import Child, ChildCreate, ChildUpdate
 from models.community import Community
+from models.out import ChildOut
 from repositories.base import BaseRepository
 
 logger = logging.getLogger()
