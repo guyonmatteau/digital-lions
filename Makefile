@@ -20,7 +20,4 @@ precommit:
 db.check:
 	$(MAKE) -C backend db.check
 
-prune:
-	docker container prune
-	docker volume prune
 
