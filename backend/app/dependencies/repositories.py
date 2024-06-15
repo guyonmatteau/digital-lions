@@ -2,11 +2,10 @@ from typing import Annotated
 
 from dependencies.database import DatabaseDependency
 from fastapi import Depends
-from repositories.team import TeamRepository
+from repositories.child import ChildRepository
 
-# from repositories.community import CommunityRepository
-from repositories.base import BaseRepository
-from models.community import Community
+# from repositories.team import TeamRepository
+from repositories.community import CommunityRepository
 
 
 def get_team_repository(db: DatabaseDependency):
@@ -18,8 +17,13 @@ def get_team_repository(db: DatabaseDependency):
 
 
 def get_community_repository(db: DatabaseDependency):
-    return BaseRepository(model=Community, db=db)
+    return CommunityRepository(db=db)
+
+def get_child_repository(db: DatabaseDependency):
+    return ChildRepository(db=db)
 
 
-TeamRepositoryDependency = Annotated[TeamRepository, Depends(get_team_repository)]
-CommunityRepositoryDependency = Annotated[BaseRepository, Depends(get_community_repository)]
+
+# TeamRepositoryDependency = Annotated[TeamRepository, Depends(get_team_repository)]
+CommunityRepositoryDependency = Annotated[CommunityRepository, Depends(get_community_repository)]
+ChildRepositoryDependency = Annotated[ChildRepository, Depends(get_child_repository)]

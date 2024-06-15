@@ -1,10 +1,7 @@
-class ItemAlreadyExistsException(Exception):
-    pass
+class ItemAlreadyExistsException(Exception): ...
 
 
-class ItemNotFoundException(Exception):
-    pass
+class ItemNotFoundException(Exception): ...
 
 
-class UserUnauthorizedException(Exception):
-    pass
+class UserUnauthorizedException(Exception): ...

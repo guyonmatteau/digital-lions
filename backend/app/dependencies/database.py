@@ -1,9 +1,9 @@
 from functools import lru_cache
-from fastapi import Depends
 from typing import Annotated
 
 from alembic import command
 from alembic.config import Config
+from fastapi import Depends
 from settings import get_settings
 from sqlmodel import Session, SQLModel, create_engine
 

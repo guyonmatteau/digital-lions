@@ -1,19 +1,16 @@
-from typing import Annotated
-
-from fastapi import APIRouter, Depends, HTTPException, status
+from dependencies.repositories import ChildRepositoryDependency
+from exceptions import ItemAlreadyExistsException, ItemNotFoundException
+from fastapi import APIRouter, HTTPException, status
 from models.child import Child, ChildCreate, ChildUpdate
 from models.out import ChildOutWithCommunity
-from repositories.children import ChildrenRepository
 
 router = APIRouter(prefix="/children")
 
 
 @router.get("/{child_id}", summary="Get a child", response_model=ChildOutWithCommunity)
-async def get_child(
-    child_id: int, children_repository: Annotated[ChildrenRepository, Depends()]
-):
+async def get_child(child_id: int, child_repository: ChildRepositoryDependency):
     try:
-        return children_repository.get_child(child_id=child_id)
+        return child_repository.read(child_id)
     except ItemNotFoundException:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -28,10 +25,10 @@ async def get_child(
     status_code=status.HTTP_200_OK,
 )
 async def get_children(
-    children_repository: Annotated[ChildrenRepository, Depends()],
+    child_repository: ChildRepositoryDependency,
     community_id: str | None = None,
 ):
-    return children_repository.get_children(community_id=community_id)
+    return child_repository.read_all()
 
 
 @router.post(
@@ -40,11 +37,9 @@ async def get_children(
     status_code=status.HTTP_201_CREATED,
     response_model=ChildOutWithCommunity,
 )
-async def add_child(
-    child: ChildCreate, children_repository: Annotated[ChildrenRepository, Depends()]
-):
+async def add_child(child: ChildCreate, child_repository: ChildRepositoryDependency):
     try:
-        return children_repository.add_child(child=child)
+        return child_repository.create(child)
     except ItemAlreadyExistsException:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -66,10 +61,10 @@ async def add_child(
 async def update_child(
     child_id: int,
     child: ChildUpdate,
-    children_repository: Annotated[ChildrenRepository, Depends()],
+    child_repository: ChildRepositoryDependency,
 ):
     try:
-        return children_repository.update_child(child_id=child_id, child=child)
+        return child_repository.update(obj_id=child_id, obj=child)
     except ItemNotFoundException:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

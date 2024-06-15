@@ -1,55 +1,59 @@
-from typing import Union, Type, TypeVar, Generic
+from typing import Generic, TypeVar
 
 from dependencies.database import DatabaseDependency
-from fastapi import Depends
+from exceptions import ItemNotFoundException
+from models import child, community
+from models.out import ChildOut, CommunityOut
 
-from sqlmodel import SQLModel
-
-from models.community import Community
-
-from models.out import CommunityOut
-from models.child import Child
-
-
-Model = Community
-
-T = TypeVar("T", bound=SQLModel)
+Model = TypeVar("Model", community.Community, child.Child)
+ModelCreate = TypeVar("ModelCreate", community.CommunityCreate, child.ChildCreate)
+ModelOut = TypeVar("ModelOut", CommunityOut, ChildOut)
 
 
-class BaseRepository:
-    """Generic repository template for all repositories that
-    interact with a table in the database."""
+class BaseRepository(Generic[Model]):
+    """Generic repository template metaclass for all repositories that
+    interact with a table in the database. Supports all classic CRUD
+    operations as well as custom queries."""
 
-    def __init__(self, model: Model, db: DatabaseDependency):
+    model: type[Model] | None = None
+
+    def __init__(self, db: DatabaseDependency):
         self.db: DatabaseDependency = db
-        self.model: Model = model
 
-    def read_all(self) -> list[CommunityOut]:
+    def create(self, obj: ModelCreate) -> ModelOut:
+        """Create an object in the table."""
+        new_obj = self.model.from_orm(obj)
+        self.db.add(new_obj)
+        self.db.commit()
+        self.db.refresh(new_obj)
+        return new_obj
+
+    def read(self, object_id: int) -> ModelOut:
+        """Read an object from the table."""
+        obj = self.db.get(self.model, object_id)
+        if not obj:
+            raise ItemNotFoundException()
+        return obj
+
+    def read_all(self) -> list[ModelOut]:
+        """Read all objects from the table."""
         objects = self.db.query(self.model).all()
-        print(f"OBJECTS: {objects}")
         return objects
 
-    def read(self, object_id: int) -> list[Model]:
-        object_ = self.db.get(self.model, object_id)
-        if not object_:
-            raise ItemNotFoundException()
-        return object_
-
-    def create(self, object_data: Model) -> Model:
-        new_object = self.model.from_orm(object_data)
-        self.db.add(new_object)
-        self.db.commit()
-        self.db.refresh(new_object)
-        return new_object
-
-    def update(self, object_id: int, object_data: Model) -> Model:
+    def update(self, object_id: int, obj: Model) -> ModelOut:
+        """Update an object in the table."""
         db_object = self.db.get(self.model, object_id)
         if not db_object:
             raise ItemNotFoundException()
 
-        object_data = self.model.model_dump(exclude_unset=True)
-        db_object.sqlmodel_update(object_data)
+        obj_data = obj.model_dump(exclude_unset=True)
+        db_object.sqlmodel_update(obj_data)
         self.db.add(db_object)
         self.db.commit()
         self.db.refresh(db_object)
         return db_object
+
+    def query(self, query: str) -> list[ModelOut]:
+        """Execute a custom query."""
+        objects = self.db.execute(query)
+        return objects

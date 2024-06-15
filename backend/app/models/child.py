@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 
 from pydantic import field_validator
-from sqlmodel import Field, Relationship, SQLModel
+from sqlmodel import Field, SQLModel
 
 
 class ChildBase(SQLModel):
