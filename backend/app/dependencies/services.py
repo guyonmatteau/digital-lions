@@ -1,12 +1,12 @@
 from typing import Annotated
 
-from dependencies.repositories import get_team_repository
+from dependencies.repositories import TeamRepositoryDependency
 from fastapi import Depends
-from repositories.team import TeamRepository
 from services.team import TeamService
 
 
-def get_team_service(
-    team_repository: Annotated[TeamRepository, Depends(get_team_repository)]
-):
+def get_team_service(team_repository: TeamRepositoryDependency):
     return TeamService(team_repository=team_repository)
+
+
+TeamServiceDependency = Annotated[TeamService, Depends(get_team_service)]

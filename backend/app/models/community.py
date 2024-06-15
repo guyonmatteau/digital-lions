@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from datetime import datetime
 
 from sqlmodel import Field, Relationship, SQLModel
@@ -23,7 +25,7 @@ class Community(CommunityUpdate, table=True):
     __table_args__ = {"extend_existing": True}
     id: int = Field(default=None, primary_key=True)
 
-    workshops: list["Workshop"] | None = Relationship(back_populates="community")
+    # workshops: list[Workshop] | None = Relationship(back_populates="community")
 
     created_at: datetime = datetime.now()
     # TODO add updated_at default factory

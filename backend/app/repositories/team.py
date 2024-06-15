@@ -1,7 +1,7 @@
 import logging
 
 from exceptions import ItemNotFoundException
-from models.team import Team, TeamCreate
+from models.team import Team, TeamBase
 from repositories.base import BaseRepository
 
 logger = logging.getLogger()
@@ -10,7 +10,7 @@ logger = logging.getLogger()
 class TeamRepository(BaseRepository):
     """Repository to interact with Team table from database."""
 
-    def create(self, team: TeamCreate) -> Team:
+    def create(self, team: TeamBase) -> Team:
         new_team = Team.from_orm(team)
         self.db.add(new_team)
         self.db.refresh(new_team)

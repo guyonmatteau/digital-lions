@@ -1,10 +1,10 @@
 from typing import Optional
 
-from db.session import get_db
+from dependencies.repositories import CommunityRepositoryDependency
+from dependencies.database import DatabaseDependency
 from fastapi import APIRouter, Depends, HTTPException, status
 from models.community import Community, CommunityCreate
 from models.out import CommunityOut
-from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/communities")
 
@@ -15,8 +15,8 @@ router = APIRouter(prefix="/communities")
     status_code=status.HTTP_200_OK,
     summary="Get a community",
 )
-async def get_community(community_id: int, db: Session = Depends(get_db)):
-    community = db.get(Community, community_id)
+async def get_community(community_id: int, repository=CommunityRepositoryDependency):
+    community = repository.read(community_id)
     if not community:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -29,11 +29,11 @@ async def get_community(community_id: int, db: Session = Depends(get_db)):
     "",
     summary="Get communities",
     status_code=status.HTTP_200_OK,
-    response_model=Optional[list[Community]],
+    response_model=list[Community] | None,
 )
-async def get_communities(db: Session = Depends(get_db)):
-    communities = db.query(Community).all()
-    return communities
+async def get_communities(database: DatabaseDependency):
+    return database.query(Community).all()
+    # return repository.read_all()
 
 
 @router.post(
@@ -42,7 +42,7 @@ async def get_communities(db: Session = Depends(get_db)):
     status_code=status.HTTP_201_CREATED,
     response_model=Community,
 )
-async def add_community(community: CommunityCreate, db: Session = Depends(get_db)):
+async def add_community(community: CommunityCreate, repository=CommunityRepositoryDependency):
     if db.query(Community).filter(Community.name == community.name).first():
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -62,7 +62,7 @@ async def add_community(community: CommunityCreate, db: Session = Depends(get_db
     status_code=status.HTTP_200_OK,
 )
 async def update_community(
-    community_id: int, community: Community, db: Session = Depends(get_db)
+    community_id: int, community: Community, repository=CommunityRepositoryDependency
 ):
     db_community = db.get(Community, community_id)
     if not db_community:

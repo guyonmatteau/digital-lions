@@ -2,7 +2,7 @@ import logging
 import logging.config
 import os
 
-from db.session import init_db
+from dependencies.database import init_db
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers.attendance import router as attendance_router

@@ -12,11 +12,23 @@ class ChildBase(SQLModel):
     first_name: str
     last_name: str
     age: int | None = Field(
-        default=None, description="Age in years at the time of registration",
+        default=None,
+        description="Age in years at the time of registration",
     )
-    dob: str | None = Field(default=None,
-                            description="Date of birth in the format YYYY-MM-DD")
+    dob: str | None = Field(default=None, description="Date of birth in the format YYYY-MM-DD")
     gender: str | None = Field(default=None, description="Gender of child")
+
+    @field_validator("gender")
+    def validate_gender(cls, v) -> str:
+        if v is not None and v not in ["male", "female"]:
+            raise ValueError("Invalid gender")
+        return v
+
+    @field_validator("age")
+    def validate_age(cls, v):
+        if v is not None and v <= 0:
+            raise ValueError("Negative age is invalid")
+        return v
 
 
 class ChildCreate(ChildBase):
@@ -30,19 +42,6 @@ class ChildUpdate(ChildCreate):
 
     is_active: bool = True
 
-    @field_validator("gender")
-    def validate_gender(cls, v) -> str:
-        if v is not None and v not in ["male", "female"]:
-            raise ValueError("Invalid gender")
-        return v
-
-
-    @field_validator("age")
-    def validate_age(cls, v):
-        if v is not None and v <= 0:
-            raise ValueError("Negative age is invalid")
-        return v
-
 
 class Child(ChildUpdate, table=True):
     """Schema for child model in database."""
@@ -52,5 +51,5 @@ class Child(ChildUpdate, table=True):
     created_at: datetime = datetime.now()
     is_active: bool = True
 
-    community: Community | None = Relationship(back_populates="children")
-    attendances: list[Attendance] = Relationship(back_populates="child")
+    # community: Community | None = Relationship(back_populates="children")
+    # attendances: list[Attendance] = Relationship(back_populates="child")
