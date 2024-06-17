@@ -1,5 +1,6 @@
 from models.team import TeamBase
 from repositories import ChildRepository, CommunityRepository, TeamRepository
+from exceptions import CommunityNotFoundException
 
 
 class TeamService:
@@ -11,24 +12,25 @@ class TeamService:
         child_repository: ChildRepository,
         community_repository: CommunityRepository,
     ):
-        self.team_repository = team_repository
-        self.community_repository = community_repository
-        self.child_repository = child_repository
+        self._team_repository = team_repository
+        self._child_repository = child_repository
+        self._community_repository = community_repository
 
     def get_teams(self):
-        return self.team_repository.get_teams()
+        return self._team_repository.read_all()
 
     def get_team(self, team_id):
-        return self.team_repository.get_team(team_id)
+        return self._team_repository.read(object_id=team_id)
 
     def create_team(self, team: TeamBase):
         """Create a new team."""
-        if not self.community_repository.read(obj_id=team.community_id):
-            raise ValueError("Community does not exist")
+        if not self._community_repository.read(object_id=team.community_id):
+            raise CommunityNotFoundException()
 
-        # validate that the program exists (or default)
+        for child in team.children:
+            self._child_repository.create(child)
 
-        # create children
+        self._team_repository.create(team)
 
         return self.team_repository.create_team(team)
 

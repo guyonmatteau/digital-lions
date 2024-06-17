@@ -1,10 +1,11 @@
-"""Models for responses to the client. In separate files to avoid circular imports."""
+"""Models for responses to the client. All in one module to avoid circular imports."""
 
 from __future__ import annotations
 
 # from models.attendance import AttendanceBase
 from models.child import ChildBase
 from models.community import CommunityBase
+from models.team import TeamBase
 
 # from models.workshop import WorkshopBase
 
@@ -24,6 +25,10 @@ class ChildOutWithCommunity(ChildOut):
 
 
 class CommunityOut(CommunityBase):
+    id: int
+
+
+class TeamOut(TeamBase):
     id: int
 
 

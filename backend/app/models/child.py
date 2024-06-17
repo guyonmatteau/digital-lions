@@ -21,7 +21,7 @@ class ChildValidator:
         return v
 
 
-class ChildBase(SQLModel, ChildValidator, CreatedAt, UpdatedAt):
+class ChildBase(SQLModel, CreatedAt, UpdatedAt, ChildValidator):
     """Base schema for child model."""
 
     first_name: str

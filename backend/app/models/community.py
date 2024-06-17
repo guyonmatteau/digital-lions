@@ -16,9 +16,6 @@ class Community(CommunityBase, table=True):
 
     # workshops: list[Workshop] | None = Relationship(back_populates="community")
 
-    # TODO add updated_at default factory
-    # updated_at: datetime = datetime.now()
-
 
 class CommunityCreate(CommunityBase):
     pass
