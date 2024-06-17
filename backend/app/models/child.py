@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from models.base import CreatedAt, UpdatedAt
+from models.base import (
+    MetadataColumns,
+)
 from pydantic import field_validator
 from sqlmodel import Field, SQLModel
 
@@ -21,7 +23,8 @@ class ChildValidator:
         return v
 
 
-class ChildBase(SQLModel, CreatedAt, UpdatedAt, ChildValidator):
+class ChildBase(SQLModel):
+    # , CreatedAtProperty, UpdatedAtProperty, IsActiveProperty, ChildValidator):
     """Base schema for child model."""
 
     first_name: str
@@ -32,15 +35,16 @@ class ChildBase(SQLModel, CreatedAt, UpdatedAt, ChildValidator):
     )
     dob: str | None = Field(default=None, description="Date of birth in the format YYYY-MM-DD")
     gender: str | None = Field(default=None, description="Gender of child")
-    community_id: int = Field(foreign_key="community.id")
+    team_id: int = Field(foreign_key="team.id")
 
 
-class Child(ChildBase, table=True):
+class Child(ChildBase, MetadataColumns, table=True):
     """Schema for child model in database."""
 
-    # __table_args__ = {"extend_existing": True}
+    __table_args__ = {"extend_existing": True}
+    __tablename__ = "children"
     id: int = Field(default=None, primary_key=True)
-
+    # team: Team = Relationship(back_populates="children")
     # community: Community | None = Relationship(back_populates="children")
     # attendances: list[Attendance] = Relationship(back_populates="child")
 
@@ -51,7 +55,8 @@ class ChildCreate(ChildBase):
     pass
 
 
-class ChildUpdate(SQLModel, ChildValidator, UpdatedAt):
+class ChildUpdate(SQLModel, ChildValidator):
+    # , UpdatedAt):
     """Schema for updating a child."""
 
     first_name: str | None = None
@@ -59,5 +64,4 @@ class ChildUpdate(SQLModel, ChildValidator, UpdatedAt):
     age: int | None = None
     dob: str | None = None
     gender: str | None = None
-    community_id: int | None = None
-    is_active: bool | None = None
+    # is_active: bool | None = None

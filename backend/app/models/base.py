@@ -5,20 +5,48 @@ from datetime import datetime
 from pydantic import computed_field
 
 
-class CreatedAt:
+class CreatedAtProperty:
     """Created at timestamp."""
 
     @computed_field
     def created_at(self) -> datetime:
         return datetime.now()
 
+
+class IsActiveProperty:
+    """Is active property."""
+
     def is_active(self) -> bool:
         return True
 
 
-class UpdatedAt:
+class IsActiveColumn:
+    """Is active column."""
+
+    is_active: bool
+
+
+class CreatedAtColumn:
+    """Created at timestamp."""
+
+    created_at: datetime
+
+
+class UpdatedAtProperty:
     """Updated at timestamp."""
 
     @computed_field
     def updated_at(self) -> datetime:
         return datetime.now()
+
+
+class UpdatedAtColumn:
+    """Updated at timestamp."""
+
+    updated_at: datetime
+
+
+class MetadataColumns(CreatedAtColumn, UpdatedAtColumn, IsActiveColumn):
+    """Metadata columns for database models."""
+
+    pass

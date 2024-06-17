@@ -20,4 +20,8 @@ precommit:
 db.check:
 	$(MAKE) -C backend db.check
 
-
+# utility command for wiping the database and its volume
+db.reset:
+	docker-compose down db
+	docker volume rm --force digital-lions_pgdata
+	docker-compose up db

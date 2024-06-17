@@ -6,7 +6,7 @@ from exceptions import (
 )
 from fastapi import APIRouter, HTTPException, status
 from models.out import TeamOut
-from models.team import TeamBase
+from models.team import TeamBase, TeamCreate
 
 logger = logging.getLogger()
 
@@ -19,7 +19,7 @@ router = APIRouter(prefix="/teams", tags=["teams"])
     status_code=status.HTTP_201_CREATED,
     summary="Create a new team",
 )
-async def post_team(team_service: TeamServiceDependency, team: TeamBase):
+async def post_team(team_service: TeamServiceDependency, team: TeamCreate):
     try:
         await team_service.create_team(team)
     except ItemAlreadyExistsException:

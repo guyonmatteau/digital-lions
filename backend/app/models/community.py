@@ -1,14 +1,15 @@
 from __future__ import annotations
 
-from models.base import CreatedAt, UpdatedAt
+from models.base import MetadataColumns, UpdatedAtProperty
 from sqlmodel import Field, SQLModel
 
 
-class CommunityBase(SQLModel, CreatedAt, UpdatedAt):
+class CommunityBase(SQLModel):
+    # , CreatedAtProperty, UpdatedAtProperty):
     name: str
 
 
-class Community(CommunityBase, table=True):
+class Community(CommunityBase, MetadataColumns, table=True):
     """Schema for community in database."""
 
     # __table_args__ = {"extend_existing": True}
@@ -21,7 +22,7 @@ class CommunityCreate(CommunityBase):
     pass
 
 
-class CommunityUpdate(SQLModel, UpdatedAt):
+class CommunityUpdate(SQLModel, UpdatedAtProperty):
     """Schema for updating a community."""
 
     name: str | None = None

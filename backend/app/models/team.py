@@ -1,10 +1,14 @@
 from __future__ import annotations
 
-from models.base import CreatedAt, UpdatedAt
-from sqlmodel import Field, SQLModel
+from pydantic import ConfigDict
+from sqlalchemy.orm import Mapper
+
+# from models.base import CreatedAt, UpdatedAt
+from sqlmodel import Field, Relationship, SQLModel
 
 
-class TeamBase(SQLModel, CreatedAt, UpdatedAt):
+class TeamBase(SQLModel):
+    # , CreatedAt, UpdatedAt):
     """Base class for team model."""
 
     name: str = Field(description="Name of the team", default=None, nullable=True)
@@ -13,10 +17,28 @@ class TeamBase(SQLModel, CreatedAt, UpdatedAt):
     )
 
 
+class TeamCreateChild(SQLModel):
+    """Data model to create a child within a team."""
+
+    first_name: str
+    last_name: str
+    age: int | None = Field(
+        default=None,
+        description="Age in years at the time of registration",
+    )
+    dob: str | None = Field(default=None, description="Date of birth in the format YYYY-MM-DD")
+    gender: str | None = Field(default=None, description="Gender of child")
+
+
 class TeamCreate(TeamBase):
     """Data model for creating a team."""
 
-    pass
+    # model_config = ConfigDict(arbitrary_types_allowed=True)
+    # ig:
+    #     arbitrary_types_allowed=True
+    children: list[TeamCreateChild] | None = Field(
+        description="List of children to create within the team", default=None
+    )
 
 
 class Team(TeamBase, table=True):
@@ -25,19 +47,23 @@ class Team(TeamBase, table=True):
     that the team follows are linked to the team as well."""
 
     # __table_args__ = {"extend_existing": True}
+    __tablename__ = "team"
 
     id: int = Field(default=None, primary_key=True)
     program_tracker: int = Field(
         description="The current workshop the team is at in the program", default=1
     )
 
+    children: list[Child] | None = Relationship(
+        back_populates="team"
+    )  # children: list[Child] | None = Relationship(back_populates="team")
     # community: Community = Relationship(back_populates="teams")
     # program: Program = Relationship(back_populates="teams")
-    # children: list[Child] | None = Relationship(back_populates="team")
     # workshops: list[Workshop] | None = Relationship(back_populates="team")
 
 
-class TeamUpdate(SQLModel, CreatedAt, UpdatedAt):
+class TeamUpdate(SQLModel):
+    # , CreatedAt, UpdatedAt):
     """Data model for updating a team."""
 
     name: str = Field(description="Name of the team", nullable=True)
