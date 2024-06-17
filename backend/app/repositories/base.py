@@ -7,4 +7,4 @@ from sqlmodel import Session
 
 class BaseRepository:
     def __init__(self, db: Annotated[Session, Depends(get_db)]):
-        self._db = db
+        self.db = db

@@ -8,7 +8,7 @@ from settings import get_settings
 from sqlmodel import Session, SQLModel, create_engine
 
 
-@lru_cache()
+@lru_cache
 def get_engine():
     settings = get_settings()
     return create_engine(settings.postgres_url)
@@ -16,9 +16,7 @@ def get_engine():
 
 def init_db():
     """Setup db and create tables"""
-    settings = get_settings()
     engine = get_engine()
-
     SQLModel.metadata.create_all(engine)
 
 
