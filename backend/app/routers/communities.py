@@ -46,7 +46,8 @@ async def add_community(community: CommunityCreate, repository: CommunityReposit
     try:
         # TODO repositrory will be intermediated by service
         return repository.create(community)
-    except Exception:
+    except Exception as e:
+        logger.error(e)
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=f"There already exists a community with name {community.name}",

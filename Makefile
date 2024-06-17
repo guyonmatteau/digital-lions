@@ -21,7 +21,10 @@ db.check:
 	$(MAKE) -C backend db.check
 
 # utility command for wiping the database and its volume
-db.reset:
+db.wipe:
 	docker-compose down db
 	docker volume rm --force digital-lions_pgdata
 	docker-compose up db
+
+db.ip: 
+	docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' postgres
