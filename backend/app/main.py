@@ -20,7 +20,7 @@ logging.config.fileConfig(logging_conf, disable_existing_loggers=False)  # type:
 logger = logging.getLogger(__name__)
 logger.info("Logging configuration: %s", logging_conf)
 
-app = FastAPI(title="Digital Lion API", version="0.1.0")
+app = FastAPI(title="Digital Lion API", version="0.1.0", root_path="/api/v1")
 
 ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS").split(",")
 methods = ["GET", "POST", "PUT", "DELETE"]

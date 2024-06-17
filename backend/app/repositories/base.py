@@ -7,6 +7,7 @@ from models.out import ChildOut, CommunityOut
 
 Model = TypeVar("Model", community.Community, child.Child)
 ModelCreate = TypeVar("ModelCreate", community.CommunityCreate, child.ChildCreate)
+ModelUpdate = TypeVar("ModelUpdate", community.CommunityUpdate, child.ChildUpdate)
 ModelOut = TypeVar("ModelOut", CommunityOut, ChildOut)
 
 
@@ -15,7 +16,7 @@ class BaseRepository(Generic[Model]):
     interact with a table in the database. Supports all classic CRUD
     operations as well as custom queries."""
 
-    model: type[Model] | None = None
+    model: type[Model]
 
     def __init__(self, db: DatabaseDependency):
         self.db: DatabaseDependency = db
@@ -40,8 +41,9 @@ class BaseRepository(Generic[Model]):
         objects = self.db.query(self.model).all()
         return objects
 
-    def update(self, object_id: int, obj: Model) -> ModelOut:
+    def update(self, object_id: int, obj: ModelUpdate) -> ModelOut:
         """Update an object in the table."""
+
         db_object = self.db.get(self.model, object_id)
         if not db_object:
             raise ItemNotFoundException()

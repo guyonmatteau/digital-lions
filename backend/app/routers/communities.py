@@ -1,8 +1,11 @@
+import logging
 
 from dependencies.repositories import CommunityRepositoryDependency
 from fastapi import APIRouter, HTTPException, status
 from models.community import Community, CommunityCreate
 from models.out import CommunityOut
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/communities")
 
@@ -57,9 +60,10 @@ async def add_community(community: CommunityCreate, repository: CommunityReposit
     status_code=status.HTTP_200_OK,
 )
 async def update_community(
-    community_id: int, community: Community, repository=CommunityRepositoryDependency
+    community_id: int, community: Community, repository: CommunityRepositoryDependency
 ):
     try:
         return repository.update(community_id, community)
-    except Exception:
+    except Exception as e:
+        logger.error(e)
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Bad request")

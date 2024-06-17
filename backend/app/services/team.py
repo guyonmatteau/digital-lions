@@ -1,11 +1,16 @@
-from app.models.team import TeamBase
-from app.repositories.team import TeamRepository
+from models.team import TeamBase
+from repositories import ChildRepository, CommunityRepository, TeamRepository
 
 
 class TeamService:
     """Team service layer to do anything related to teams."""
 
-    def __init__(self, team_repository: TeamRepository):
+    def __init__(
+        self,
+        team_repository: TeamRepository,
+        child_repository: ChildRepository,
+        community_repository: CommunityRepository,
+    ):
         self.team_repository = team_repository
         self.community_repository = community_repository
         self.child_repository = child_repository
@@ -18,7 +23,7 @@ class TeamService:
 
     def create_team(self, team: TeamBase):
         """Create a new team."""
-        if not self.community_repository.read(community_id=team.community_id):
+        if not self.community_repository.read(obj_id=team.community_id):
             raise ValueError("Community does not exist")
 
         # validate that the program exists (or default)

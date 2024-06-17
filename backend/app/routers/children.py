@@ -2,7 +2,7 @@ from dependencies.repositories import ChildRepositoryDependency
 from exceptions import ItemAlreadyExistsException, ItemNotFoundException
 from fastapi import APIRouter, HTTPException, status
 from models.child import Child, ChildCreate, ChildUpdate
-from models.out import ChildOutWithCommunity
+from models.out import ChildOut, ChildOutWithCommunity
 
 router = APIRouter(prefix="/children")
 
@@ -21,7 +21,7 @@ async def get_child(child_id: int, child_repository: ChildRepositoryDependency):
 @router.get(
     "",
     summary="Get children",
-    response_model=list[ChildOutWithCommunity],
+    response_model=list[ChildOut],
     status_code=status.HTTP_200_OK,
 )
 async def get_children(
@@ -35,7 +35,7 @@ async def get_children(
     "",
     summary="Add a child",
     status_code=status.HTTP_201_CREATED,
-    response_model=ChildOutWithCommunity,
+    response_model=ChildOut,
 )
 async def add_child(child: ChildCreate, child_repository: ChildRepositoryDependency):
     try:
@@ -64,7 +64,7 @@ async def update_child(
     child_repository: ChildRepositoryDependency,
 ):
     try:
-        return child_repository.update(obj_id=child_id, obj=child)
+        return child_repository.update(object_id=child_id, obj=child)
     except ItemNotFoundException:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

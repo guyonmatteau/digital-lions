@@ -24,3 +24,4 @@ db.check:
 	cd app; poetry run alembic check
 
 
+

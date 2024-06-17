@@ -1,5 +1,5 @@
 from models.community import Community
-from repositories.base import BaseRepository
+from repositories import BaseRepository
 
 
 class CommunityRepository(BaseRepository[Community]):
