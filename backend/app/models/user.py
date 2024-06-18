@@ -33,12 +33,10 @@ class UserUpdate(UserCreate):
 
 
 class User(UserBase, table=True):
+    """User model in database."""
+
+    __tablename__ = "users"
     created_at: datetime = datetime.now()
     id: int | None = Field(default=None, primary_key=True)
     hashed_password: bytes = Field(description="Hashed password in bytes")
-    salt: bytes = Field(
-        description="Random byte string with which the password is encrypted"
-    )
-
-    # TODO add updated_at default factory
-    # updated_at: datetime = datetime.now()
+    salt: bytes = Field(description="Random byte string with which the password is encrypted")

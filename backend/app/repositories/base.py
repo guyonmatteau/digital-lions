@@ -48,7 +48,7 @@ class BaseRepository(Generic[Model]):
         if not db_object:
             raise ItemNotFoundException()
 
-        obj_data = obj_model_dump(exclude_unset=True)
+        obj_data = obj.model_dump(exclude_unset=True)
         db_object.sqlmodel_update(obj_data)
         self._db.add(db_object)
         self._db.commit()

@@ -30,6 +30,7 @@ class CommunityOut(CommunityBase):
 
 class TeamOut(TeamBase):
     id: int
+    children: list[ChildOut]
 
 
 # class UserOut(UserBase):

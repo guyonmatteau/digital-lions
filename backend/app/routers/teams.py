@@ -21,7 +21,7 @@ router = APIRouter(prefix="/teams", tags=["teams"])
 )
 async def post_team(team_service: TeamServiceDependency, team: TeamCreate):
     try:
-        await team_service.create_team(team)
+        return team_service.create_team(team)
     except ItemAlreadyExistsException:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,

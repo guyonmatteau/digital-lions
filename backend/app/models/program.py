@@ -9,3 +9,4 @@ class Program(SQLModel, table=True):
 
     __table_args__ = {"extend_existing": True}
     id: int = Field(default=None, primary_key=True)
+    name: str = Field(description="Name of the program", default="Default")
