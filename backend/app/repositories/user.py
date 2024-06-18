@@ -6,7 +6,8 @@ from exceptions import (
     ItemNotFoundException,
     UserUnauthorizedException,
 )
-from models.user import User, UserCreate, UserLogin, UserOut, UserUpdate
+from models.out import UserOut
+from models.user import User, UserCreate, UserUpdate
 from repositories.base import BaseRepository
 
 logger = logging.getLogger()

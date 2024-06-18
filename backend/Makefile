@@ -14,11 +14,14 @@ run:
 app: shell
 	cd app; uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
-format:  shell
-	poetry run isort --recursive app
-	poetry run black app
+lint: 
+	poetry run ruff check app
+
+format: lint
+	poetry run ruff format app
 
 db.check:
 	cd app; poetry run alembic check
+
 
 

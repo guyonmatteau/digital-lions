@@ -1,84 +1,53 @@
-# to avoid circular imports we put all base models and Out models
-# in this separate module. Hence this module should NOT import
-# from other models. TO DO fix
-from typing import List, Optional
+"""Base properties for all database models."""
 
-from pydantic import field_validator
-from sqlmodel import Field, Relationship, SQLModel
+from datetime import datetime
+
+from pydantic import computed_field, field_validator
 
 
-class CommunityBase(SQLModel):
-    name: str
+class CreatedAt:
+    """Created at timestamp."""
+
+    created_at: datetime
+
+    @field_validator("created_at")
+    def created_at(self, cls) -> datetime:
+        return datetime.now()
 
 
-class ChildBase(SQLModel):
-    """Base schema for child model."""
+class IsActiveProperty:
+    """Is active property."""
 
-    first_name: str
-    last_name: str
-    age: Optional[int] = Field(
-        default=None, description="Age in years at the time of registration"
-    )
+    @field_validator("is_active")
+    def is_active(self) -> bool:
+        return True
 
 
-class AttendanceBase(SQLModel):
-    """Base class for attendance model."""
+class IsActiveColumn:
+    """Is active column."""
 
-    child_id: int = Field(foreign_key="child.id", exclude=True)
-    attendance: str
-
-    @field_validator("attendance")
-    def validate_attendance(cls, v):
-        if v not in ["present", "absent", "cancelled"]:
-            raise ValueError(
-                "Attendance must be either 'present' or 'absent' or 'cancelled'"
-            )
-        return v
+    is_active: bool
 
 
-class WorkshopBaseBase(SQLModel):
-    date: str = Field(description="The date of the workshop in the format YYYY-MM-DD")
-    cycle: Optional[int] = Field(
-        default=None, description="The cycle of the workshop", nullable=True
-    )
+class CreatedAtColumn:
+    """Created at timestamp."""
 
 
-class WorkshopBase(WorkshopBaseBase):
-    cancelled: bool = Field(
-        default=False, description="Whether the workshop was cancelled or not"
-    )
-    cancellation_reason: Optional[str] = Field(
-        default=None,
-        description="The reason for the cancellation, if any",
-        nullable=True,
-    )
+class UpdatedAtProperty:
+    """Updated at timestamp."""
+
+    @computed_field
+    def updated_at(self) -> datetime:
+        return datetime.now()
 
 
-class CommunityOut(CommunityBase):
-    id: int
+class UpdatedAtColumn:
+    """Updated at timestamp."""
+
+    updated_at: datetime
 
 
-class WorkshopOut(WorkshopBaseBase):
-    id: int
-    community: CommunityOut
+class MetadataColumns(CreatedAtColumn, UpdatedAtColumn, IsActiveColumn):
+    """Metadata columns for database models."""
 
-
-class WorkshopOutWithAttendance(WorkshopOut, WorkshopBaseBase):
-    attendance: List[AttendanceBase]
-
-
-class WorkshopOutForAttendance(WorkshopOut):
-    id: int
-
-
-class ChildOut(ChildBase):
-    id: int
-
-
-class ChildOutWithCommunity(ChildOut):
-    community: CommunityOut
-
-
-class AttendanceOutWithChild(AttendanceBase):
-    child: ChildOut
-    workshop: WorkshopOutForAttendance
+    pass

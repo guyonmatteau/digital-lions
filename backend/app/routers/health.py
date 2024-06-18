@@ -1,8 +1,7 @@
-from db.session import get_db
-from fastapi import APIRouter, Depends, Request, status
+from dependencies.database import DatabaseDependency
+from fastapi import APIRouter, status
 from fastapi.responses import JSONResponse
 from models.community import Community
-from sqlmodel import Session
 
 router = APIRouter(prefix="/health")
 
@@ -13,9 +12,10 @@ router = APIRouter(prefix="/health")
     summary="Health check",
     status_code=200,
 )
-async def get_health(request: Request, db: Session = Depends(get_db)):
+async def get_health(db: DatabaseDependency):
+    """Health endpoint for backend and databse."""
     try:
-        # to check database we will execute raw query
+        # TODO use db.ping() to check for connection
         db.query(Community).first()
         return JSONResponse(status_code=status.HTTP_200_OK, content={"status": "ok"})
     except Exception as exc:

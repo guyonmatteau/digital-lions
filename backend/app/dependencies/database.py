@@ -1,9 +1,9 @@
-import logging
-import os
 from functools import lru_cache
+from typing import Annotated
 
 from alembic import command
 from alembic.config import Config
+from fastapi import Depends
 from settings import get_settings
 from sqlmodel import Session, SQLModel, create_engine
 
@@ -26,10 +26,13 @@ def run_migrations():
     command.upgrade(alembic_cfg, "head")
 
 
-def get_db():
+def get_database():
     engine = get_engine()
     db = Session(engine)
     try:
         yield db
     finally:
         db.close()
+
+
+DatabaseDependency = Annotated[Session, Depends(get_database)]

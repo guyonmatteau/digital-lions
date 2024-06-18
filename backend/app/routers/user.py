@@ -7,7 +7,8 @@ from exceptions import (
     UserUnauthorizedException,
 )
 from fastapi import APIRouter, Depends, HTTPException, status
-from models.user import User, UserCreate, UserLogin, UserOut, UserUpdate
+from models.out import UserOut
+from models.user import UserCreate, UserLogin, UserUpdate
 from repositories.user import UserRepository
 
 logger = logging.getLogger()

@@ -25,3 +25,6 @@ db.wipe:
 	docker-compose down db
 	docker volume rm --force digital-lions_pgdata
 	docker-compose up db
+
+db.ip: 
+	docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' postgres

@@ -1,12 +1,13 @@
+from __future__ import annotations
+
 from typing import Optional
 
 from db.session import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.responses import JSONResponse
-from models.attendance import Attendance, AttendanceCreate
-from models.base import WorkshopOut
+from models.attendance import AttendanceCreate
 from models.child import Child
 from models.community import Community
+from models.out import WorkshopOut
 from models.workshop import Workshop, WorkshopCreate
 from routers.attendance import add_attendance
 from sqlmodel import Session
@@ -84,8 +85,8 @@ async def get_workshop(workshop_id: int, db: Session = Depends(get_db)):
     response_model=Optional[list[WorkshopOut]],
 )
 async def get_workshops(
-    community_id: Optional[int] = None,
-    date: Optional[str] = None,
+    community_id: int | None = None,
+    date: str | None = None,
     db: Session = Depends(get_db),
 ):
     """Get the Workshop of a child to a workshop."""
