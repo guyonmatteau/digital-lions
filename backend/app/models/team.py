@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from pydantic import ConfigDict
-from sqlalchemy.orm import Mapper
+from sqlalchemy.orm import Mapped
+from typing import List
 
 # from models.base import CreatedAt, UpdatedAt
 from sqlmodel import Field, Relationship, SQLModel
@@ -17,7 +18,7 @@ class TeamBase(SQLModel):
     )
 
 
-class TeamCreateChild(SQLModel):
+class TeamCreateChild:
     """Data model to create a child within a team."""
 
     first_name: str
@@ -54,16 +55,17 @@ class Team(TeamCreate, table=True):
     program_tracker: int = Field(
         description="The current workshop the team is at in the program", default=1
     )
-    # child: Child = Relationship(back_populates="team")
+    community_id: int = Field(foreign_key="communities.id")
+    community: Mapped["Community"] = Relationship(back_populates="teams")
     # children: list[Child] | None = Relationship(
     #     back_populates="team"
     # )  # children: list[Child] | None = Relationship(back_populates="team")
-    community: Community = Relationship(back_populates="teams")
+    # community: Community = Relationship(back_populates="teams")
     # program: Program = Relationship(back_populates="teams")
     # workshops: list[Workshop] | None = Relationship(back_populates="team")
 
 
-class TeamUpdate(SQLModel):
+class TeamUpdate:
     # , CreatedAt, UpdatedAt):
     """Data model for updating a team."""
 
