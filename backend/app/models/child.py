@@ -1,9 +1,12 @@
+from datetime import datetime
 from typing import TYPE_CHECKING
 
-from pydantic import field_validator
+from models.base import CreateProperties, MetadataColumns, UpdateProperties
+from pydantic import computed_field, field_validator
 from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
+    # from models.attendance import Attendance
     from models.team import Team
 
 
@@ -24,7 +27,6 @@ class ChildValidator:
 
 
 class ChildBase(SQLModel):
-    # , CreatedAtProperty, UpdatedAtProperty, IsActiveProperty, ChildValidator):
     """Base schema for child model."""
 
     first_name: str
@@ -35,28 +37,30 @@ class ChildBase(SQLModel):
     )
     dob: str | None = Field(default=None, description="Date of birth in the format YYYY-MM-DD")
     gender: str | None = Field(default=None, description="Gender of child")
+
+
+class ChildRelations:
+    """Relationships for child model with other tables."""
+
     team_id: int = Field(foreign_key="teams.id")
 
 
-class Child(ChildBase, table=True):
-    # MetadataColumns, table=True):
+class Child(ChildBase, ChildRelations, MetadataColumns, table=True):
     """Schema for child model in database."""
 
     __tablename__ = "children"
     id: int = Field(default=None, primary_key=True)
     team: "Team" = Relationship(back_populates="children")
-    # community: Community | None = Relationship(back_populates="children")
-    # attendances: list[Attendance] = Relationship(back_populates="child")
+    # attendances: list["Attendance"] = Relationship(back_populates="child")
 
 
-class ChildCreate(ChildBase):
+class ChildCreate(ChildBase, ChildValidator, ChildRelations, CreateProperties):
     """Schema for creating a child."""
 
     pass
 
 
-class ChildUpdate(SQLModel, ChildValidator):
-    # , UpdatedAt):
+class ChildUpdate(SQLModel, ChildValidator, UpdateProperties):
     """Schema for updating a child."""
 
     first_name: str | None = None
@@ -64,4 +68,8 @@ class ChildUpdate(SQLModel, ChildValidator):
     age: int | None = None
     dob: str | None = None
     gender: str | None = None
-    # is_active: bool | None = None
+    is_active: bool | None = None
+
+    @computed_field
+    def last_updated_at(self) -> datetime:
+        return datetime.now()

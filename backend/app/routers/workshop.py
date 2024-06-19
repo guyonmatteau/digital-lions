@@ -1,16 +1,14 @@
-from __future__ import annotations
-
 from typing import Optional
 
-from db.session import get_db
-from fastapi import APIRouter, Depends, HTTPException, status
-from models.attendance import AttendanceCreate
+from dependencies.database import DatabaseDependency
+from fastapi import APIRouter, HTTPException, status
+
+# from models.attendance import AttendanceCreate
 from models.child import Child
 from models.community import Community
 from models.out import WorkshopOut
 from models.workshop import Workshop, WorkshopCreate
-from routers.attendance import add_attendance
-from sqlmodel import Session
+# from routers.attendance import add_attendance
 
 router = APIRouter(prefix="/workshops")
 
@@ -21,7 +19,7 @@ router = APIRouter(prefix="/workshops")
     status_code=status.HTTP_201_CREATED,
     response_model=WorkshopOut,
 )
-async def add_workshop(workshop: WorkshopCreate, db: Session = Depends(get_db)):
+async def add_workshop(workshop: WorkshopCreate, db: DatabaseDependency):
     if (
         db.query(Workshop)
         .filter(
@@ -56,7 +54,6 @@ async def add_workshop(workshop: WorkshopCreate, db: Session = Depends(get_db)):
     # add attendances for created workshop
     if workshop.attendance is not None:
         for attendance in workshop.attendance:
-
             new_attendance = AttendanceCreate(
                 child_id=attendance.child_id,
                 workshop_id=new_workshop.id,
@@ -68,7 +65,7 @@ async def add_workshop(workshop: WorkshopCreate, db: Session = Depends(get_db)):
 
 
 @router.get("/{workshop_id}", summary="Get workshop by ID", response_model=WorkshopOut)
-async def get_workshop(workshop_id: int, db: Session = Depends(get_db)):
+async def get_workshop(workshop_id: int, db: DatabaseDependency):
     workshop = db.get(Workshop, workshop_id)
     if workshop is None:
         raise HTTPException(
@@ -85,9 +82,9 @@ async def get_workshop(workshop_id: int, db: Session = Depends(get_db)):
     response_model=Optional[list[WorkshopOut]],
 )
 async def get_workshops(
+    db: DatabaseDependency,
     community_id: int | None = None,
     date: str | None = None,
-    db: Session = Depends(get_db),
 ):
     """Get the Workshop of a child to a workshop."""
     filters = []

@@ -1,6 +1,5 @@
 from typing import Optional
 
-from db.session import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
 from models.attendance import Attendance, AttendanceCreate
 from models.child import Child
@@ -53,9 +52,7 @@ async def add_attendance(attendance: AttendanceCreate, db: Session = Depends(get
 async def get_attendance(attendance_id: int, db: Session = Depends(get_db)):
     attendance = db.get(Attendance, attendance_id)
     if attendance is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Attendance not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Attendance not found")
     return attendance
 
 

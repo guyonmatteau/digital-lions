@@ -21,7 +21,6 @@ class Community(CommunityBase, table=True):
     id: int = Field(default=None, primary_key=True)
 
     teams: list["Team"] = Relationship(back_populates="community")
-    # workshops: list[Workshop] | None = Relationship(back_populates="community")
 
 
 class CommunityCreate(CommunityBase):

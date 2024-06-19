@@ -1,8 +1,12 @@
-from __future__ import annotations
-
 # from models.attendance import AttendanceBase
 # from models.community import Community, CommunityOut
-from sqlmodel import Field, SQLModel
+from typing import TYPE_CHECKING
+
+from sqlmodel import Field, Relationship, SQLModel
+
+if TYPE_CHECKING:
+    # from models.attendance import Attendance
+    from models.team import Team
 
 
 class WorkshopBase(SQLModel):
@@ -16,9 +20,9 @@ class WorkshopBase(SQLModel):
 
 
 class WorkshopCreate(WorkshopBase):
-    community_id: int
     # TODO somewhow this gets not resolved
     # attendance: Optional[List[AttendanceBase]]
+    pass
 
 
 class Workshop(WorkshopBase, table=True):
@@ -26,9 +30,10 @@ class Workshop(WorkshopBase, table=True):
     on a given date in a given community. It can be cancelled, in that case
     there will exist a cancellation reason."""
 
-    __table_args__ = {"extend_existing": True}
-    id: int = Field(default=None, primary_key=True)
-    team_id: int = Field(foreign_key="team.id")
+    __tablename__ = "workshops"
 
-    # team: Team = Relationship(back_populates="workshops")
-    # attendances: list[Attendance] = Relationship(back_populates="workshop")
+    id: int = Field(default=None, primary_key=True)
+
+    team_id: int = Field(foreign_key="teams.id")
+    team: "Team" = Relationship(back_populates="workshops")
+    # attendances: list["Attendance"] = Relationship(back_populates="workshop")

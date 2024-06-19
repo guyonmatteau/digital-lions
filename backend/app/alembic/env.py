@@ -5,10 +5,12 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 from sqlmodel import SQLModel
 
+from app.models.attendance import Attendance
 from app.models.child import Child
 from app.models.community import Community
 from app.models.team import Team
 from app.models.user import User
+from app.models.workshop import Workshop
 from app.settings import get_settings
 
 # this is the Alembic Config object, which provides

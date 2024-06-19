@@ -1,11 +1,17 @@
-from __future__ import annotations
+from typing import TYPE_CHECKING
 
+from pydantic import Field, field_validator
+from sqlmodel import Relationship, SQLModel
+
+if TYPE_CHECKING:
+    from models.child import Child
+    from models.workshop import Workshop
 
 
 # class AttendanceBase(SQLModel):
 #     """Base class for attendance model."""
 #
-#     child_id: int = Field(foreign_key="child.id", exclude=True)
+#     child_id: int = Field(foreign_key="children.id", exclude=True)
 #     attendance: str
 #
 #     @field_validator("attendance")
@@ -18,14 +24,15 @@ from __future__ import annotations
 # class AttendanceCreate(AttendanceBase):
 #     """Data model for creating an attendance."""
 #
-#     workshop_id: int = Field(foreign_key="workshop.id")
+#     workshop_id: int = Field(foreign_key="workshops.id")
 #
+
+# class Attendance(SQLModel, table=True):
+#     """Data model for attendance of a child in a workshop."""
 #
-# class Attendance(AttendanceCreate, table=True):
-#     """Data model for attenadance of a child in a workshop."""
-#
-#     __table_args__ = {"extend_existing": True}
+#     __tablename__ = "attendances"
 #
 #     id: int = Field(default=None, primary_key=True)
-# child: Child = Relationship(back_populates="attendances")
-# workshop: Workshop = Relationship(back_populates="attendances")
+#
+#     child: "Child" = Relationship(back_populates="attendances")
+#     workshop: "Workshop" = Relationship(back_populates="attendances")

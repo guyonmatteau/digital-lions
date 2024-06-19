@@ -1,24 +1,28 @@
-"""Base properties for all database models."""
+"""Metadata properties for all database models."""
 
 from datetime import datetime
 
-from pydantic import computed_field, field_validator
+from pydantic import computed_field
 
 
-class CreatedAt:
+class CreatedAtProperty:
+    """Created at timestamp."""
+
+    @computed_field
+    def created_at(self) -> datetime:
+        return datetime.now()
+
+
+class CreatedAtColumn:
     """Created at timestamp."""
 
     created_at: datetime
 
-    @field_validator("created_at")
-    def created_at(self, cls) -> datetime:
-        return datetime.now()
-
 
 class IsActiveProperty:
-    """Is active property."""
+    """Is active property, defaults to True on creation of record."""
 
-    @field_validator("is_active")
+    @computed_field
     def is_active(self) -> bool:
         return True
 
@@ -29,25 +33,33 @@ class IsActiveColumn:
     is_active: bool
 
 
-class CreatedAtColumn:
-    """Created at timestamp."""
-
-
-class UpdatedAtProperty:
+class LastUpdatedAtProperty:
     """Updated at timestamp."""
 
     @computed_field
-    def updated_at(self) -> datetime:
+    def last_updated_at(self) -> datetime:
         return datetime.now()
 
 
-class UpdatedAtColumn:
+class LastUpdatedAtColumn:
     """Updated at timestamp."""
 
-    updated_at: datetime
+    last_updated_at: datetime
 
 
-class MetadataColumns(CreatedAtColumn, UpdatedAtColumn, IsActiveColumn):
+class CreateProperties(CreatedAtProperty, LastUpdatedAtProperty, IsActiveProperty):
+    """Properties for create objects."""
+
+    pass
+
+
+class UpdateProperties(LastUpdatedAtProperty):
+    """Metadata properties for updating models."""
+
+    pass
+
+
+class MetadataColumns(CreatedAtColumn, LastUpdatedAtColumn, IsActiveColumn):
     """Metadata columns for database models."""
 
     pass

@@ -6,8 +6,8 @@ from __future__ import annotations
 from models.child import ChildBase
 from models.community import CommunityBase
 from models.team import TeamBase
-
-# from models.workshop import WorkshopBase
+from models.user import UserBase
+from models.workshop import WorkshopBase
 
 
 # class AttendanceOutWithChild(AttendanceBase):
@@ -33,18 +33,18 @@ class TeamOut(TeamBase):
     children: list[ChildOut]
 
 
-# class UserOut(UserBase):
-#     id: int
-#
-#
-# class WorkshopOut(WorkshopBase):
-#     id: int
-#     community: CommunityOut
-#
-#
-# class WorkshopOutWithAttendance(WorkshopOut, WorkshopBase):
-#     attendance: List[AttendanceBase]
-#
-#
-# class WorkshopOutForAttendance(WorkshopOut):
-#     id: int
+class UserOut(UserBase):
+    id: int
+
+
+class WorkshopOut(WorkshopBase):
+    id: int
+    community: CommunityOut
+
+
+class WorkshopOutWithAttendance(WorkshopOut, WorkshopBase):
+    attendance: List[AttendanceBase]
+
+
+class WorkshopOutForAttendance(WorkshopOut):
+    id: int
