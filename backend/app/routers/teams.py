@@ -1,9 +1,7 @@
 import logging
 
 from dependencies.services import TeamServiceDependency
-from exceptions import (
-    ItemAlreadyExistsException,
-)
+from exceptions import ItemAlreadyExistsException
 from fastapi import APIRouter, HTTPException, status
 from models.out import TeamOut
 from models.team import TeamBase, TeamCreate
