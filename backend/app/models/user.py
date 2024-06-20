@@ -39,4 +39,6 @@ class User(UserBase, table=True):
     created_at: datetime = datetime.now()
     id: int | None = Field(default=None, primary_key=True)
     hashed_password: bytes = Field(description="Hashed password in bytes")
-    salt: bytes = Field(description="Random byte string with which the password is encrypted")
+    salt: bytes = Field(
+        description="Random byte string with which the password is encrypted"
+    )

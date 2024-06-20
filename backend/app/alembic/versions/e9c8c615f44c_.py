@@ -25,7 +25,10 @@ def upgrade() -> None:
     op.add_column(
         "children",
         sa.Column(
-            "last_updated_at", sa.DateTime(), nullable=False, server_default=str(datetime.now())
+            "last_updated_at",
+            sa.DateTime(),
+            nullable=False,
+            server_default=str(datetime.now()),
         ),
     )
     op.drop_column("children", "last_edited")

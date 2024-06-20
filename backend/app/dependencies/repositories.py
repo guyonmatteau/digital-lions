@@ -17,6 +17,8 @@ def get_child_repository(db: DatabaseDependency):
     return ChildRepository(db=db)
 
 
-CommunityRepositoryDependency = Annotated[CommunityRepository, Depends(get_community_repository)]
+CommunityRepositoryDependency = Annotated[
+    CommunityRepository, Depends(get_community_repository)
+]
 ChildRepositoryDependency = Annotated[ChildRepository, Depends(get_child_repository)]
 TeamRepositoryDependency = Annotated[TeamRepository, Depends(get_team_repository)]

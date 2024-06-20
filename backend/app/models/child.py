@@ -1,8 +1,7 @@
-from datetime import datetime
 from typing import TYPE_CHECKING
 
 from models.base import CreateProperties, MetadataColumns, UpdateProperties
-from pydantic import computed_field, field_validator
+from pydantic import field_validator
 from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
@@ -35,7 +34,9 @@ class ChildBase(SQLModel):
         default=None,
         description="Age in years at the time of registration",
     )
-    dob: str | None = Field(default=None, description="Date of birth in the format YYYY-MM-DD")
+    dob: str | None = Field(
+        default=None, description="Date of birth in the format YYYY-MM-DD"
+    )
     gender: str | None = Field(default=None, description="Gender of child")
 
 
@@ -69,7 +70,3 @@ class ChildUpdate(SQLModel, ChildValidator, UpdateProperties):
     dob: str | None = None
     gender: str | None = None
     is_active: bool | None = None
-
-    @computed_field
-    def last_updated_at(self) -> datetime:
-        return datetime.now()

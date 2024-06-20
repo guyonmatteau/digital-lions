@@ -25,7 +25,9 @@ class TeamCreateChild(SQLModel):
         default=None,
         description="Age in years at the time of registration",
     )
-    dob: str | None = Field(default=None, description="Date of birth in the format YYYY-MM-DD")
+    dob: str | None = Field(
+        default=None, description="Date of birth in the format YYYY-MM-DD"
+    )
     gender: str | None = Field(default=None, description="Gender of child")
 
 

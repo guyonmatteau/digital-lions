@@ -42,7 +42,9 @@ async def get_communities(repository: CommunityRepositoryDependency):
     status_code=status.HTTP_201_CREATED,
     response_model=CommunityOut,
 )
-async def add_community(community: CommunityCreate, repository: CommunityRepositoryDependency):
+async def add_community(
+    community: CommunityCreate, repository: CommunityRepositoryDependency
+):
     try:
         # TODO repositrory will be intermediated by service
         return repository.create(community)

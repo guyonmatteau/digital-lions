@@ -52,7 +52,9 @@ async def add_attendance(attendance: AttendanceCreate, db: Session = Depends(get
 async def get_attendance(attendance_id: int, db: Session = Depends(get_db)):
     attendance = db.get(Attendance, attendance_id)
     if attendance is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Attendance not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Attendance not found"
+        )
     return attendance
 
 

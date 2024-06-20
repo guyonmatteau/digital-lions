@@ -9,8 +9,8 @@ from routers.children import router as child_router
 from routers.communities import router as community_router
 from routers.health import router as health_router
 from routers.teams import router as teams_router
-from routers.workshop import router as workshop_router
 from routers.user import router as user_router
+from routers.workshop import router as workshop_router
 
 logging_conf = "logging.conf"
 logging.config.fileConfig(logging_conf, disable_existing_loggers=False)  # type: ignore

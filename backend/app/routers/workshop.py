@@ -8,6 +8,7 @@ from models.child import Child
 from models.community import Community
 from models.out import WorkshopOut
 from models.workshop import Workshop, WorkshopCreate
+
 # from routers.attendance import add_attendance
 
 router = APIRouter(prefix="/workshops")

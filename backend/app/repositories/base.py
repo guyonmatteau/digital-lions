@@ -6,8 +6,12 @@ from models import child, community, team
 from models.out import ChildOut, CommunityOut, TeamOut
 
 Model = TypeVar("Model", community.Community, child.Child, team.Team)
-ModelCreate = TypeVar("ModelCreate", community.CommunityCreate, child.ChildCreate, team.TeamCreate)
-ModelUpdate = TypeVar("ModelUpdate", community.CommunityUpdate, child.ChildUpdate, team.TeamUpdate)
+ModelCreate = TypeVar(
+    "ModelCreate", community.CommunityCreate, child.ChildCreate, team.TeamCreate
+)
+ModelUpdate = TypeVar(
+    "ModelUpdate", community.CommunityUpdate, child.ChildUpdate, team.TeamUpdate
+)
 ModelOut = TypeVar("ModelOut", CommunityOut, ChildOut, TeamOut)
 
 

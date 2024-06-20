@@ -9,7 +9,6 @@ from models.team import TeamBase
 from models.user import UserBase
 from models.workshop import WorkshopBase
 
-
 # class AttendanceOutWithChild(AttendanceBase):
 #     child: ChildOut
 #     workshop: WorkshopOutForAttendance

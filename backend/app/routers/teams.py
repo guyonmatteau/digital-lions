@@ -30,14 +30,20 @@ async def post_team(team_service: TeamServiceDependency, team: TeamCreate):
 
 
 @router.get(
-    "", response_model=list[TeamOut], status_code=status.HTTP_200_OK, summary="Get all teams"
+    "",
+    response_model=list[TeamOut],
+    status_code=status.HTTP_200_OK,
+    summary="Get all teams",
 )
 async def get_teams(team_service: TeamServiceDependency):
     return team_service.get_teams()
 
 
 @router.get(
-    "/{team_id}", response_model=TeamOut, status_code=status.HTTP_200_OK, summary="Get a teams"
+    "/{team_id}",
+    response_model=TeamOut,
+    status_code=status.HTTP_200_OK,
+    summary="Get a teams",
 )
 async def get_team(team_service: TeamServiceDependency, team_id: int):
     return team_service.get_team(team_id=team_id)

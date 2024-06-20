@@ -1,11 +1,7 @@
 from typing import TYPE_CHECKING
 
-from pydantic import Field, field_validator
-from sqlmodel import Relationship, SQLModel
-
 if TYPE_CHECKING:
-    from models.child import Child
-    from models.workshop import Workshop
+    pass
 
 
 # class AttendanceBase(SQLModel):
