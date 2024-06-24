@@ -19,7 +19,7 @@ router = APIRouter(prefix="/teams", tags=["teams"])
 )
 async def post_team(team_service: TeamServiceDependency, team: TeamCreate):
     try:
-        return team_service.create_team(team)
+        return team_service.create(team)
     except ItemAlreadyExistsException:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -34,7 +34,7 @@ async def post_team(team_service: TeamServiceDependency, team: TeamCreate):
     summary="Get all teams",
 )
 async def get_teams(team_service: TeamServiceDependency):
-    return team_service.get_teams()
+    return team_service.get_all()
 
 
 @router.get(
@@ -44,4 +44,4 @@ async def get_teams(team_service: TeamServiceDependency):
     summary="Get a teams",
 )
 async def get_team(team_service: TeamServiceDependency, team_id: int):
-    return team_service.get_team(team_id=team_id)
+    return team_service.get(team_id=team_id)

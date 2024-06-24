@@ -3,11 +3,12 @@ import logging
 from exceptions import CommunityNotFoundException
 from models.team import TeamCreate
 from repositories import ChildRepository, CommunityRepository, TeamRepository
+from services.base import BaseService
 
 logger = logging.getLogger(__name__)
 
 
-class TeamService:
+class TeamService(BaseService):
     """Team service layer to do anything related to teams."""
 
     def __init__(
@@ -16,19 +17,11 @@ class TeamService:
         child_repository: ChildRepository,
         community_repository: CommunityRepository,
     ):
-        self._team_repository = team_repository
+        self._repository = team_repository
         self._child_repository = child_repository
         self._community_repository = community_repository
 
-    def get_teams(self):
-        print("THIS")
-
-        return self._team_repository.read_all()
-
-    def get_team(self, team_id):
-        return self._team_repository.read(object_id=team_id)
-
-    def create_team(self, team: TeamCreate):
+    def create(self, team: TeamCreate):
         """Create a new team."""
         if not self._community_repository.read(object_id=team.community_id):
             raise CommunityNotFoundException()
@@ -36,16 +29,10 @@ class TeamService:
         # for child in team.children:
         #     self._child_repository.create(child)
 
-        # self._team_repository.create(team)
+        self._repository.create(team)
 
-        return self._team_repository.create(team)
+        return self._repository.create(team)
 
     def create_workshop_report(self):
         """Create a report of the workshops the team has done."""
         pass
-
-    def update_team(self, team_id, team):
-        return self._team_repository.update_team(team_id, team)
-
-    def delete_team(self, team_id):
-        return self._team_repository.delete_team(team_id)

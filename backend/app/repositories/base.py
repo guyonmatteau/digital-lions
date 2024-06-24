@@ -6,12 +6,8 @@ from models import child, community, team
 from models.out import ChildOut, CommunityOut, TeamOut
 
 Model = TypeVar("Model", community.Community, child.Child, team.Team)
-ModelCreate = TypeVar(
-    "ModelCreate", community.CommunityCreate, child.ChildCreate, team.TeamCreate
-)
-ModelUpdate = TypeVar(
-    "ModelUpdate", community.CommunityUpdate, child.ChildUpdate, team.TeamUpdate
-)
+ModelCreate = TypeVar("ModelCreate", community.CommunityCreate, child.ChildCreate, team.TeamCreate)
+ModelUpdate = TypeVar("ModelUpdate", community.CommunityUpdate, child.ChildUpdate, team.TeamUpdate)
 ModelOut = TypeVar("ModelOut", CommunityOut, ChildOut, TeamOut)
 
 
@@ -33,14 +29,14 @@ class BaseRepository(Generic[Model]):
         self._db.refresh(new_obj)
         return new_obj
 
-    def read(self, object_id: int) -> ModelOut:
+    def read(self, object_id: int) -> ModelOut | None:
         """Read an object from the table."""
         obj = self._db.get(self._model, object_id)
         if not obj:
             raise ItemNotFoundException()
         return obj
 
-    def read_all(self) -> list[ModelOut]:
+    def read_all(self) -> list[ModelOut] | None:
         """Read all objects from the table."""
         objects = self._db.query(self._model).all()
         return objects

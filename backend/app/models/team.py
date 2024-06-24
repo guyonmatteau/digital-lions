@@ -1,15 +1,16 @@
 # from models.base import CreatedAt, UpdatedAt
 from typing import TYPE_CHECKING
 
+from models.base import CreateProperties, MetadataColumns, UpdateProperties
 from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
     from models.child import Child
     from models.community import Community
+    from models.workshop import Workshop
 
 
 class TeamBase(SQLModel):
-    # , CreatedAt, UpdatedAt):
     """Base class for team model."""
 
     name: str = Field(description="Name of the team", default=None, nullable=True)
@@ -25,19 +26,17 @@ class TeamCreateChild(SQLModel):
         default=None,
         description="Age in years at the time of registration",
     )
-    dob: str | None = Field(
-        default=None, description="Date of birth in the format YYYY-MM-DD"
-    )
+    dob: str | None = Field(default=None, description="Date of birth in the format YYYY-MM-DD")
     gender: str | None = Field(default=None, description="Gender of child")
 
 
-class TeamCreate(TeamBase):
+class TeamCreate(TeamBase, CreateProperties):
     """Data model for creating a team."""
 
     children: list[TeamCreateChild] | None
 
 
-class Team(TeamBase, table=True):
+class Team(TeamBase, MetadataColumns, table=True):
     """Data model for teams. A team is a group of children that
     follow the Little Lions program: a set of workshops. The workshops
     that the team follows are linked to the team as well."""
@@ -51,12 +50,11 @@ class Team(TeamBase, table=True):
 
     community: "Community" = Relationship(back_populates="teams")
     children: list["Child"] | None = Relationship(back_populates="team")
+    workshops: list["Workshop"] | None = Relationship(back_populates="team")
     # program: Program = Relationship(back_populates="teams")
-    # workshops: list[Workshop] | None = Relationship(back_populates="team")
 
 
-class TeamUpdate:
-    # , CreatedAt, UpdatedAt):
+class TeamUpdate(UpdateProperties):
     """Data model for updating a team."""
 
     name: str | None = None

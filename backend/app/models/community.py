@@ -1,6 +1,6 @@
-from datetime import datetime
 from typing import TYPE_CHECKING
 
+from models.base import CreateProperties, MetadataColumns, UpdateProperties
 from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
@@ -9,12 +9,9 @@ if TYPE_CHECKING:
 
 class CommunityBase(SQLModel):
     name: str
-    is_active: bool = True
-    updated_at: datetime = datetime.now()
-    created_at: datetime = datetime.now()
 
 
-class Community(CommunityBase, table=True):
+class Community(CommunityBase, MetadataColumns, table=True):
     """Schema for community in database."""
 
     __tablename__ = "communities"
@@ -23,12 +20,11 @@ class Community(CommunityBase, table=True):
     teams: list["Team"] = Relationship(back_populates="community")
 
 
-class CommunityCreate(CommunityBase):
+class CommunityCreate(CommunityBase, CreateProperties):
     pass
 
 
-class CommunityUpdate(SQLModel):
+class CommunityUpdate(SQLModel, UpdateProperties):
     """Schema for updating a community."""
 
     name: str | None = None
-    is_active: bool | None = None
