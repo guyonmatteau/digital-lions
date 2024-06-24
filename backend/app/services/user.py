@@ -2,26 +2,21 @@ import logging
 
 import bcrypt
 from exceptions import ItemAlreadyExistsException, ItemNotFoundException, UserUnauthorizedException
-from models.user import User, UserCreate, UserOut
+from models.user import User, UserCreate, UserOut, UserUpdate
 from repositories import UserRepository
+from services.base import BaseService
 
 logger = logging.getLogger()
 
 
-class UserService:
+class UserService(BaseService):
     """User service layer to do anything related to users."""
 
     def __init__(
         self,
         user_repository: UserRepository,
     ):
-        self._user_repository = user_repository
-
-    def get_users(self):
-        return self._user_repository.read_all()
-
-    def get_user(self, user_id):
-        return self._user_repository.read(object_id=user_id)
+        self._repository = user_repository
 
     def create_user(self, user: UserCreate):
         """Create a new user."""
@@ -37,9 +32,6 @@ class UserService:
         """Create a report of the workshops the user has done."""
         pass
 
-    def update_user(self, user_id, user):
-        return self._user_repository.update_user(user_id, user)
-
     def delete_user(self, user_id):
         return self._user_repository.delete_user(user_id)
 
@@ -48,7 +40,7 @@ class UserService:
             raise ItemAlreadyExistsException()
 
         # this should be part of the service
-        hashed_password, salt = _hash_password(user.password)
+        hashed_password, salt = self._hash_password(user.password)
         extra_data = {"hashed_password": hashed_password, "salt": salt}
         db_user = User.model_validate(user, update=extra_data)
         self.db.add(db_user)
@@ -71,7 +63,7 @@ class UserService:
         db_user = self.db.query(User).filter(User.email_address == user.email_address).first()
         if not db_user:
             raise ItemNotFoundException()
-        hashed_password, _ = _hash_password(user.password, db_user.salt)
+        hashed_password, _ = self._hash_password(user.password, db_user.salt)
         if db_user.hashed_password != hashed_password:
             raise UserUnauthorizedException()
         return db_user

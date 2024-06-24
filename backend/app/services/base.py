@@ -2,16 +2,14 @@ import logging
 from typing import TypeVar
 
 from repositories.base import BaseRepository
+from sqlmodel import SQLModel
 
 logger = logging.getLogger(__name__)
 
-from models import child, community, team
-from models.out import ChildOut, CommunityOut, TeamOut
-
-Model = TypeVar("Model", community.Community, child.Child, team.Team)
-ModelCreate = TypeVar("ModelCreate", community.CommunityCreate, child.ChildCreate, team.TeamCreate)
-ModelUpdate = TypeVar("ModelUpdate", community.CommunityUpdate, child.ChildUpdate, team.TeamUpdate)
-ModelOut = TypeVar("ModelOut", CommunityOut, ChildOut, TeamOut)
+Model = TypeVar("Model", bound=SQLModel)
+ModelCreate = TypeVar("ModelCreate", bound=SQLModel)
+ModelUpdate = TypeVar("ModelUpdate", bound=SQLModel)
+ModelOut = TypeVar("ModelOut", bound=SQLModel)
 
 
 class BaseService:

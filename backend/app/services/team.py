@@ -29,8 +29,6 @@ class TeamService(BaseService):
         # for child in team.children:
         #     self._child_repository.create(child)
 
-        self._repository.create(team)
-
         return self._repository.create(team)
 
     def create_workshop_report(self):
