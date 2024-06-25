@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 class TeamBase(SQLModel):
     """Base class for team model."""
 
-    name: str = Field(description="Name of the team", default=None, nullable=True)
+    name: str = Field(description="Name of the team")
     community_id: int = Field(foreign_key="communities.id")
 
 

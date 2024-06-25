@@ -5,7 +5,7 @@ from pydantic import field_validator
 from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
-    # from models.attendance import Attendance
+    from models.attendance import Attendance
     from models.team import Team
 
 
@@ -50,7 +50,7 @@ class Child(ChildBase, ChildRelations, MetadataColumns, table=True):
     __tablename__ = "children"
     id: int = Field(default=None, primary_key=True)
     team: "Team" = Relationship(back_populates="children")
-    # attendances: list["Attendance"] = Relationship(back_populates="child")
+    attendances: list["Attendance"] = Relationship(back_populates="child")
 
 
 class ChildCreate(ChildBase, ChildValidator, ChildRelations, CreateProperties):

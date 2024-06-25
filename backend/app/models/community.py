@@ -11,6 +11,10 @@ class CommunityBase(SQLModel):
     name: str
 
 
+class CommunityCreate(CommunityBase, CreateProperties):
+    pass
+
+
 class Community(CommunityBase, MetadataColumns, table=True):
     """Schema for community in database."""
 
@@ -18,10 +22,6 @@ class Community(CommunityBase, MetadataColumns, table=True):
     id: int = Field(default=None, primary_key=True)
 
     teams: list["Team"] = Relationship(back_populates="community")
-
-
-class CommunityCreate(CommunityBase, CreateProperties):
-    pass
 
 
 class CommunityUpdate(SQLModel, UpdateProperties):

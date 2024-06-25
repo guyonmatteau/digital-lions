@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
-    # from models.attendance import Attendance
+    from models.attendance import Attendance
     from models.team import Team
 
 
@@ -36,4 +36,4 @@ class Workshop(WorkshopBase, table=True):
 
     team_id: int = Field(foreign_key="teams.id")
     team: "Team" = Relationship(back_populates="workshops")
-    # attendances: list["Attendance"] = Relationship(back_populates="workshop")
+    attendances: list["Attendance"] = Relationship(back_populates="workshop")
