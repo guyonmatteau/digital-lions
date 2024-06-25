@@ -1,6 +1,7 @@
 import logging
 
-from dependencies.repositories import CommunityRepositoryDependency
+from dependencies.services import CommunityServiceDependency
+from exceptions import CommunityAlreadyExistsException, CommunityNotFoundException
 from fastapi import APIRouter, HTTPException, status
 from models.community import Community, CommunityCreate
 from models.out import CommunityOut
@@ -16,8 +17,8 @@ router = APIRouter(prefix="/communities")
     status_code=status.HTTP_200_OK,
     summary="Get a community",
 )
-async def get_community(community_id: int, repository: CommunityRepositoryDependency):
-    community = repository.read(community_id)
+async def get_community(community_id: int, service: CommunityServiceDependency):
+    community = service.get(community_id)
     if not community:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -32,8 +33,8 @@ async def get_community(community_id: int, repository: CommunityRepositoryDepend
     status_code=status.HTTP_200_OK,
     response_model=list[CommunityOut] | None,
 )
-async def get_communities(repository: CommunityRepositoryDependency):
-    return repository.read_all()
+async def get_communities(service: CommunityServiceDependency):
+    return service.get_all()
 
 
 @router.post(
@@ -42,14 +43,10 @@ async def get_communities(repository: CommunityRepositoryDependency):
     status_code=status.HTTP_201_CREATED,
     response_model=CommunityOut,
 )
-async def add_community(
-    community: CommunityCreate, repository: CommunityRepositoryDependency
-):
+async def add_community(community: CommunityCreate, service: CommunityServiceDependency):
     try:
-        # TODO repositrory will be intermediated by service
-        return repository.create(community)
-    except Exception as e:
-        logger.error(e)
+        return service.create(community)
+    except CommunityAlreadyExistsException:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=f"There already exists a community with name {community.name}",
@@ -63,10 +60,12 @@ async def add_community(
     status_code=status.HTTP_200_OK,
 )
 async def update_community(
-    community_id: int, community: Community, repository: CommunityRepositoryDependency
+    community_id: int, community: Community, service: CommunityServiceDependency
 ):
     try:
-        return repository.update(community_id, community)
-    except Exception as e:
-        logger.error(e)
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Bad request")
+        return service.update(community_id, community)
+    except CommunityNotFoundException:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Community with ID {community_id} not found.",
+        )

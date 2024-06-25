@@ -50,7 +50,7 @@ class Child(ChildBase, ChildRelations, MetadataColumns, table=True):
     __tablename__ = "children"
     id: int = Field(default=None, primary_key=True)
     team: "Team" = Relationship(back_populates="children")
-    attendances: list["Attendance"] = Relationship(back_populates="child")
+    child_attendances: list["Attendance"] = Relationship(back_populates="attendance_child")
 
 
 class ChildCreate(ChildBase, ChildValidator, ChildRelations, CreateProperties):

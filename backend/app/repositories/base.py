@@ -41,9 +41,13 @@ class BaseRepository(Generic[Model]):
         objects = self._db.query(self._model).all()
         return objects
 
+    def filter(self, attr: str, value: str) -> list[ModelOut] | None:
+        """Filter objects by an attribute."""
+        objects = self._db.query(self._model).filter(getattr(self._model, attr) == value).all()
+        return objects
+
     def update(self, object_id: int, obj: ModelUpdate) -> ModelOut:
         """Update an object in the table."""
-
         db_object = self._db.get(self._model, object_id)
         if not db_object:
             raise ItemNotFoundException()

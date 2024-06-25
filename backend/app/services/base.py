@@ -29,6 +29,7 @@ class BaseService:
 
     def create(self, obj: ModelCreate):
         """Create a new object on the repository."""
+
         return self._repository.create(obj)
 
     def update(self, object_id: int, obj):

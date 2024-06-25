@@ -1,7 +1,7 @@
-from sqlmodel import Field, Relationship, SQLModel
-from pydantic import field_validator
-
 from typing import TYPE_CHECKING
+
+from pydantic import field_validator
+from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
     from models.child import Child
@@ -37,5 +37,5 @@ class Attendance(AttendanceBase, table=True):
     child_id: int = Field(foreign_key="children.id")
     workshop_id: int = Field(foreign_key="workshops.id")
 
-    child: "Child" = Relationship(back_populates="attendances")
+    attendance_child: "Child" = Relationship(back_populates="child_attendances")
     workshop: "Workshop" = Relationship(back_populates="attendances")

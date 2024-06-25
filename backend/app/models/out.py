@@ -2,17 +2,17 @@
 
 from __future__ import annotations
 
-# from models.attendance import AttendanceBase
+from models.attendance import AttendanceBase
 from models.child import ChildBase
 from models.community import CommunityBase
 from models.team import TeamBase
 from models.user import UserBase
 from models.workshop import WorkshopBase
 
-# class AttendanceOutWithChild(AttendanceBase):
-#     child: ChildOut
-#     workshop: WorkshopOutForAttendance
-#
+
+class AttendanceOutWithChild(AttendanceBase):
+    child: ChildOut
+    workshop: WorkshopOutForAttendance
 
 
 class ChildOut(ChildBase):

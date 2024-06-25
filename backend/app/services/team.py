@@ -26,9 +26,6 @@ class TeamService(BaseService):
         if not self._community_repository.read(object_id=team.community_id):
             raise CommunityNotFoundException()
 
-        # for child in team.children:
-        #     self._child_repository.create(child)
-
         return self._repository.create(team)
 
     def create_workshop_report(self):

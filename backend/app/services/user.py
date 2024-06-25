@@ -20,12 +20,6 @@ class UserService(BaseService):
 
     def create_user(self, user: UserCreate):
         """Create a new user."""
-
-        # for child in user.children:
-        #     self._child_repository.create(child)
-
-        # self._user_repository.create(user)
-
         return self._user_repository.create(user)
 
     def create_workshop_report(self):

@@ -1,11 +1,10 @@
-from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from dependencies.database import DatabaseDependency
+from fastapi import APIRouter, HTTPException, status
 from models.attendance import Attendance, AttendanceCreate
 from models.child import Child
 from models.out import AttendanceOutWithChild
 from models.workshop import Workshop
-from sqlmodel import Session
 
 router = APIRouter(prefix="/attendance")
 
@@ -16,7 +15,7 @@ router = APIRouter(prefix="/attendance")
     status_code=status.HTTP_201_CREATED,
     response_model=Attendance,
 )
-async def add_attendance(attendance: AttendanceCreate, db: Session = Depends(get_db)):
+async def add_attendance(attendance: AttendanceCreate, db: DatabaseDependency):
     # validate that the workshop exist
     workshop = db.get(Workshop, attendance.workshop_id)
     if workshop is None:
@@ -49,12 +48,10 @@ async def add_attendance(attendance: AttendanceCreate, db: Session = Depends(get
     response_model=list[AttendanceOutWithChild],
     summary="Get attendance of child to a workshop.",
 )
-async def get_attendance(attendance_id: int, db: Session = Depends(get_db)):
+async def get_attendance(attendance_id: int, db: DatabaseDependency):
     attendance = db.get(Attendance, attendance_id)
     if attendance is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Attendance not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Attendance not found")
     return attendance
 
 
@@ -62,12 +59,12 @@ async def get_attendance(attendance_id: int, db: Session = Depends(get_db)):
     "",
     summary="Get attendances of children to workshops",
     status_code=status.HTTP_200_OK,
-    response_model=Optional[list[AttendanceOutWithChild]],
+    response_model=list[AttendanceOutWithChild] | None,
 )
 async def get_attendances(
+    db: DatabaseDependency,
     child_id: int | None = None,
     community_id: int | None = None,
-    db: Session = Depends(get_db),
 ):
     """Get the attendance of a child to a workshop."""
     filters = []
