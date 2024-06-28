@@ -1,9 +1,11 @@
 from typing import Annotated
 
 from dependencies.repositories import (
+    AttendanceRepositoryDependency,
     ChildRepositoryDependency,
     CommunityRepositoryDependency,
     TeamRepositoryDependency,
+    WorkshopRepositoryDependency,
 )
 from fastapi import Depends
 from services.child import ChildService
@@ -15,11 +17,15 @@ def get_team_service(
     team_repository: TeamRepositoryDependency,
     child_repository: ChildRepositoryDependency,
     community_repository: CommunityRepositoryDependency,
+    workshop_repository: WorkshopRepositoryDependency,
+    attendance_repository: AttendanceRepositoryDependency,
 ):
     return TeamService(
         team_repository=team_repository,
         child_repository=child_repository,
         community_repository=community_repository,
+        workshop_repository=workshop_repository,
+        attendance_repository=attendance_repository,
     )
 
 

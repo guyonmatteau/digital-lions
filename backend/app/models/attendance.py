@@ -16,7 +16,8 @@ class AttendanceBase(SQLModel):
     @field_validator("attendance")
     def validate_attendance(cls, v):
         if v not in ["present", "absent", "cancelled"]:
-            raise ValueError("Attendance must be either 'present' or 'absent' or 'cancelled'")
+            raise ValueError(
+                "Attendance must be either 'present' or 'absent' or 'cancelled'")
         return v
 
 
@@ -38,4 +39,4 @@ class Attendance(AttendanceBase, table=True):
     workshop_id: int = Field(foreign_key="workshops.id")
 
     child: "Child" = Relationship(back_populates="attendances")
-    workshop: "Workshop" = Relationship(back_populates="attendances")
+    workshop: "Workshop" = Relationship(back_populates="attendance")

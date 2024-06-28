@@ -24,5 +24,6 @@ class ChildService(BaseService):
         try:
             self._team_repository.read(object_id=child.team_id)
         except exceptions.ItemNotFoundException:
+            logger.error(f"Team with ID {child.team_id} not found")
             raise exceptions.TeamNotFoundException()
         return self._repository.create(child)

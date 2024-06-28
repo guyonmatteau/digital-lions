@@ -5,6 +5,7 @@ from dependencies.services import TeamServiceDependency
 from fastapi import APIRouter, HTTPException, status
 from models.out import TeamOut
 from models.team import TeamBase, TeamCreate
+from models.workshop import WorkshopCreate
 
 logger = logging.getLogger()
 
@@ -50,3 +51,20 @@ async def get_teams(team_service: TeamServiceDependency):
 )
 async def get_team(team_service: TeamServiceDependency, team_id: int):
     return team_service.get(object_id=team_id)
+
+
+@router.post(
+    "/{team_id}/workshop",
+    status_code=status.HTTP_201_CREATED,
+    summary="Add a workshop to a team",
+)
+async def create_workshop(
+    team_service: TeamServiceDependency, team_id: int, workshop: WorkshopCreate
+):
+    try:
+        return team_service.create_workshop(team_id, workshop)
+    except exceptions.ItemNotFoundException:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Team with ID {team_id} not found",
+        )
