@@ -49,8 +49,7 @@ class TeamService(BaseService):
         for child in children:
             child.team_id = new_team.id
             self._child_repository.create(child)
-            logger.info(f"Child with id {
-                        child.id} added to team {new_team.id}.")
+            logger.info("Child with id {} added to team {}.", child.id, new_team.id)
         return new_team
 
     def create_workshop(self, team_id: int, workshop: WorkshopCreate):

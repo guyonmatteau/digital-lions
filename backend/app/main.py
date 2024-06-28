@@ -22,7 +22,7 @@ app = FastAPI(title="Digital Lion API", version="0.1.0", root_path="/api/v1")
 
 ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS").split(",")
 methods = ["GET", "POST", "PUT", "DELETE"]
-logger.info(f"CORSMiddleware allowed rigins: {ALLOWED_ORIGINS}")
+logger.info(f"CORSMiddleware allowed origins: {ALLOWED_ORIGINS}")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,

@@ -50,8 +50,7 @@ async def add_community(community: CommunityCreate, service: CommunityServiceDep
     except CommunityAlreadyExistsException:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail=f"There already exists a community with name {
-                community.name}",
+            detail=f"Community with name {community.name} already exists.",
         )
 
 
