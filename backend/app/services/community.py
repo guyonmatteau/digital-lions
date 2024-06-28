@@ -1,10 +1,9 @@
 import logging
 
+import exceptions
 from models.community import CommunityCreate
 from repositories import CommunityRepository
 from services.base import BaseService
-
-from app.exceptions import CommunityAlreadyExistsException
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +20,7 @@ class CommunityService(BaseService):
     def create(self, obj: CommunityCreate):
         """Create a new object on the repository."""
         if self._repository.filter(attr="name", value=obj.name):
-            raise CommunityAlreadyExistsException(
+            raise exceptions.CommunityAlreadyExistsException(
                 f"Community with name {obj.name} already exists."
             )
         return self._repository.create(obj)
