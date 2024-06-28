@@ -3,12 +3,16 @@
 from __future__ import annotations
 
 from models.attendance import AttendanceBase
-from models.base import MetadataColumns
 from models.child import ChildBase
 from models.community import CommunityBase
 from models.team import TeamBase
 from models.user import UserBase
 from models.workshop import WorkshopBase
+from pydantic import BaseModel
+
+
+class RecordCreated(BaseModel):
+    id: int
 
 
 class AttendanceOutWithChild(AttendanceBase):
@@ -24,13 +28,18 @@ class ChildOutWithCommunity(ChildOut):
     community: CommunityOut
 
 
-class CommunityOut(CommunityBase, MetadataColumns):
+class ChildOutDeep(ChildOut):
+    team: TeamOut
+
+
+class CommunityOut(CommunityBase):
     id: int
 
 
 class TeamOut(TeamBase):
     id: int
     children: list[ChildOut]
+    community: CommunityOut
 
 
 class UserOut(UserBase):

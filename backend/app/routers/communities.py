@@ -44,12 +44,14 @@ async def get_communities(service: CommunityServiceDependency):
     response_model=CommunityOut,
 )
 async def add_community(community: CommunityCreate, service: CommunityServiceDependency):
+    """Add a community."""
     try:
         return service.create(community)
     except CommunityAlreadyExistsException:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail=f"There already exists a community with name {community.name}",
+            detail=f"There already exists a community with name {
+                community.name}",
         )
 
 
@@ -62,6 +64,7 @@ async def add_community(community: CommunityCreate, service: CommunityServiceDep
 async def update_community(
     community_id: int, community: CommunityUpdate, service: CommunityServiceDependency
 ):
+    """Update a community."""
     try:
         return service.update(community_id, community)
     except CommunityNotFoundException:

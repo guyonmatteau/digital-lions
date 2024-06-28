@@ -6,6 +6,7 @@ from dependencies.repositories import (
     TeamRepositoryDependency,
 )
 from fastapi import Depends
+from services.child import ChildService
 from services.community import CommunityService
 from services.team import TeamService
 
@@ -26,5 +27,13 @@ def get_community_service(community_repository: CommunityRepositoryDependency):
     return CommunityService(community_repository=community_repository)
 
 
+def get_child_service(
+    child_repository: ChildRepositoryDependency, team_repository: TeamRepositoryDependency
+):
+    return ChildService(child_repository=child_repository, team_repository=team_repository)
+
+
 TeamServiceDependency = Annotated[TeamService, Depends(get_team_service)]
-CommunityServiceDependency = Annotated[CommunityService, Depends(get_community_service)]
+ChildServiceDependency = Annotated[ChildService, Depends(get_child_service)]
+CommunityServiceDependency = Annotated[CommunityService, Depends(
+    get_community_service)]

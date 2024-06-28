@@ -1,7 +1,7 @@
 import logging
 
+import exceptions
 from dependencies.services import TeamServiceDependency
-from exceptions import ItemAlreadyExistsException
 from fastapi import APIRouter, HTTPException, status
 from models.out import TeamOut
 from models.team import TeamBase, TeamCreate
@@ -20,7 +20,12 @@ router = APIRouter(prefix="/teams", tags=["teams"])
 async def post_team(team_service: TeamServiceDependency, team: TeamCreate):
     try:
         return team_service.create(team)
-    except ItemAlreadyExistsException:
+    except exceptions.CommunityNotFoundException:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Community with ID {team.community_id} not found",
+        )
+    except exceptions.ItemAlreadyExistsException:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=f"Team with name {team.name} already exists",
@@ -44,4 +49,4 @@ async def get_teams(team_service: TeamServiceDependency):
     summary="Get a teams",
 )
 async def get_team(team_service: TeamServiceDependency, team_id: int):
-    return team_service.get(team_id=team_id)
+    return team_service.get(object_id=team_id)

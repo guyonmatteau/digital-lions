@@ -1,6 +1,6 @@
 import logging
 
-from exceptions import CommunityNotFoundException
+import exceptions
 from models.team import TeamCreate
 from repositories import ChildRepository, CommunityRepository, TeamRepository
 from services.base import BaseService
@@ -23,8 +23,10 @@ class TeamService(BaseService):
 
     def create(self, team: TeamCreate):
         """Create a new team."""
-        if not self._community_repository.read(object_id=team.community_id):
-            raise CommunityNotFoundException()
+        try:
+            self._community_repository.read(object_id=team.community_id)
+        except exceptions.ItemNotFoundException:
+            raise exceptions.CommunityNotFoundException()
 
         # first create the team, then add children to it
         children = team.children
