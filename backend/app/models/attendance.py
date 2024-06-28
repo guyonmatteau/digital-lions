@@ -37,5 +37,5 @@ class Attendance(AttendanceBase, table=True):
     child_id: int = Field(foreign_key="children.id")
     workshop_id: int = Field(foreign_key="workshops.id")
 
-    attendance_child: "Child" = Relationship(back_populates="child_attendances")
+    child: "Child" = Relationship(back_populates="attendances")
     workshop: "Workshop" = Relationship(back_populates="attendances")

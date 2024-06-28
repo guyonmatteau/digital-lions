@@ -27,8 +27,15 @@ class IsActiveProperty:
         return True
 
 
+class IsActiveUpdateProperty:
+    """Is active property, defaults to True on creation of record,
+    but can be updated to false at a later stage."""
+
+    is_active: bool | None = None
+
+
 class IsActiveColumn:
-    """Is active column."""
+    """Is active column in databases table."""
 
     is_active: bool
 
@@ -53,7 +60,7 @@ class CreateProperties(CreatedAtProperty, LastUpdatedAtProperty, IsActivePropert
     pass
 
 
-class UpdateProperties(LastUpdatedAtProperty):
+class UpdateProperties(LastUpdatedAtProperty, IsActiveUpdateProperty):
     """Metadata properties for updating models."""
 
     pass

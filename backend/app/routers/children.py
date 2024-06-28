@@ -26,7 +26,6 @@ async def get_child(child_id: int, child_repository: ChildRepositoryDependency):
 )
 async def get_children(
     child_repository: ChildRepositoryDependency,
-    community_id: str | None = None,
 ):
     return child_repository.read_all()
 

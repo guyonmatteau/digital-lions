@@ -1,7 +1,7 @@
-# from models.base import CreatedAt, UpdatedAt
 from typing import TYPE_CHECKING
 
 from models.base import CreateProperties, MetadataColumns, UpdateProperties
+from pydantic import BaseModel
 from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
@@ -14,10 +14,9 @@ class TeamBase(SQLModel):
     """Base class for team model."""
 
     name: str = Field(description="Name of the team")
-    community_id: int = Field(foreign_key="communities.id")
 
 
-class TeamCreateChild(SQLModel):
+class TeamCreateChild(BaseModel, CreateProperties):
     """Data model to create a child within a team."""
 
     first_name: str
@@ -28,12 +27,17 @@ class TeamCreateChild(SQLModel):
     )
     dob: str | None = Field(default=None, description="Date of birth in the format YYYY-MM-DD")
     gender: str | None = Field(default=None, description="Gender of child")
+    team_id: int | None = Field(description="ID of the team the child belongs to", default=None)
 
 
 class TeamCreate(TeamBase, CreateProperties):
     """Data model for creating a team."""
 
+    class Config:
+        arbitrary_types_allowed = True
+
     children: list[TeamCreateChild] | None
+    community_id: int = Field(foreign_key="communities.id")
 
 
 class Team(TeamBase, MetadataColumns, table=True):
@@ -48,10 +52,10 @@ class Team(TeamBase, MetadataColumns, table=True):
         description="The current workshop the team is at in the program", default=1
     )
 
+    community_id: int = Field(foreign_key="communities.id")
     community: "Community" = Relationship(back_populates="teams")
     children: list["Child"] | None = Relationship(back_populates="team")
     workshops: list["Workshop"] | None = Relationship(back_populates="team")
-    # program: Program = Relationship(back_populates="teams")
 
 
 class TeamUpdate(UpdateProperties):

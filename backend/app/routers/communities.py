@@ -3,7 +3,7 @@ import logging
 from dependencies.services import CommunityServiceDependency
 from exceptions import CommunityAlreadyExistsException, CommunityNotFoundException
 from fastapi import APIRouter, HTTPException, status
-from models.community import Community, CommunityCreate
+from models.community import CommunityCreate, CommunityUpdate
 from models.out import CommunityOut
 
 logger = logging.getLogger(__name__)
@@ -18,13 +18,13 @@ router = APIRouter(prefix="/communities")
     summary="Get a community",
 )
 async def get_community(community_id: int, service: CommunityServiceDependency):
-    community = service.get(community_id)
-    if not community:
+    try:
+        return service.get(community_id)
+    except CommunityNotFoundException:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Community with ID {community_id} not found",
         )
-    return community
 
 
 @router.get(
@@ -56,11 +56,11 @@ async def add_community(community: CommunityCreate, service: CommunityServiceDep
 @router.patch(
     "/{community_id}",
     summary="Update a community",
-    response_model=Community,
+    response_model=CommunityOut,
     status_code=status.HTTP_200_OK,
 )
 async def update_community(
-    community_id: int, community: Community, service: CommunityServiceDependency
+    community_id: int, community: CommunityUpdate, service: CommunityServiceDependency
 ):
     try:
         return service.update(community_id, community)

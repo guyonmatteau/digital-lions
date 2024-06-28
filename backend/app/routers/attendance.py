@@ -1,3 +1,4 @@
+from typing import Optional
 
 from dependencies.database import DatabaseDependency
 from fastapi import APIRouter, HTTPException, status

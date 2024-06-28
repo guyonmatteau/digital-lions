@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from models.attendance import AttendanceBase
+from models.base import MetadataColumns
 from models.child import ChildBase
 from models.community import CommunityBase
 from models.team import TeamBase
@@ -23,7 +24,7 @@ class ChildOutWithCommunity(ChildOut):
     community: CommunityOut
 
 
-class CommunityOut(CommunityBase):
+class CommunityOut(CommunityBase, MetadataColumns):
     id: int
 
 

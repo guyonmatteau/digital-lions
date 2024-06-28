@@ -34,7 +34,8 @@ class ChildBase(SQLModel):
         default=None,
         description="Age in years at the time of registration",
     )
-    dob: str | None = Field(default=None, description="Date of birth in the format YYYY-MM-DD")
+    dob: str | None = Field(
+        default=None, description="Date of birth in the format YYYY-MM-DD")
     gender: str | None = Field(default=None, description="Gender of child")
 
 
@@ -50,7 +51,7 @@ class Child(ChildBase, ChildRelations, MetadataColumns, table=True):
     __tablename__ = "children"
     id: int = Field(default=None, primary_key=True)
     team: "Team" = Relationship(back_populates="children")
-    child_attendances: list["Attendance"] = Relationship(back_populates="attendance_child")
+    attendances: list["Attendance"] = Relationship(back_populates="child")
 
 
 class ChildCreate(ChildBase, ChildValidator, ChildRelations, CreateProperties):
