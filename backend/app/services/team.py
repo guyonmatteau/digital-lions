@@ -68,3 +68,11 @@ class TeamService(BaseService):
             child_attendance.workshop_id = workshop_record.id
             self._attendance_repository.create(child_attendance)
         return workshop_record
+
+    def get_workshops(self, team_id: int):
+        """Get all workshops for a team."""
+        try:
+            self._repository.read(object_id=team_id)
+        except exceptions.TeamNotFoundException:
+            raise exceptions.TeamNotFoundException()
+        return self._workshop_repository.filter(attr="team_id", value=team_id)

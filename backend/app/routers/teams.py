@@ -54,7 +54,7 @@ async def get_team(team_service: TeamServiceDependency, team_id: int):
 
 
 @router.post(
-    "/{team_id}/workshop",
+    "/{team_id}/workshops",
     status_code=status.HTTP_201_CREATED,
     summary="Add a workshop to a team",
 )

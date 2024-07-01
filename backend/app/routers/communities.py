@@ -1,7 +1,7 @@
 import logging
 
+import exceptions
 from dependencies.services import CommunityServiceDependency
-from exceptions import CommunityAlreadyExistsException, CommunityNotFoundException
 from fastapi import APIRouter, HTTPException, status
 from models.community import CommunityCreate, CommunityUpdate
 from models.out import CommunityOut
@@ -20,7 +20,7 @@ router = APIRouter(prefix="/communities")
 async def get_community(community_id: int, service: CommunityServiceDependency):
     try:
         return service.get(community_id)
-    except CommunityNotFoundException:
+    except exceptions.CommunityNotFoundException:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Community with ID {community_id} not found",
@@ -47,7 +47,7 @@ async def add_community(community: CommunityCreate, service: CommunityServiceDep
     """Add a community."""
     try:
         return service.create(community)
-    except CommunityAlreadyExistsException:
+    except exceptions.CommunityAlreadyExistsException:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=f"Community with name {community.name} already exists.",
