@@ -37,6 +37,7 @@ build-backend = "poetry.core.masonry.api"
 pythonpath = ["app"]
 
 [tool.ruff]
+extend-exclude = ["app/alembic/*"]
 fix = true
 show-fixes = true
 line-length = 99

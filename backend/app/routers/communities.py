@@ -15,9 +15,10 @@ router = APIRouter(prefix="/communities")
     "/{community_id}",
     response_model=CommunityOut,
     status_code=status.HTTP_200_OK,
-    summary="Get a community",
+    summary="Get community by ID",
 )
 async def get_community(community_id: int, service: CommunityServiceDependency):
+    """Get a community by ID."""
     try:
         return service.get(community_id)
     except exceptions.CommunityNotFoundException:
@@ -66,7 +67,7 @@ async def update_community(
     """Update a community."""
     try:
         return service.update(community_id, community)
-    except CommunityNotFoundException:
+    except exceptions.CommunityNotFoundException:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Community with ID {community_id} not found.",

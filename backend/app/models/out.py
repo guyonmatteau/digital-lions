@@ -48,7 +48,7 @@ class UserOut(UserBase):
 
 class WorkshopOut(WorkshopBase):
     id: int
-    community: CommunityOut
+    team_id: int
 
 
 class WorkshopOutWithAttendance(WorkshopOut, WorkshopBase):

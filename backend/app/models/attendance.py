@@ -16,8 +16,7 @@ class AttendanceBase(SQLModel):
     @field_validator("attendance")
     def validate_attendance(cls, v):
         if v not in ["present", "absent", "cancelled"]:
-            raise ValueError(
-                "Attendance must be either 'present' or 'absent' or 'cancelled'")
+            raise ValueError("Attendance must be either 'present' or 'absent' or 'cancelled'")
         return v
 
 

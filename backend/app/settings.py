@@ -7,7 +7,6 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-
     scheme: str = "postgresql"
     database: str = "digitallions"
 
