@@ -52,7 +52,7 @@ class WorkshopOut(WorkshopBase):
 
 
 class WorkshopOutWithAttendance(WorkshopOut, WorkshopBase):
-    attendance: List[AttendanceBase]
+    attendance: list[AttendanceBase]
 
 
 class WorkshopOutForAttendance(WorkshopOut):

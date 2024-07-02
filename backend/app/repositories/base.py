@@ -61,5 +61,5 @@ class BaseRepository(Generic[Model]):
 
     def query(self, query: str) -> list[ModelOut]:
         """Execute a custom query."""
-        objects = self._db.execute(query)
+        objects = self._db.exec(query)
         return objects

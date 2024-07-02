@@ -32,8 +32,7 @@ services:
       ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
     ports:
       - 8000:8000
-    networks:
-      - postgres
+      
   frontend:
     container_name: frontend
     image: "digitallionsfrontend:latest"

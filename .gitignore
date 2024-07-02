@@ -6,6 +6,7 @@ __pycache__
 .ruff_cache
 .mypy_cache
 *.env
+!.env.dev
 .venv
 venv/
 dist

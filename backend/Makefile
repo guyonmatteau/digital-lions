@@ -1,6 +1,6 @@
 include ../.env
 export
-.PHONY: app
+.PHONY: shell build run app tests lint format 
 
 shell: 
 	poetry shell
@@ -13,6 +13,9 @@ run:
 
 app: shell
 	cd app; uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+tests:
+	poetry run python -m pytest tests --disable-warnings
 
 lint: 
 	poetry run ruff check app
