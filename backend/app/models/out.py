@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 from models.attendance import AttendanceBase
-from models.child import ChildBase
+from models.base import MetadataColumns
+from models.child import ChildBase, ChildPersonalInfo
 from models.community import CommunityBase
 from models.team import TeamBase
 from models.user import UserBase
@@ -15,31 +16,47 @@ class RecordCreated(BaseModel):
     id: int
 
 
+# each model has two output types to be returned by the API:
+# Basic to be used as object in a list, only containing basic info
+# full to be used as objectOut on GET by ID
+
+
+class ChildOut(ChildBase, ChildPersonalInfo, MetadataColumns):
+    """Response model containing all info on a child,
+    including relations like team community, and metadata."""
+
+    id: int
+
+
+class ChildOutBasic(ChildBase):
+    """Response model containing only basic properties, to be used when
+    returning a list of objects."""
+
+    id: int
+
+
+class TeamOut(TeamBase, MetadataColumns):
+    """Response model containing all info on a team, including
+    children in it, workshops, etc."""
+
+    id: int
+    children: list[ChildOutBasic]
+    community: CommunityOutBasic
+
+
+class TeamOutBasic(TeamBase):
+    """Response model containing basic properties of a team."""
+
+    id: int
+
+
 class AttendanceOutWithChild(AttendanceBase):
     child: ChildOut
     workshop: WorkshopOutForAttendance
 
 
-class ChildOut(ChildBase):
+class CommunityOutBasic(CommunityBase):
     id: int
-
-
-class ChildOutWithCommunity(ChildOut):
-    community: CommunityOut
-
-
-class ChildOutDeep(ChildOut):
-    team: TeamOut
-
-
-class CommunityOut(CommunityBase):
-    id: int
-
-
-class TeamOut(TeamBase):
-    id: int
-    children: list[ChildOut]
-    community: CommunityOut
 
 
 class UserOut(UserBase):

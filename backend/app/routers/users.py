@@ -1,11 +1,7 @@
 import logging
 from typing import Annotated
 
-from exceptions import (
-    ItemAlreadyExistsException,
-    ItemNotFoundException,
-    UserUnauthorizedException,
-)
+from exceptions import ItemAlreadyExistsException, ItemNotFoundException, UserUnauthorizedException
 from fastapi import APIRouter, Depends, HTTPException, status
 from models.out import UserOut
 from models.user import UserCreate, UserLogin, UserUpdate
@@ -13,7 +9,7 @@ from repositories.user import UserRepository
 
 logger = logging.getLogger()
 
-router = APIRouter(prefix="/users", tags=["users"])
+router = APIRouter(prefix="/users")
 
 
 @router.post(

@@ -2,12 +2,12 @@ import exceptions
 from dependencies.services import ChildServiceDependency
 from fastapi import APIRouter, HTTPException, status
 from models.child import Child, ChildCreate, ChildUpdate
-from models.out import ChildOut, ChildOutDeep, RecordCreated
+from models.out import ChildOut, ChildOutBasic, RecordCreated
 
 router = APIRouter(prefix="/children")
 
 
-@router.get("/{child_id}", summary="Get a child by ID", response_model=ChildOutDeep)
+@router.get("/{child_id}", summary="Get a child by id", response_model=ChildOut)
 async def get_child(child_id: int, child_service: ChildServiceDependency):
     try:
         return child_service.get(child_id)
@@ -21,12 +21,22 @@ async def get_child(child_id: int, child_service: ChildServiceDependency):
 @router.get(
     "",
     summary="Get children",
-    response_model=list[ChildOut],
+    response_model=list[ChildOutBasic],
     status_code=status.HTTP_200_OK,
 )
 async def get_children(
     child_service: ChildServiceDependency,
+    community_id: int = None,
 ):
+    """Get list of children, optionally filtered by community.
+
+    Args:
+        community_id int: id of community to filter children on.
+
+    Returns:
+        List of children matching condition.
+    """
+
     return child_service.get_all()
 
 

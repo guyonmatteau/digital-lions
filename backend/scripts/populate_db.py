@@ -1,8 +1,11 @@
 """Utility script to populate db with records."""
 
+import faker
 import requests
 
+LOCALE = "zu_ZA"
 URL = "http://localhost:8000/api/v1"
+
 
 communities = [{"name": "Community 1"}, {"name": "Community 2"}]
 children = [

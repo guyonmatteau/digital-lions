@@ -2,13 +2,12 @@ from typing import Generic, TypeVar
 
 from dependencies.database import DatabaseDependency
 from exceptions import ItemNotFoundException
-from models import child, community, team
-from models.out import ChildOut, CommunityOut, TeamOut
+from sqlmodel import SQLModel
 
-Model = TypeVar("Model", community.Community, child.Child, team.Team)
-ModelCreate = TypeVar("ModelCreate", community.CommunityCreate, child.ChildCreate, team.TeamCreate)
-ModelUpdate = TypeVar("ModelUpdate", community.CommunityUpdate, child.ChildUpdate, team.TeamUpdate)
-ModelOut = TypeVar("ModelOut", CommunityOut, ChildOut, TeamOut)
+Model = TypeVar("Model", bound=SQLModel)
+ModelCreate = TypeVar("ModelCreate", bound=SQLModel)
+ModelUpdate = TypeVar("ModelUpdate", bound=SQLModel)
+ModelOut = TypeVar("ModelOut", bound=SQLModel)
 
 
 class BaseRepository(Generic[Model]):
