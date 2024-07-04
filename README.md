@@ -7,15 +7,15 @@ POC for a CRUD application for coaches and volunteers of [Little Lions Child Coa
 
 Everything should just fly. This repo uses [direnv](https://direnv.net/). First copy `.env.template` to `.env`. After that spin up the postgresDB (and optionally pgadmin if you want to inspect the database from the browser):
 ```bash
-docker-compose up -d db pgadmin
+docker compose up -d db pgadmin
 ```
 After that spin up the backend (either detached or in separate window):
 ```bash
-docker-compose up backend
+docker compose up backend
 ```
 The backend API should now be available at `http://localhost:8000/api/v1/docs#/`. Finally spin up the frontend (either detached or in separate window):
 ```bash
-docker-compose up frontend
+docker compose up frontend
 ```
 The frontend should now be available at `http://localhost:5173`.
 
