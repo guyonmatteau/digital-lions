@@ -1,6 +1,7 @@
 import logging
 
 import exceptions
+from models.child import ChildCreate
 from models.team import TeamCreate
 from models.workshop import WorkshopCreate
 from repositories import (
@@ -47,9 +48,9 @@ class TeamService(BaseService):
         logger.info(f"Team with id {new_team.id} created.")
 
         for child in children:
-            child.team_id = new_team.id
-            self._child_repository.create(child)
-            logger.info("Child with id {} added to team {}.", child.id, new_team.id)
+            child_in = ChildCreate(team_id=new_team.id, **child.dict())
+            child_created = self._child_repository.create(child_in)
+            logger.info("Child with id %d added to team %d.", child_created.id, new_team.id)
         return new_team
 
     def create_workshop(self, team_id: int, workshop: WorkshopCreate):

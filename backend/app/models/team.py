@@ -27,7 +27,6 @@ class TeamCreateChild(BaseModel, CreateProperties):
     )
     dob: str | None = Field(default=None, description="Date of birth in the format YYYY-MM-DD")
     gender: str | None = Field(default=None, description="Gender of child")
-    team_id: int | None = Field(description="ID of the team the child belongs to", default=None)
 
 
 class TeamCreate(TeamBase, CreateProperties):

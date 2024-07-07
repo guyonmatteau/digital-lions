@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     def postgres_url(self) -> str:
         database_url = os.environ.get("POSTGRES_DATABASE_URL")
         if database_url is not None:
-            logging.info(f"Using database URL from environment: {database_url}")
+            logging.info("Using database URL from environment variable POSTGRES_DATABASE_URL")
             return database_url
 
         logging.info("Building database URL from environment variables")
@@ -33,6 +33,7 @@ class Settings(BaseSettings):
             raise ValueError("POSTGRES_PORT is not set")
 
         url = f"{self.scheme}://{username}:{password}@{host}:{port}/{self.database}"
+        logging.info(f"Database URL: {url}")
         return url
 
 

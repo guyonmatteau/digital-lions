@@ -1,4 +1,5 @@
 # ruff: noqa: F401
+import os
 from logging.config import fileConfig
 
 from alembic import context
@@ -19,7 +20,7 @@ config = context.config
 section = config.config_ini_section
 
 settings = get_settings()
-config.set_main_option("sqlalchemy.url", settings.postgres_url)
+config.set_main_option("sqlalchemy.url", os.environ.get("POSTGRES_DATABASE_URL"))
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
