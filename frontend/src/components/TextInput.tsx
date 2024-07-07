@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface TextInputProps {
     className?: string;
-    label: string;
+    label?: string;
     value?: string; // Optional initial value
     onChange?: (value: string) => void; // Optional callback to emit input value
     onBlur?: (value: string) => void; // Optional callback when input loses focus
@@ -10,6 +10,11 @@ interface TextInputProps {
 
 const TextInput: React.FC<TextInputProps> = ({ className, label, value = '', onChange, onBlur }) => {
     const [inputValue, setInputValue] = useState(value);
+
+    // Update local state when value prop changes
+    useEffect(() => {
+        setInputValue(value);
+    }, [value]);
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setInputValue(event.target.value);

@@ -1,4 +1,3 @@
-/* src/styles/globals.css */
 
 @tailwind base;
 @tailwind components;
@@ -16,11 +15,118 @@
   box-sizing: inherit;
 }
 
+:root {
+  --color-button: #FFFFFF;               /* Button color */
+  --color-button-secondary: #F7CD47;     /* Secondary button color */
+  --color-button-text: #000000;          /* Text color in buttons */
+  --color-background: #F4ECE2;           /* Background color */
+  --color-background-text: #000000;      /* Text color in background */
+  --color-footer-background: #1A6878;    /* Footer background color */
+  --color-footer-text: #FFFFFF;          /* Text color in footer */
+  --color-card: #ABC69E;                 /* Card color */
+  --color-card-secondary: #F7CD47;       /* Second card color */
+  --color-card-text: #FFFFFF;            /* Text color in cards */
+  --color-border: #CCCCCC;               /* Gray Border */
+  
+  /* Primary, secondary, success, danger, warning mappings */
+  --color-primary: #FFFFFF;              /* White */
+  --color-primary-dark: #F7CD47;         /* Yellow */
+  --color-secondary: #F7CD47;            /* Yellow */
+  --color-secondary-dark: #CC9900;       /* Darker Yellow */
+  --color-success: #4CAF50;              /* Green */
+  --color-success-dark: #388E3C;         /* Darker Green */
+  --color-danger: #FF6347;               /* Red */
+  --color-danger-dark: #CC3333;          /* Darker Red */
+  --color-warning: #FFA500;              /* Orange */
+  --color-warning-dark: #CC9900;         /* Darker Orange */
+  --color-neutral-light: #F2F2F2;        /* Light Gray for outline */
+  --color-text: #333333;                 /* Dark Text */
+  --color-text-light: #FFFFFF;           /* Light Text */
+}
+
+
+
+
+/* Use CSS variables */
+.bg-button-primary {
+  background-color: var(--color-button);
+}
+.bg-button-secondary {
+  background-color: var(--color-button-secondary);
+}
+.text-button-text {
+  color: var(--color-button-text);
+}
+.bg-background {
+  background-color: var(--color-background);
+}
+.text-background-text {
+  color: var(--color-background-text);
+}
+.bg-footer-background {
+  background-color: var(--color-footer-background);
+}
+.text-footer-text {
+  color: var(--color-footer-text);
+}
+.bg-card {
+  background-color: var(--color-card);
+}
+.bg-card-secondary {
+  background-color: var(--color-card-secondary);
+}
+.text-card-text {
+  color: var(--color-card-text);
+}
+.border-border {
+  border-color: var(--color-border);
+}
+.bg-primary {
+  background-color: var(--color-primary);
+}
+.bg-primary-dark {
+  background-color: var(--color-primary-dark);
+}
+.bg-secondary {
+  background-color: var(--color-secondary);
+}
+.bg-secondary-dark {
+  background-color: var(--color-secondary-dark);
+}
+.bg-success {
+  background-color: var(--color-success);
+}
+.bg-success-dark {
+  background-color: var(--color-success-dark);
+}
+.bg-danger {
+  background-color: var(--color-danger);
+}
+.bg-danger-dark {
+  background-color: var(--color-danger-dark);
+}
+.bg-warning {
+  background-color: var(--color-warning);
+}
+.bg-warning-dark {
+  background-color: var(--color-warning-dark);
+}
+.bg-neutral-light {
+  background-color: var(--color-neutral-light);
+}
+.bg-text {
+  color: var(--color-text);
+}
+.bg-text-light {
+  color: var(--color-text-light);
+}
+
+
 body {
   background-color: #f3f4f6; 
   margin: 0;
   padding: 0;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Work Sans', sans-serif;
   display: flex;
   flex-direction: column;
   min-height: 100vh; 
