@@ -69,4 +69,3 @@ class ChildUpdate(SQLModel, ChildPersonalInfo, ChildValidator, UpdateProperties)
 
     first_name: str | None = None
     last_name: str | None = None
-    is_active: bool | None = None

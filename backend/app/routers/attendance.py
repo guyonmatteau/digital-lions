@@ -12,8 +12,9 @@ router = APIRouter(prefix="/attendance")
     summary="Get attendance of child to a workshop.",
 )
 async def get_attendance(attendance_id: int, attendance_service: AttendanceServiceDependency):
+    """Get the attendance of a child to a workshop."""
     try:
-        return attendance_service.get_attendance(attendance_id)
+        return attendance_service.get(attendance_id)
     except exceptions.AttendanceNotFoundException:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Attendance not found")
 
@@ -30,4 +31,4 @@ async def get_attendances(
     community_id: int | None = None,
 ):
     """Get all the attendances."""
-    return attendance_service.get_attendances()
+    return attendance_service.get_all()

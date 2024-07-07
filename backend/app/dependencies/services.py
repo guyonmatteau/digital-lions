@@ -40,8 +40,13 @@ def get_community_service(community_repository: CommunityRepositoryDependency):
 def get_child_service(
     child_repository: ChildRepositoryDependency,
     team_repository: TeamRepositoryDependency,
+    attendance_repository: AttendanceRepositoryDependency,
 ):
-    return ChildService(child_repository=child_repository, team_repository=team_repository)
+    return ChildService(
+        child_repository=child_repository,
+        team_repository=team_repository,
+        attendance_repository=attendance_repository,
+    )
 
 
 def get_workshop_service(workshop_repository: WorkshopRepositoryDependency):

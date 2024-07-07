@@ -45,12 +45,12 @@ class TeamService(BaseService):
         children = team.children
         delattr(team, "children")
         new_team = self._repository.create(team)
-        logger.info(f"Team with id {new_team.id} created.")
+        logger.info(f"Team with ID {new_team.id} created.")
 
         for child in children:
             child_in = ChildCreate(team_id=new_team.id, **child.dict())
             child_created = self._child_repository.create(child_in)
-            logger.info("Child with id %d added to team %d.", child_created.id, new_team.id)
+            logger.info("Child with ID %d added to team %d.", child_created.id, new_team.id)
         return new_team
 
     def create_workshop(self, team_id: int, workshop: WorkshopCreate):
@@ -69,6 +69,20 @@ class TeamService(BaseService):
             child_attendance.workshop_id = workshop_record.id
             self._attendance_repository.create(child_attendance)
         return workshop_record
+
+    def delete(self, object_id: int, cascade: bool = False):
+        """Delete a team."""
+
+        if self._child_repository.filter(attr="team_id", value=object_id):
+            if not cascade:
+                logger.error(f"Team with ID {object_id} not empty: has children.")
+                raise exceptions.TeamHasChildrenException()
+
+            logger.info(f"Deleting children from team with ID {object_id}")
+            self._child_repository.delete_bulk(attr="team_id", value=object_id)
+
+        logger.info(f"Deleting team with ID {object_id}")
+        self._repository.delete(object_id=object_id)
 
     def get_workshops(self, team_id: int):
         """Get all workshops for a team."""

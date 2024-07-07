@@ -2,6 +2,7 @@ from typing import Generic, TypeVar
 
 from dependencies.database import DatabaseDependency
 from exceptions import ItemNotFoundException
+from sqlalchemy import delete
 from sqlmodel import SQLModel
 
 Model = TypeVar("Model", bound=SQLModel)
@@ -27,6 +28,20 @@ class BaseRepository(Generic[Model]):
         self._db.commit()
         self._db.refresh(new_obj)
         return new_obj
+
+    def delete(self, object_id: int) -> None:
+        """Delete an object from the table."""
+        obj = self._db.get(self._model, object_id)
+        if not obj:
+            raise ItemNotFoundException()
+        self._db.delete(obj)
+        self._db.commit()
+
+    def delete_bulk(self, attr: str, value: str) -> None:
+        """Delete all objects by an attribute matching a value."""
+        statement = delete(self._model).where(getattr(self._model, attr) == value)
+        self._db.exec(statement)
+        self._db.commit()
 
     def read(self, object_id: int) -> ModelOut | None:
         """Read an object from the table."""

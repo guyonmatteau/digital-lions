@@ -70,6 +70,27 @@ async def create_workshop(
         )
 
 
+@router.delete(
+    "/{team_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Delete a team",
+)
+async def delete_team(team_service: TeamServiceDependency, team_id: int, cascade: bool = False):
+    try:
+        return team_service.delete(object_id=team_id, cascade=cascade)
+    except exceptions.TeamHasChildrenException:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"Cannot delete team with ID {team_id} because it has related children record "
+            + "and 'cascade' is set to False",
+        )
+    except exceptions.ItemNotFoundException:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Team with ID {team_id} not found",
+        )
+
+
 # @router.get(
 #     "/{team_id}/workshops",
 #     status_code=status.HTTP_200_OK,
