@@ -16,7 +16,8 @@ logger = logging.getLogger(__name__)
 logger.info("Logging configuration: %s", logging_conf)
 
 ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS").split(",")
-methods = ["GET", "POST", "PUT", "DELETE"]
+ALLOWED_METHODS = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+ALLOWED_HEADERS = ["Content-Type", "Authorization"]
 logger.info(f"CORSMiddleware allowed origins: {ALLOWED_ORIGINS}")
 
 
@@ -35,8 +36,8 @@ async def catch_any_exception(request: Request, call_next: Any) -> Any:
     TODO: this should be removed in production and handled by a proper error handler."""
     try:
         return await call_next(request)
-    except Exception as e:
-        logger.error(e)
+    except Exception as exc:
+        logger.error(exc)
         return JSONResponse(status_code=500, content={"message": "Internal server error"})
 
 
@@ -44,9 +45,10 @@ app = FastAPI(title="Digital Lion's API", version="0.1.0", root_path="/api/v1", 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
-    allow_methods=methods,
-    allow_headers=["*"],
+    allow_methods=ALLOWED_METHODS,
+    allow_headers=ALLOWED_HEADERS,
 )
+
 app.middleware("http")(catch_any_exception)
 app.include_router(health.router, tags=["health"])
 app.include_router(teams.router, tags=["teams"])

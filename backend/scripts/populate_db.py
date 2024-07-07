@@ -30,6 +30,7 @@ if __name__ == "__main__":
     """Populate db with records, to be converted to integration test."""
 
     logger.info(f"Adding {COMMUNITY_COUNT} communities to the db")
+
     for _ in range(COMMUNITY_COUNT):
         community = {"name": fake.first_name()}
         logger.info(f"Creating community {community['name']}")
