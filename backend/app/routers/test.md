@@ -7,27 +7,30 @@ If you then call GET /teams/:teamId/workshops you get a list of workshop for tha
 ```
 GET /teams/:teamId/workshops 
 API response:
-[
-  {
-    "workshop_number": 1,
-    "date": null,
-    "workshop_id": null
-    "attendance": []
-  },
-  {
-    "workshop_number": 2,
-    "date": null,
-    "workshop_id": null
-    "attendance": []
-  },
-  ...
-  {
-    "workshop_number": 12,
-    "date": null,
-    "workshop_id": null
-    "attendance": []
-  },
-]
+{
+  "program_id": 1,
+  "workshops": [
+    {
+      "workshop_number": 1,
+      "date": null,
+      "workshop_id": null
+      "attendance": []
+    },
+    {
+      "workshop_number": 2,
+      "date": null,
+      "workshop_id": null
+      "attendance": []
+    },
+    ...
+    {
+      "workshop_number": 12,
+      "date": null,
+      "workshop_id": null
+      "attendance": []
+    },
+  ]
+}
 ```
 
 Next a workshop is happening, so we want to add the attendance of this workshop to the team. We call do this by creating a workshop with attendance:
@@ -58,46 +61,50 @@ if we list the workshops for the team again we get:
 ```
 GET /teams/:teamId/workshops 
 Reponse:
-[
-  {
-    "workshop_number": 1,
-    "date": "2016-10-01",
-    "workshop_id": 132,
-    "attendance": [
-      {
-        "child_id": 1,
-        "first_name": "John",
-        "last_name": "Doe",
-        "attendance": "present"
-      },
-      {
-        "child_id": 2,
-        "first_name": "Jane",
-        "last_name": "Doe",
-      },
-        "attendance": "absent"
-      {
-        "child_id": 3,
-        "first_name": "Jack",
-        "last_name": "Doe",
-        "attendance": "present"
-      }
-    ] 
-  },
-  {
-    "workshop_number": 2,
-    "date": null,
-    "workshop_id": null
-    "attendance": []
-  },
-  ...
-  {
-    "workshop_number": 12,
-    "date": null,
-    "workshop_id": null
-    "attendance": []
-  },
-]
+{
+  "program_id": 1,
+  "workshops":
+  [
+    {
+      "workshop_number": 1,
+      "date": "2016-10-01",
+      "workshop_id": 132,
+      "attendance": [
+        {
+          "child_id": 1,
+          "first_name": "John",
+          "last_name": "Doe",
+          "attendance": "present"
+        },
+        {
+          "child_id": 2,
+          "first_name": "Jane",
+          "last_name": "Doe",
+        },
+          "attendance": "absent"
+        {
+          "child_id": 3,
+          "first_name": "Jack",
+          "last_name": "Doe",
+          "attendance": "present"
+        }
+      ] 
+    },
+    {
+      "workshop_number": 2,
+      "date": null,
+      "workshop_id": null
+      "attendance": []
+    },
+    ...
+    {
+      "workshop_number": 12,
+      "date": null,
+      "workshop_id": null
+      "attendance": []
+    },
+  ]
+}
 ```
 This continues until all 12 workshops have been filled. Of course strict validation will take place (i.e. are the passed `child_id` actually part of the team, is the `attendance` value correct, 
 
