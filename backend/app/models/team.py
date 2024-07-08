@@ -47,6 +47,8 @@ class Team(TeamBase, MetadataColumns, table=True):
     __tablename__ = "teams"
 
     id: int = Field(default=None, primary_key=True)
+
+    # 1 is the starting point of the default program
     program_tracker: int = Field(
         description="The current workshop the team is at in the program", default=1
     )

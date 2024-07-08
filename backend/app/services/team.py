@@ -3,7 +3,7 @@ import logging
 import exceptions
 from models.child import ChildCreate
 from models.team import TeamCreate
-from models.workshop import WorkshopCreate
+from models.workshop import WorkshopCreate, WorkshopCreateInDB
 from repositories import (
     AttendanceRepository,
     ChildRepository,
@@ -61,9 +61,13 @@ class TeamService(BaseService):
             raise exceptions.TeamNotFoundException()
 
         attendance = workshop.attendance
-        workshop.team_id = team_id
-        delattr(workshop, "attendance")
-        workshop_record = self._workshop_repository.create(workshop)
+        workshop_in = WorkshopCreateInDB(
+            team_id=team_id,
+            date=workshop.date,
+            workshop_number=workshop.workshop_number,
+        )
+
+        workshop_record = self._workshop_repository.create(workshop_in)
 
         for child_attendance in attendance:
             child_attendance.workshop_id = workshop_record.id

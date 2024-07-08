@@ -3,7 +3,7 @@ import logging
 import exceptions
 from dependencies.services import TeamServiceDependency
 from fastapi import APIRouter, HTTPException, status
-from models.out import RecordCreated, TeamOut, TeamOutBasic
+from models.out import RecordCreated, TeamOut, TeamOutBasic, WorkshopOutWithAttendance
 from models.team import TeamCreate
 from models.workshop import WorkshopCreate
 
@@ -91,17 +91,17 @@ async def delete_team(team_service: TeamServiceDependency, team_id: int, cascade
         )
 
 
-# @router.get(
-#     "/{team_id}/workshops",
-#     status_code=status.HTTP_200_OK,
-#     summary="Get workshops done by team",
-# )
-# async def get_workshops(team_service: TeamServiceDependency, team_id: int):
-#     pass
-#
-#
-# @router.get(
-#     "/{team_id}/stats", status_code=status.HTTP_200_OK, summary="Get stats of a team"
-# )
-# async def get_stats(team_service: TeamServiceDependency, team_id: int):
-#     pass
+@router.get(
+    "/{team_id}/workshops",
+    status_code=status.HTTP_200_OK,
+    summary="Get workshops done by team",
+    # response_model=list[WorkshopOutWithAttendance],
+)
+async def get_workshops(team_service: TeamServiceDependency, team_id: int):
+    try:
+        return team_service.get_workshops(team_id)
+    except exceptions.TeamNotFoundException:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Team with ID {team_id} not found",
+        )

@@ -9,6 +9,7 @@ from sqlmodel import SQLModel
 from app.models.attendance import Attendance
 from app.models.child import Child
 from app.models.community import Community
+from app.models.program import Program
 from app.models.team import Team
 from app.models.user import User
 from app.models.workshop import Workshop

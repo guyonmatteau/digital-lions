@@ -10,11 +10,8 @@ if TYPE_CHECKING:
 
 class WorkshopBase(SQLModel):
     date: str = Field(description="The date of the workshop in the format YYYY-MM-DD")
-    cancelled: bool = Field(default=False, description="Whether the workshop was cancelled or not")
-    cancellation_reason: str | None = Field(
-        default=None,
-        description="The reason for the cancellation, if any",
-        nullable=True,
+    workshop_number: int = Field(
+        description="The number of the workshop in the program", default=0
     )
 
 
@@ -32,11 +29,14 @@ class WorkshopCreateAttendance(SQLModel):
         return v
 
 
+class WorkshopCreateInDB(WorkshopBase):
+    team_id: int = Field(foreign_key="teams.id")
+
+
 class WorkshopCreate(WorkshopBase):
     class Config:
         arbitrary_types_allowed = True
 
-    team_id: int | None = Field(foreign_key="teams.id", default=None)
     attendance: list[WorkshopCreateAttendance] | None
 
 

@@ -17,7 +17,7 @@ class RecordCreated(BaseModel):
 
 
 # each model has two output types to be returned by the API:
-# Basic to be used as object in a list, only containing basic info
+# base, to be used as object in a list, only containing basic info
 # full to be used as objectOut on GET by ID
 
 
@@ -68,8 +68,19 @@ class WorkshopOut(WorkshopBase):
     team_id: int
 
 
+class ChildOutSimple(BaseModel):
+    id: int
+    first_name: str
+    last_name: str
+
+
+class AttendanceForWorkshop(BaseModel):
+    attendance: str
+    child: ChildOutSimple
+
+
 class WorkshopOutWithAttendance(WorkshopOut, WorkshopBase):
-    attendance: list[AttendanceBase]
+    attendance: list[AttendanceForWorkshop]
 
 
 class WorkshopOutForAttendance(WorkshopOut):
