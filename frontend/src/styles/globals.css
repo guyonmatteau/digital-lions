@@ -24,13 +24,15 @@
   --color-footer-background: #1A6878;    /* Footer background color */
   --color-footer-text: #FFFFFF;          /* Text color in footer */
   --color-card: #ABC69E;                 /* Card color */
-  --color-card-secondary: #F7CD47;       /* Second card color */
+  --color-card-dark: #8CA47F;            /* Card hover color */
+  --color-card-secondary: #F7CD47;         /* Second card color */
+  --color-card-secondary-dark: #E6B43D; /* Second cad hover color */
   --color-card-text: #FFFFFF;            /* Text color in cards */
   --color-border: #CCCCCC;               /* Gray Border */
   
   /* Primary, secondary, success, danger, warning mappings */
   --color-primary: #FFFFFF;              /* White */
-  --color-primary-dark: #F7CD47;         /* Yellow */
+  --color-primary-dark: #B5AFA5;         /* Light Gray */
   --color-secondary: #F7CD47;            /* Yellow */
   --color-secondary-dark: #CC9900;       /* Darker Yellow */
   --color-success: #4CAF50;              /* Green */
@@ -72,8 +74,14 @@
 .bg-card {
   background-color: var(--color-card);
 }
+.bg-card-dark {
+  background-color: var(--color-card-dark)
+}
 .bg-card-secondary {
   background-color: var(--color-card-secondary);
+}
+.bg-card-secondary-dark {
+  background-color: var(--color-card-secondary-dark);
 }
 .text-card-text {
   color: var(--color-card-text);
