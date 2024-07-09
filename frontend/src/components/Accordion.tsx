@@ -1,51 +1,77 @@
 import React, { useState } from "react";
-import * as Accordion from "@radix-ui/react-accordion";
-import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons";
+
 interface AccordionProps {
   title: string;
   description?: string;
-  className?: string;
   children: React.ReactNode;
+  className?: string;
+  disabled?: boolean
 }
 
-const CustomAccordion: React.FC<AccordionProps> = ({
+const Accordion: React.FC<AccordionProps> = ({
   title,
   description,
   children,
   className,
+  disabled
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const toggleMenu = () => {
+  const toggleAccordion = () => {
     setIsOpen(!isOpen);
   };
 
   return (
-    <Accordion.Root
-      type="single"
-      collapsible
-      className={`${className} border border-border rounded-xl overflow-hidden`}
+    <div
+      id="accordion-open"
+      data-accordion="open"
+      className={`${className} rounded-lg`}
     >
-      <Accordion.Item value="item-1">
-        <Accordion.Header className="bg-card">
-          <Accordion.Trigger
-            onClick={toggleMenu}
-            className="flex items-center justify-between w-full p-5 font-medium text-card-text border-b border-border focus:ring-4 focus:ring-background gap-3 transition-all duration-300"
+      <h2 id="accordion-open-heading-1">
+        <button
+          onClick={toggleAccordion}
+          type="button"
+          className={`rounded-t-lg ${isOpen ? "rounded-none" : "rounded-lg"} bg-card flex items-center justify-between w-full p-5 font-medium text-white  dark:text-gray-400 hover:bg-card-dark dark:hover:bg-gray-800`}
+          data-accordion-target="#accordion-open-body-1"
+          aria-expanded={isOpen}
+          aria-controls="accordion-open-body-1"
+        >
+          <span className="flex items-center">{title}</span>
+          <svg
+            data-accordion-icon
+            className={`w-3 h-3 ${!isOpen ? "rotate-180" : ""} transition-transform`}
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 10 6"
           >
-            <span className="flex items-center">{title}</span>
-            {isOpen ? (
-              <ChevronUpIcon className="AccordionChevron" aria-hidden />
-            ) : (
-              <ChevronDownIcon className="AccordionChevron" aria-hidden />
-            )}
-          </Accordion.Trigger>
-        </Accordion.Header>
-        <Accordion.Content className="bg-card p-5">
+            <path
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M9 5 5 1 1 5"
+            />
+          </svg>
+        </button>
+      </h2>
+      <div
+        id="accordion-open-body-1"
+        className={`transition-max-height duration-50 ease-in-out ${
+          isOpen ? "max-h-screen" : "max-h-0"
+        }`}
+        aria-labelledby="accordion-open-heading-1"
+        style={{
+          overflow: isOpen ? "visible" : "hidden",
+        }}
+      >
+        <div className="bg-card p-5 dark:bg-gray-900 rounded-b-lg">
+          <p className="mb-2 text-gray-500 dark:text-gray-400">{description}</p>
           {children}
-        </Accordion.Content>
-      </Accordion.Item>
-    </Accordion.Root>
+        </div>
+      </div>
+    </div>
   );
 };
 
-export default CustomAccordion;
+export default Accordion;

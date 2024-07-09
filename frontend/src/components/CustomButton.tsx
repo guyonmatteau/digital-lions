@@ -5,7 +5,7 @@ interface CustomButtonProps {
   onClick?: () => void;
   className?: string;
   isLoading?: boolean;
-  isDisabled?: boolean;
+  disabled?: boolean;
   variant?:
     | "primary"
     | "secondary"
@@ -13,7 +13,7 @@ interface CustomButtonProps {
     | "danger"
     | "warning"
     | "outline"
-    | "none"; // Added variant prop
+    | "none"; 
 }
 
 const CustomButton: React.FC<CustomButtonProps> = ({
@@ -21,26 +21,24 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   onClick,
   className,
   isLoading,
-  isDisabled,
+  disabled,
   variant = "primary",
 }) => {
   const [loading, setLoading] = useState(false);
 
   const handleClick = () => {
-    if (onClick && !loading) {
+    if (onClick && !loading && !disabled) {
       setLoading(true);
       onClick();
-      // Example: Simulate async action with setTimeout
       setTimeout(() => {
         setLoading(false);
       }, 1000); // Replace with actual async action
     }
   };
 
-  // Define classes based on variant prop
   let buttonClass =
-    "relative py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500";
-  let buttonColorClass = "bg-green-500 hover:bg-green-700";
+    "relative py-2 px-4 rounded-lg text-sm";
+  let buttonColorClass = "";
   let textColorClass = "bg-text";
   let borderColorClass = "border-transparent";
 
@@ -66,9 +64,10 @@ const CustomButton: React.FC<CustomButtonProps> = ({
       textColorClass = "bg-text-light";
       break;
     case "outline":
+      buttonClass += " border";
       buttonColorClass = "hover:bg-neutral-light";
       textColorClass = "text-neutral-dark";
-      borderColorClass = "border-neutral";
+      borderColorClass = "border-neutral-500";
       break;
     case "none":
       buttonColorClass = "";
@@ -80,9 +79,9 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   return (
     <button
       type="button"
-      className={`${buttonClass} ${buttonColorClass} ${textColorClass} ${borderColorClass}`}
+      className={`${className} ${buttonClass} ${buttonColorClass} ${textColorClass} ${borderColorClass} ${disabled ? "opacity-50 cursor-not-allowed" : ""}`} // Apply opacity and cursor style for disabled state
       onClick={handleClick}
-      disabled={isLoading || isDisabled}
+      disabled={isLoading || disabled}
       style={{ minWidth: "8rem", minHeight: "2.5rem" }}
     >
       {isLoading ? (
@@ -99,7 +98,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
               cy="12"
               r="10"
               stroke="currentColor"
-              stroke-width="4"
+              strokeWidth="4"
             ></circle>
             <path
               className="opacity-75"

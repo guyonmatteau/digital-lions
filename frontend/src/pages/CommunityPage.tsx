@@ -4,7 +4,9 @@ import Accordion from "@/components/Accordion";
 import CustomButton from "@/components/CustomButton";
 import TextInput from "@/components/TextInput";
 import * as Separator from "@radix-ui/react-separator";
-import getCommunities from "@/api/services/getCommunities";
+import getCommunities from "@/api/services/communities/getCommunities";
+import Loader from "@/components/Loader";
+import createTeam from "@/api/services/teams/createTeam"; // Import createTeam function
 
 interface AccordionData {
   title: string;
@@ -14,18 +16,21 @@ interface AccordionData {
 
 interface Team {
   name: string;
-  // Add more fields as needed
+  id: number;
 }
 
 const CommunityPage: React.FC = () => {
   const [communityName, setCommunityName] = useState("");
   const [teamName, setTeamName] = useState("");
+  const [teamId] = useState(0); // Assuming teamId is managed differently in actual implementation
   const [accordionData, setAccordionData] = useState<AccordionData[]>([]);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   // Function to fetch communities on page load
   useEffect(() => {
     const fetchCommunities = async () => {
+      setLoading(true);
       try {
         const communities = await getCommunities();
         const accordionDataFromApi: AccordionData[] = communities.map((community) => ({
@@ -35,6 +40,8 @@ const CommunityPage: React.FC = () => {
         setAccordionData(accordionDataFromApi);
       } catch (error) {
         console.error("Failed to fetch communities:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -68,13 +75,30 @@ const CommunityPage: React.FC = () => {
     }
   };
 
-  const handleAddTeam = (index: number) => {
-    const updatedAccordionData = [...accordionData];
-    updatedAccordionData[index].teams.push({ name: teamName });
-    setAccordionData(updatedAccordionData);
-    setTeamName(""); // Clear teamName input
-  };
+  const handleAddTeam = async (index: number) => {
+    try {
+      const response = await createTeam({
+        firstName: teamName, // Assuming firstName maps to team name in API call
+        lastName: "", // Adjust as per API requirements if necessary
+        age: 0, // Adjust as per API requirements if necessary
+        dateOfBirth: "", // Adjust as per API requirements if necessary
+        gender: "", // Adjust as per API requirements if necessary
+        name: teamName, // Assuming name maps to team name in API call
+        communityId: 0, // Adjust as per API requirements if necessary
+      });
 
+      // Assuming API returns team ID or relevant data for further handling
+      const newTeamId = response.id; // Adjust as per API response structure
+
+      const updatedAccordionData = [...accordionData];
+      updatedAccordionData[index].teams.push({ name: teamName, id: newTeamId });
+      setAccordionData(updatedAccordionData);
+      setTeamName(""); // Clear teamName input
+    } catch (error) {
+      console.error("Error creating team:", error);
+      // Handle error state or feedback to user as needed
+    }
+  };
 
   const handleEditTeam = (teamId: number) => {
     navigate(`/teams/${teamId}`);
@@ -82,48 +106,56 @@ const CommunityPage: React.FC = () => {
 
   return (
     <div className="p-8">
-      <TextInput
-        className="mb-2"
-        label="Community name"
-        value={communityName}
-        onChange={handleCommunityNameChange}
-        onBlur={handleCommunityNameBlur}
-      />
-      <CustomButton
-        label="Add Community"
-        onClick={handleAddCommunity}
-        variant={"primary"}
-      />
-      {accordionData.map((item, index) => (
-        <Accordion
-          key={index}
-          title={item.title}
-          description={item.description}
-          className="mt-4"
-        >
-          {item.teams.map((team, teamIndex) => (
-            <div
-              key={teamIndex}
-              className="flex items-center justify-between mb-2"
+      {loading && <Loader loadingText={"Loading communities"} />}
+      {!loading && (
+        <>
+          <TextInput
+            className="mb-2"
+            label="Community name"
+            value={communityName}
+            onChange={handleCommunityNameChange}
+            onBlur={handleCommunityNameBlur}
+          />
+          <CustomButton
+            label="Add Community"
+            onClick={handleAddCommunity}
+            variant={"primary"}
+            className="hover:bg-card-dark hover:text-white"
+          />
+          {accordionData.map((item, index) => (
+            <Accordion
+              key={index}
+              title={item.title}
+              description={item.description}
+              className="mt-2"
             >
-              <p className="bg-text-light">{team.name}</p>
-              <CustomButton label="Edit" variant="secondary"   onClick={() => handleEditTeam(team.id)} />
-            </div>
+              {item.teams.map((team, teamIndex) => (
+                <div
+                  key={teamIndex}
+                  className="flex items-center justify-between mb-2"
+                >
+                  <p className="bg-text-light">{team.name}</p>
+                  <CustomButton label="Edit" variant="secondary" onClick={() => handleEditTeam(team.id)} />
+                </div>
+              ))}
+              {item.teams.length > 0 && <Separator.Root className="bg-primary data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px my-[15px]" />}
+              <TextInput
+                className="mb-2"
+                value={teamName}
+                onChange={handleTeamNameChange}
+                onBlur={handleTeamNameBlur}
+              />
+              <CustomButton
+                label="Add team"
+                disabled={teamName === ''}
+                onClick={() => handleAddTeam(index)}
+                variant="secondary"
+                className="hover:bg-card-secondary-dark hover:text-white"
+              />
+            </Accordion>
           ))}
-          {item.teams.length > 0 && <Separator.Root  className="bg-primary data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px my-[15px]" />}
-            <TextInput
-              className="mb-2"
-              value={teamName}
-              onChange={handleTeamNameChange}
-              onBlur={handleTeamNameBlur}
-            />
-            <CustomButton
-              label="Add team"
-              onClick={() => handleAddTeam(index)}
-              variant="secondary"
-            />
-        </Accordion>
-      ))}
+        </>
+      )}
     </div>
   );
 };
