@@ -63,10 +63,21 @@ async def create_workshop(
 ):
     try:
         return team_service.create_workshop(team_id, workshop)
-    except exceptions.ItemNotFoundException:
+    except exceptions.TeamNotFoundException:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Team with ID {team_id} not found",
+        )
+    except exceptions.ChildNotInTeam as exc:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=str(exc),
+        )
+    except Exception as exc:
+        logger.error("An error occurred: %s", exc)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An error occurred",
         )
 
 

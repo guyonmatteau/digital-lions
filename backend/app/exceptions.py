@@ -4,6 +4,9 @@
 class ChildNotFoundException(Exception): ...
 
 
+class ChildNotInTeam(Exception): ...
+
+
 class ChildHasAttendanceException(Exception): ...
 
 

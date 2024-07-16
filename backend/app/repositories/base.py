@@ -40,7 +40,6 @@ class BaseRepository(Generic[Model]):
     def delete_bulk(self, attr: str, value: str) -> None:
         """Delete all objects by an attribute matching a value."""
         statement = delete(self._model).where(getattr(self._model, attr) == value)
-        print(statement)
         self._db.exec(statement)
         self._db.commit()
 

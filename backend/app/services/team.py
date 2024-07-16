@@ -2,8 +2,10 @@ import logging
 
 import exceptions
 from models.child import ChildCreate
+from models.program import DefaultProgram
 from models.team import TeamCreate
 from models.workshop import WorkshopCreate, WorkshopCreateInDB
+from pydantic import BaseModel, Field
 from repositories import (
     AttendanceRepository,
     ChildRepository,
@@ -14,6 +16,13 @@ from repositories import (
 from services.base import BaseService
 
 logger = logging.getLogger(__name__)
+
+
+class WorkshopRep(BaseModel):
+    workshop_number: int
+    date: str = None
+    workshop_id: int = Field(default=None, alias="id", serialization_alias="workshop_id")
+    attendance: list = []
 
 
 class TeamService(BaseService):
@@ -57,7 +66,8 @@ class TeamService(BaseService):
         """Create a workshop for a team."""
         try:
             self._repository.read(object_id=team_id)
-        except exceptions.TeamNotFoundException:
+        except exceptions.ItemNotFoundException:
+            logger.error(f"Team with ID {team_id} not found")
             raise exceptions.TeamNotFoundException()
 
         attendance = workshop.attendance
@@ -70,6 +80,11 @@ class TeamService(BaseService):
         workshop_record = self._workshop_repository.create(workshop_in)
 
         for child_attendance in attendance:
+            if not self._child_repository.read(child_attendance.child_id):
+                logger.error(f"Child with ID {child_id} not found")
+                raise exceptions.ChildNotFoundException(
+                    f"Child with ID {child_id} is not in team with ID {team_id}"
+                )
             child_attendance.workshop_id = workshop_record.id
             self._attendance_repository.create(child_attendance)
         return workshop_record
@@ -90,8 +105,15 @@ class TeamService(BaseService):
 
     def get_workshops(self, team_id: int):
         """Get all workshops for a team."""
+        # TEMPORARY McGYVERED SOLUTION to be tidied up later
         try:
             self._repository.read(object_id=team_id)
         except exceptions.TeamNotFoundException:
             raise exceptions.TeamNotFoundException()
-        return self._workshop_repository.filter(attr="team_id", value=team_id)
+
+        team_workshops = self._workshop_repository.filter(attr="team_id", value=team_id)
+        workshops_done = [WorkshopRep(**args.dict()) for args in team_workshops]
+
+        while len(workshops_done) < 12:
+            workshops_done.append(WorkshopRep(workshop_number=len(workshops_done) + 1))
+        return {"program_id": 1, "workshops": workshops_done}

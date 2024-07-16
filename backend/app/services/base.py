@@ -37,3 +37,4 @@ class BaseService:
 
     def delete(self, object_id: int):
         return self._repository.delete(object_id=object_id)
+        return self._repository.delete(object_id=object_id)
