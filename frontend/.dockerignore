@@ -1,0 +1,7 @@
+.gitignore 
+.env
+.next/
+dist/
+node_modules/
+next-env.d.ts
+
