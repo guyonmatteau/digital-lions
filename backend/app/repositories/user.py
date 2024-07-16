@@ -60,9 +60,7 @@ class UserRepository(BaseRepository):
         return db_user
 
     def login_user(self, user: User) -> UserOut:
-        db_user = (
-            self.db.query(User).filter(User.email_address == user.email_address).first()
-        )
+        db_user = self.db.query(User).filter(User.email_address == user.email_address).first()
         if not db_user:
             raise ItemNotFoundException()
         hashed_password, _ = _hash_password(user.password, db_user.salt)

@@ -2,13 +2,13 @@ from typing import Generic, TypeVar
 
 from dependencies.database import DatabaseDependency
 from exceptions import ItemNotFoundException
-from models import child, community, team
-from models.out import ChildOut, CommunityOut, TeamOut
+from sqlalchemy import delete
+from sqlmodel import SQLModel
 
-Model = TypeVar("Model", community.Community, child.Child, team.Team)
-ModelCreate = TypeVar("ModelCreate", community.CommunityCreate, child.ChildCreate, team.TeamCreate)
-ModelUpdate = TypeVar("ModelUpdate", community.CommunityUpdate, child.ChildUpdate, team.TeamUpdate)
-ModelOut = TypeVar("ModelOut", CommunityOut, ChildOut, TeamOut)
+Model = TypeVar("Model", bound=SQLModel)
+ModelCreate = TypeVar("ModelCreate", bound=SQLModel)
+ModelUpdate = TypeVar("ModelUpdate", bound=SQLModel)
+ModelOut = TypeVar("ModelOut", bound=SQLModel)
 
 
 class BaseRepository(Generic[Model]):
@@ -28,6 +28,21 @@ class BaseRepository(Generic[Model]):
         self._db.commit()
         self._db.refresh(new_obj)
         return new_obj
+
+    def delete(self, object_id: int) -> None:
+        """Delete an object from the table."""
+        obj = self._db.get(self._model, object_id)
+        if not obj:
+            raise ItemNotFoundException()
+        self._db.delete(obj)
+        self._db.commit()
+
+    def delete_bulk(self, attr: str, value: str) -> None:
+        """Delete all objects by an attribute matching a value."""
+        statement = delete(self._model).where(getattr(self._model, attr) == value)
+        print(statement)
+        self._db.exec(statement)
+        self._db.commit()
 
     def read(self, object_id: int) -> ModelOut | None:
         """Read an object from the table."""
@@ -61,5 +76,5 @@ class BaseRepository(Generic[Model]):
 
     def query(self, query: str) -> list[ModelOut]:
         """Execute a custom query."""
-        objects = self._db.execute(query)
+        objects = self._db.exec(query)
         return objects

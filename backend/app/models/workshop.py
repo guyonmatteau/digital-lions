@@ -1,7 +1,6 @@
-# from models.attendance import AttendanceBase
-# from models.community import Community, CommunityOut
 from typing import TYPE_CHECKING
 
+from pydantic import field_validator
 from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
@@ -19,10 +18,26 @@ class WorkshopBase(SQLModel):
     )
 
 
+class WorkshopCreateAttendance(SQLModel):
+    """Model for adding attendance to a workshop."""
+
+    attendance: str
+    child_id: int = Field(foreign_key="children.id")
+    workshop_id: int = Field(foreign_key="workshops.id", default=None)
+
+    @field_validator("attendance")
+    def validate_attendance(cls, v):
+        if v not in ["present", "absent", "cancelled"]:
+            raise ValueError("Attendance must be either 'present' or 'absent' or 'cancelled'")
+        return v
+
+
 class WorkshopCreate(WorkshopBase):
-    # TODO somewhow this gets not resolved
-    # attendance: Optional[List[AttendanceBase]]
-    pass
+    class Config:
+        arbitrary_types_allowed = True
+
+    team_id: int | None = Field(foreign_key="teams.id", default=None)
+    attendance: list[WorkshopCreateAttendance] | None
 
 
 class Workshop(WorkshopBase, table=True):
@@ -33,7 +48,6 @@ class Workshop(WorkshopBase, table=True):
     __tablename__ = "workshops"
 
     id: int = Field(default=None, primary_key=True)
-
     team_id: int = Field(foreign_key="teams.id")
     team: "Team" = Relationship(back_populates="workshops")
-    attendances: list["Attendance"] = Relationship(back_populates="workshop")
+    attendance: list["Attendance"] = Relationship(back_populates="workshop")
