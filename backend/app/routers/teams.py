@@ -3,18 +3,14 @@ import logging
 import exceptions
 from dependencies.services import TeamServiceDependency
 from fastapi import APIRouter, HTTPException, status
-from models.out import RecordCreated, TeamOut, TeamOutBasic
+from models.api.generic import Message, RecordCreated
+from models.out import TeamOut, TeamOutBasic
 from models.team import TeamCreate
 from models.workshop import WorkshopCreate
-from pydantic import BaseModel
 
 logger = logging.getLogger()
 
 router = APIRouter(prefix="/teams")
-
-
-class Message(BaseModel):
-    detail: str
 
 
 @router.post(
@@ -71,7 +67,10 @@ async def get_team(team_service: TeamServiceDependency, team_id: int):
     summary="Add workshop to team",
     response_model=RecordCreated,
     responses={
-        400: {"model": Message, "description": "Bad request: missing attendance"},
+        400: {
+            "model": Message,
+            "description": "Bad request: missing attendance or child not in team.",
+        },
         409: {"model": Message, "description": "Conflict: workshop already exists"},
         404: {
             "model": Message,
@@ -85,14 +84,14 @@ async def create_workshop(
     """Add a workshop to a team."""
     try:
         return team_service.create_workshop(team_id, workshop)
-    except (exceptions.TeamNotFoundException, exceptions.ChildNotInTeam) as exc:
+    except exceptions.TeamNotFoundException as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
     except exceptions.WorkshopExistsException as exc:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=str(exc),
         )
-    except exceptions.WorkshopIncompleteAttendance as exc:
+    except (exceptions.WorkshopIncompleteAttendance, exceptions.ChildNotInTeam) as exc:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(exc),
