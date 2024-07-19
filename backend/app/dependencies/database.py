@@ -10,6 +10,7 @@ from sqlmodel import Session, SQLModel, create_engine
 
 @lru_cache
 def get_engine():
+    """Get a cached database engine."""
     settings = get_settings()
     return create_engine(settings.postgres_url)
 
@@ -26,7 +27,8 @@ def run_migrations():
     command.upgrade(alembic_cfg, "head")
 
 
-def get_database():
+def get_database() -> Session:
+    """Get a database session"""
     engine = get_engine()
     db = Session(engine)
     try:

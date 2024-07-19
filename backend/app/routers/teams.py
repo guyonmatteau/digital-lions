@@ -3,13 +3,18 @@ import logging
 import exceptions
 from dependencies.services import TeamServiceDependency
 from fastapi import APIRouter, HTTPException, status
-from models.out import RecordCreated, TeamOut, TeamOutBasic, WorkshopOutWithAttendance
+from models.out import RecordCreated, TeamOut, TeamOutBasic
 from models.team import TeamCreate
 from models.workshop import WorkshopCreate
+from pydantic import BaseModel
 
 logger = logging.getLogger()
 
 router = APIRouter(prefix="/teams")
+
+
+class Message(BaseModel):
+    detail: str
 
 
 @router.post(
@@ -17,6 +22,13 @@ router = APIRouter(prefix="/teams")
     response_model=RecordCreated,
     status_code=status.HTTP_201_CREATED,
     summary="Create a new team",
+    responses={
+        400: {"model": Message, "description": "Bad request: missing community_id"},
+        409: {
+            "model": Message,
+            "description": "Conflict: team with name already exists",
+        },
+    },
 )
 async def post_team(team_service: TeamServiceDependency, team: TeamCreate):
     try:
@@ -57,27 +69,39 @@ async def get_team(team_service: TeamServiceDependency, team_id: int):
     "/{team_id}/workshops",
     status_code=status.HTTP_201_CREATED,
     summary="Add workshop to team",
+    response_model=RecordCreated,
+    responses={
+        400: {"model": Message, "description": "Bad request: missing attendance"},
+        409: {"model": Message, "description": "Conflict: workshop already exists"},
+        404: {
+            "model": Message,
+            "description": "Not found: team or child in team not found",
+        },
+    },
 )
 async def create_workshop(
     team_service: TeamServiceDependency, team_id: int, workshop: WorkshopCreate
 ):
+    """Add a workshop to a team."""
     try:
         return team_service.create_workshop(team_id, workshop)
-    except exceptions.TeamNotFoundException:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Team with ID {team_id} not found",
-        )
-    except exceptions.ChildNotInTeam as exc:
+    except (exceptions.TeamNotFoundException, exceptions.ChildNotInTeam) as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
+    except exceptions.WorkshopExistsException as exc:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=str(exc),
         )
+    except exceptions.WorkshopIncompleteAttendance as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(exc),
+        )
     except Exception as exc:
-        logger.error("An error occurred: %s", exc)
+        logger.error("An error occurred: %s", str(exc))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="An error occurred",
+            detail=str(exc),
         )
 
 
@@ -85,8 +109,18 @@ async def create_workshop(
     "/{team_id}",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Delete a team",
+    response_model=None,
+    responses={
+        404: {"model": Message, "description": "Not found: team not found"},
+        409: {
+            "model": Message,
+            "description": "Conflict: team has children and cascade is False",
+        },
+    },
 )
 async def delete_team(team_service: TeamServiceDependency, team_id: int, cascade: bool = False):
+    """Delete a team. This will delete all children if cascade is set to True.
+    If you want to deactivate a team use PATCH /teams/{team_id} instead."""
     try:
         return team_service.delete(object_id=team_id, cascade=cascade)
     except exceptions.TeamHasChildrenException:
@@ -106,7 +140,7 @@ async def delete_team(team_service: TeamServiceDependency, team_id: int, cascade
     "/{team_id}/workshops",
     status_code=status.HTTP_200_OK,
     summary="Get workshops done by team",
-    # response_model=list[WorkshopOutWithAttendance],
+    # response_model=GetTeamWorkshopsOut,
 )
 async def get_workshops(team_service: TeamServiceDependency, team_id: int):
     try:

@@ -1,7 +1,7 @@
 import logging
 from typing import TypeVar
 
-from repositories.base import BaseRepository
+from repositories.base import BaseRepository, Columns
 from sqlmodel import SQLModel
 
 logger = logging.getLogger(__name__)
@@ -18,6 +18,7 @@ class BaseService:
     `_repository` should be the repository that the service maps to."""
 
     _repository: type[BaseRepository]
+    cols: Columns
 
     def get_all(self):
         """Get all objects from the table."""
@@ -29,12 +30,10 @@ class BaseService:
 
     def create(self, obj: ModelCreate):
         """Create a new object on the repository."""
-
         return self._repository.create(obj)
 
     def update(self, object_id: int, obj):
         return self._repository.update(object_id=object_id, obj=obj)
 
     def delete(self, object_id: int):
-        return self._repository.delete(object_id=object_id)
         return self._repository.delete(object_id=object_id)

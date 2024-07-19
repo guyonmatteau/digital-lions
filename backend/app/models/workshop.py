@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 
 from pydantic import field_validator
-from sqlmodel import Field, Relationship, SQLModel
+from sqlmodel import Field, Relationship, SQLModel, UniqueConstraint
 
 if TYPE_CHECKING:
     from models.attendance import Attendance
@@ -46,6 +46,9 @@ class Workshop(WorkshopBase, table=True):
     there will exist a cancellation reason."""
 
     __tablename__ = "workshops"
+    __table__args__ = (
+        UniqueConstraint("team_id", "workshop_number", name="unique_workshop_number_per_team"),
+    )
 
     id: int = Field(default=None, primary_key=True)
     team_id: int = Field(foreign_key="teams.id")
