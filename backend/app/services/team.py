@@ -3,7 +3,7 @@ import logging
 import exceptions
 from models.child import ChildCreate
 from models.team import TeamCreate
-from models.workshop import WorkshopCreate, WorkshopCreateInDB
+from models.workshop import WorkshopCreate, WorkshopCreateAttendanceInDB, WorkshopCreateInDB
 from repositories import (
     AttendanceRepository,
     ChildRepository,
@@ -71,30 +71,48 @@ class TeamService(BaseService):
             logger.error(error_msg)
             raise exceptions.WorkshopExistsException(error_msg)
 
+        # validate that all children in the payload are part of the team
+        payload_child_ids = set([child.child_id for child in workshop.attendance])
+        team_child_ids = set(
+            [child.id for child in self._child_repository.where([(self.cols.team_id, team_id)])]
+        )
+
+        payload_child_ids_not_in_team = [i for i in payload_child_ids if i not in team_child_ids]
+        if payload_child_ids_not_in_team:
+            error_msg = (
+                "Payload attendance field contains children ID's that "
+                + f"are not in team {team_id}: {payload_child_ids_not_in_team}"
+            )
+            logger.error(error_msg)
+            raise exceptions.ChildNotInTeam(error_msg)
+
+        # validate that all children from the team are in the payload
+        team_child_ids_not_in_payload = [i for i in team_child_ids if i not in payload_child_ids]
+        if team_child_ids_not_in_payload:
+            error_msg = (
+                "Attendance payload incomplete. Missing child ID's from "
+                + f"team {team_id}: {team_child_ids_not_in_payload}"
+            )
+            logger.error(error_msg)
+            raise exceptions.WorkshopIncompleteAttendance(error_msg)
+
+        # create workshop
         attendance = workshop.attendance
         workshop_in = WorkshopCreateInDB(
             team_id=team_id,
             date=workshop.date,
             workshop_number=workshop.workshop_number,
         )
-
         workshop_record = self._workshop_repository.create(workshop_in)
 
+        # create attendance records for all children in team
         for child_attendance in attendance:
-            if not self._child_repository.where(
-                [
-                    (self.cols.id, child_attendance.child_id),
-                    (self.cols.team_id, team_id),
-                ]
-            ):
-                error_msg = (
-                    f"Child with ID {child_attendance.child_id} is not part of team {team_id}"
-                )
-                logger.error(error_msg)
-                raise exceptions.ChildNotInTeam(error_msg)
-
-            child_attendance.workshop_id = workshop_record.id
-            self._attendance_repository.create(child_attendance)
+            attendance_in = WorkshopCreateAttendanceInDB(
+                workshop_id=workshop_record.id,
+                child_id=child_attendance.child_id,
+                attendance=child_attendance.attendance,
+            )
+            self._attendance_repository.create(attendance_in)
 
         return workshop_record
 

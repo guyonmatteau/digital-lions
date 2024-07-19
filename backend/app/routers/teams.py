@@ -4,7 +4,7 @@ import exceptions
 from dependencies.services import TeamServiceDependency
 from fastapi import APIRouter, HTTPException, status
 from models.api.generic import Message, RecordCreated
-from models.out import TeamOut, TeamOutBasic
+from models.out import TeamOut, TeamOutBasic, WorkshopOutWithAttendance
 from models.team import TeamCreate
 from models.workshop import WorkshopCreate
 
@@ -19,7 +19,7 @@ router = APIRouter(prefix="/teams")
     status_code=status.HTTP_201_CREATED,
     summary="Create a new team",
     responses={
-        400: {"model": Message, "description": "Bad request: missing community_id"},
+        400: {"model": Message, "description": "Bad request"},
         409: {
             "model": Message,
             "description": "Conflict: team with name already exists",
@@ -110,7 +110,7 @@ async def create_workshop(
     summary="Delete a team",
     response_model=None,
     responses={
-        404: {"model": Message, "description": "Not found: team not found"},
+        404: {"model": Message, "description": "Not found"},
         409: {
             "model": Message,
             "description": "Conflict: team has children and cascade is False",
@@ -139,7 +139,7 @@ async def delete_team(team_service: TeamServiceDependency, team_id: int, cascade
     "/{team_id}/workshops",
     status_code=status.HTTP_200_OK,
     summary="Get workshops done by team",
-    # response_model=GetTeamWorkshopsOut,
+    response_model=list[WorkshopOutWithAttendance],
 )
 async def get_workshops(team_service: TeamServiceDependency, team_id: int):
     try:

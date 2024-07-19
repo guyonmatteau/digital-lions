@@ -100,6 +100,16 @@ class BaseRepository(Generic[Model]):
         expr = and_(*self._construct_filter(filters))
         return self._db.query(self._model).where(and_(expr)).all()
 
+    def where_in(self, attr: str, values: list[str]) -> list[ModelOut] | None:
+        """Filter table by an attribute where the attribute value is in a list of values.
+        Args:
+            attr (str): The attribute to filter by.
+            values (list[str]): A list of values to filter by.
+        Returns:
+            list[ModelOut]: A list of objects that meet the filter.
+        """
+        return self._db.query(self._model).filter(getattr(self._model, attr).in_(values)).all()
+
     def query(self, query: str) -> list[ModelOut]:
         """Execute a custom query."""
         objects = self._db.exec(query)

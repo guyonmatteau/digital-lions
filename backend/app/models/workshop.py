@@ -20,7 +20,6 @@ class WorkshopCreateAttendance(SQLModel):
 
     attendance: str
     child_id: int = Field(foreign_key="children.id")
-    workshop_id: int = Field(foreign_key="workshops.id", default=None)
 
     @field_validator("attendance")
     def validate_attendance(cls, v):
@@ -31,6 +30,12 @@ class WorkshopCreateAttendance(SQLModel):
 
 class WorkshopCreateInDB(WorkshopBase):
     team_id: int = Field(foreign_key="teams.id")
+
+
+class WorkshopCreateAttendanceInDB(WorkshopCreateAttendance):
+    """Model for adding attendance to workshop in the context of a workshop."""
+
+    workshop_id: int = Field(foreign_key="workshops.id", default=None)
 
 
 class WorkshopCreate(WorkshopBase):
