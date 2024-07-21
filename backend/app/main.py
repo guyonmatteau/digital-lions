@@ -8,7 +8,7 @@ from dependencies.database import init_db
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from routers import attendance, children, communities, health, teams, users, workshops
+from routers import children, communities, health, teams, users
 
 logging_conf = "logging.conf"
 logging.config.fileConfig(logging_conf, disable_existing_loggers=False)  # type: ignore
@@ -52,8 +52,6 @@ app.add_middleware(
 app.middleware("http")(catch_any_exception)
 app.include_router(health.router, tags=["health"])
 app.include_router(teams.router, tags=["teams"])
-app.include_router(attendance.router, tags=["attendances"])
 app.include_router(children.router, tags=["children"])
 app.include_router(communities.router, tags=["communities"])
-app.include_router(workshops.router, tags=["workshop"])
 app.include_router(users.router, tags=["users"])
