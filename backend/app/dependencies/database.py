@@ -1,5 +1,5 @@
 from functools import lru_cache
-from typing import Annotated
+from typing import Annotated, Callable
 
 from alembic import command
 from alembic.config import Config
@@ -37,4 +37,15 @@ def get_database() -> Session:
         db.close()
 
 
+def get_session() -> Session:
+    """Get a database session.
+
+    Args:
+        engine: SQLModel engine."""
+    engine = get_engine()
+    session = Session(bind=engine, autocommit=False, autoflush=False)
+    yield session
+
+
+SessionDependency = Annotated[Session, Depends(get_session)]
 DatabaseDependency = Annotated[Session, Depends(get_database)]

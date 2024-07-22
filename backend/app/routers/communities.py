@@ -1,6 +1,7 @@
 import logging
 
 import exceptions
+from dependencies.repositories import RepositoriesDependency
 from dependencies.services import CommunityServiceDependency
 from fastapi import APIRouter, HTTPException, status
 from models.community import CommunityCreate, CommunityUpdate
@@ -17,10 +18,10 @@ router = APIRouter(prefix="/communities")
     status_code=status.HTTP_200_OK,
     summary="Get community by ID",
 )
-async def get_community(community_id: int, service: CommunityServiceDependency):
+async def get_community(community_id: int, repositories: RepositoriesDependency):
     """Get a community by ID."""
     try:
-        return service.get(community_id)
+        return repositories.community.read(community_id)
     except exceptions.CommunityNotFoundException:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -44,10 +45,12 @@ async def get_communities(service: CommunityServiceDependency):
     status_code=status.HTTP_201_CREATED,
     response_model=CommunityOutBasic,
 )
-async def add_community(community: CommunityCreate, service: CommunityServiceDependency):
+async def add_community(community: CommunityCreate, repositories: RepositoriesDependency):
     """Add a community."""
     try:
-        return service.create(community)
+        community = repositories.community.create(community)
+        repositories.commit()
+        return community
     except exceptions.CommunityAlreadyExistsException:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,

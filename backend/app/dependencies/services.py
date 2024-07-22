@@ -8,13 +8,7 @@ from dependencies.repositories import (
     WorkshopRepositoryDependency,
 )
 from fastapi import Depends
-from services import (
-    AttendanceService,
-    ChildService,
-    CommunityService,
-    TeamService,
-    WorkshopService,
-)
+from services import ChildService, CommunityService, TeamService
 
 
 def get_team_service(
@@ -49,16 +43,6 @@ def get_child_service(
     )
 
 
-def get_workshop_service(workshop_repository: WorkshopRepositoryDependency):
-    return WorkshopService(workshop_repository=workshop_repository)
-
-
-def get_attendance_service(attendance_repository: AttendanceRepositoryDependency):
-    return AttendanceService(attendance_repository=attendance_repository)
-
-
-AttendanceServiceDependency = Annotated[AttendanceService, Depends(get_attendance_service)]
 TeamServiceDependency = Annotated[TeamService, Depends(get_team_service)]
 ChildServiceDependency = Annotated[ChildService, Depends(get_child_service)]
 CommunityServiceDependency = Annotated[CommunityService, Depends(get_community_service)]
-WorkshopServiceDependency = Annotated[WorkshopService, Depends(get_workshop_service)]

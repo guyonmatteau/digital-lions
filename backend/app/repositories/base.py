@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Generic, TypeVar
 
-from dependencies.database import DatabaseDependency
+from dependencies.database import SessionDependency
 from exceptions import ItemNotFoundException
 from sqlalchemy import and_, delete
 from sqlmodel import SQLModel
@@ -37,54 +37,54 @@ class BaseRepository(Generic[Model]):
     _model: type[Model]
     cols: Columns
 
-    def __init__(self, db: DatabaseDependency):
-        self._db: DatabaseDependency = db
+    def __init__(self, session: SessionDependency):
+        self._session: SessionDependency = session
 
     def create(self, obj: ModelCreate) -> ModelOut:
         """Create an object in the table."""
-        new_obj = self._model.from_orm(obj)
-        self._db.add(new_obj)
-        self._db.commit()
-        self._db.refresh(new_obj)
+        new_obj = self._model.model_validate(obj)
+        self._session.add(new_obj)
+        self._session.flush()
+        self._session.refresh(new_obj)
         return new_obj
 
     def delete(self, object_id: int) -> None:
         """Delete an object from the table."""
-        obj = self._db.get(self._model, object_id)
+        obj = self._session.get(self._model, object_id)
         if not obj:
             raise ItemNotFoundException()
-        self._db.delete(obj)
-        self._db.commit()
+        self._session.delete(obj)
+        self._session.flush()
 
     def delete_where(self, attr: str, value: str) -> None:
         """Delete all objects by an attribute matching a value."""
         statement = delete(self._model).where(getattr(self._model, attr) == value)
-        self._db.exec(statement)
-        self._db.commit()
+        self._session.exec(statement)
+        self._session.flush()
 
     def read(self, object_id: int) -> ModelOut | None:
         """Read an object from the table."""
-        obj = self._db.get(self._model, object_id)
+        obj = self._session.get(self._model, object_id)
         if not obj:
             raise ItemNotFoundException()
         return obj
 
     def read_all(self) -> list[ModelOut] | None:
         """Read all objects from the table."""
-        objects = self._db.query(self._model).all()
+        objects = self._session.query(self._model).all()
         return objects
 
     def update(self, object_id: int, obj: ModelUpdate) -> ModelOut:
         """Update an object in the table."""
-        db_object = self._db.get(self._model, object_id)
+        db_object = self._session.get(self._model, object_id)
         if not db_object:
             raise ItemNotFoundException()
 
         obj_data = obj.model_dump(exclude_unset=True)
         db_object.sqlmodel_update(obj_data)
-        self._db.add(db_object)
-        self._db.commit()
-        self._db.refresh(db_object)
+        self._session.add(db_object)
+        self._session.flush()
+        self._session.refresh(db_object)
         return db_object
 
     def where(self, filters: list[tuple[str, str]]) -> list[ModelOut] | None:
@@ -98,7 +98,7 @@ class BaseRepository(Generic[Model]):
             list[ModelOut]: A list of objects that meet all the filters.
         """
         expr = and_(*self._construct_filter(filters))
-        return self._db.query(self._model).where(and_(expr)).all()
+        return self._session.query(self._model).where(and_(expr)).all()
 
     def where_in(self, attr: str, values: list[str]) -> list[ModelOut] | None:
         """Filter table by an attribute where the attribute value is in a list of values.
@@ -108,11 +108,13 @@ class BaseRepository(Generic[Model]):
         Returns:
             list[ModelOut]: A list of objects that meet the filter.
         """
-        return self._db.query(self._model).filter(getattr(self._model, attr).in_(values)).all()
+        return (
+            self._session.query(self._model).filter(getattr(self._model, attr).in_(values)).all()
+        )
 
     def query(self, query: str) -> list[ModelOut]:
         """Execute a custom query."""
-        objects = self._db.exec(query)
+        objects = self._session.exec(query)
         return objects
 
     def _construct_filter(self, filters: list[tuple[str, str]]) -> list:
