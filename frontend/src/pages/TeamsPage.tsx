@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import Accordion from "@/components/Accordion";
 import getTeams from "@/api/services/teams/getTeams";
 import getTeamById from "@/api/services/teams/getTeamById";
+import createChild from "@/api/services/children/createChild";
 import SelectInput from "@/components/SelectInput";
 import CustomButton from "@/components/CustomButton";
 import Modal from "@/components/Modal";
@@ -31,6 +32,8 @@ const TeamsPage: React.FC = () => {
   const [editGender, setEditGender] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingTeam, setIsLoadingTeam] = useState(false)
+  const [isEditingChild, setIsEditingChild] = useState(false);
+  const [isAddingChild, setIsAddingChild] = useState(false);
 
   useEffect(() => {
     const fetchTeams = async () => {
@@ -66,11 +69,20 @@ const TeamsPage: React.FC = () => {
   };
 
   const handleAddChild = () => {
+    setIsAddingChild(true)
     setModalVisible(true);
   };
 
   const closeModal = () => {
     setModalVisible(false);
+    setEditChildId(null);
+    setEditFirstName("");
+    setEditLastName("");
+    setEditAge(null);
+    setEditDateOfBirth("");
+    setEditGender("");
+    setIsAddingChild(false);
+    setIsEditingChild(false);
   };
 
   const handleFirstNameChange = (value: string) => {
@@ -90,10 +102,11 @@ const TeamsPage: React.FC = () => {
   };
 
   const handleGenderChange = (value: string | number) => {
-    setEditGender(value.toString()); // Ensure value is a string before setting state
+    setEditGender(value.toString());
   };
 
   const handleEditChild = (childId: number) => {
+    setIsEditingChild(true)
     const child = selectedTeam?.children.find((c) => c.id === childId);
     if (child) {
       setEditChildId(child.id);
@@ -106,6 +119,27 @@ const TeamsPage: React.FC = () => {
     }
   };
 
+  const handleSaveChild = async () => {
+    if (isAddingChild) {
+      const newChild = {
+        teamId: selectedTeam?.id!,
+        age: editAge!,
+        dateOfBirth: editDateOfBirth,
+        gender: editGender,
+        firstName: editFirstName,
+        lastName: editLastName,
+      };
+      try {
+        await createChild(newChild);
+        const updatedTeam = await getTeamById(selectedTeam?.id!);
+        setSelectedTeam(updatedTeam);
+        closeModal();
+      } catch (error) {
+        console.error("Failed to create child:", error);
+      }
+    }
+  };
+  
   return (
     <div className="p-8">
       {isLoading || isLoadingTeam && <Loader loadingText={"Loading teams"} />}
@@ -157,7 +191,7 @@ const TeamsPage: React.FC = () => {
           )}
 
           {modalVisible && (
-            <Modal onClose={closeModal} title="Add child">
+            <Modal onClose={closeModal} title={isEditingChild ? 'Edit child' : 'Add child'} acceptText="Add" onAccept={handleSaveChild}>
               <TextInput
                 className="mb-2"
                 label="First Name"
