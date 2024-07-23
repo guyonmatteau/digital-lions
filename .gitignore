@@ -13,6 +13,9 @@ dist
 .ipynb_checkpoints/
 *.ipynb
 
+# pytest
+.coverage
+
 # database
 db/data/*   
 db/logfile
