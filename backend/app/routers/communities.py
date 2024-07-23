@@ -1,11 +1,11 @@
 import logging
 
 import exceptions
-from dependencies.repositories import RepositoriesDependency
 from dependencies.services import CommunityServiceDependency
 from fastapi import APIRouter, HTTPException, status
+from models.api.generic import RecordCreated
 from models.community import CommunityCreate, CommunityUpdate
-from models.out import CommunityOutBasic
+from models.out import CommunityOutBasic, CommunityOutGetById
 
 logger = logging.getLogger(__name__)
 
@@ -14,15 +14,15 @@ router = APIRouter(prefix="/communities")
 
 @router.get(
     "/{community_id}",
-    response_model=CommunityOutBasic,
+    response_model=CommunityOutGetById,
     status_code=status.HTTP_200_OK,
     summary="Get community by ID",
 )
-async def get_community(community_id: int, repositories: RepositoriesDependency):
+async def get_community(community_id: int, service: CommunityServiceDependency):
     """Get a community by ID."""
     try:
-        return repositories.community.read(community_id)
-    except exceptions.CommunityNotFoundException:
+        return service.get(community_id)
+    except exceptions.ItemNotFoundException:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Community with ID {community_id} not found",
@@ -31,7 +31,7 @@ async def get_community(community_id: int, repositories: RepositoriesDependency)
 
 @router.get(
     "",
-    summary="Get communities",
+    summary="List all communities",
     status_code=status.HTTP_200_OK,
     response_model=list[CommunityOutBasic] | None,
 )
@@ -43,25 +43,26 @@ async def get_communities(service: CommunityServiceDependency):
     "",
     summary="Add a community",
     status_code=status.HTTP_201_CREATED,
-    response_model=CommunityOutBasic,
+    response_model=RecordCreated,
 )
-async def add_community(community: CommunityCreate, repositories: RepositoriesDependency):
+async def post_community(community: CommunityCreate, service: CommunityServiceDependency):
     """Add a community."""
     try:
-        community = repositories.community.create(community)
-        repositories.commit()
-        return community
-    except exceptions.CommunityAlreadyExistsException:
+        return service.create(community)
+    except exceptions.CommunityAlreadyExistsException as exc:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc))
+    except Exception as e:
+        logger.error(e)
         raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail=f"Community with name {community.name} already exists.",
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal server error.",
         )
 
 
 @router.patch(
     "/{community_id}",
     summary="Update a community",
-    response_model=CommunityOutBasic,
+    response_model=CommunityOutGetById,
     status_code=status.HTTP_200_OK,
 )
 async def update_community(
@@ -70,7 +71,7 @@ async def update_community(
     """Update a community."""
     try:
         return service.update(community_id, community)
-    except exceptions.CommunityNotFoundException:
+    except exceptions.ItemNotFoundException:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Community with ID {community_id} not found.",

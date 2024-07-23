@@ -1,4 +1,6 @@
 import pytest
+from dependencies.repositories import Repositories, get_repositories
+from dependencies.services import CommunityService, get_community_service
 from fastapi.testclient import TestClient
 from sqlmodel import Session, SQLModel, create_engine
 from sqlmodel.pool import StaticPool
@@ -27,10 +29,14 @@ def client(mocker, session):
 
     from app.main import app
 
-    def get_session_override():
-        return session
+    def get_repositories_override():
+        return Repositories(session=session)
 
-    app.dependency_overrides[get_session] = get_session_override
+    def get_community_service_override():
+        return CommunityService(session=session)
+
+    app.dependency_overrides[get_repositories] = get_repositories_override
+    app.dependency_overrides[get_community_service] = get_community_service_override
 
     client = TestClient(app)
     yield client

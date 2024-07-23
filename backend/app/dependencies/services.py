@@ -1,9 +1,11 @@
 from typing import Annotated
 
+from dependencies.database import SessionDependency
 from dependencies.repositories import (
     AttendanceRepositoryDependency,
     ChildRepositoryDependency,
     CommunityRepositoryDependency,
+    RepositoriesDependency,
     TeamRepositoryDependency,
     WorkshopRepositoryDependency,
 )
@@ -27,8 +29,8 @@ def get_team_service(
     )
 
 
-def get_community_service(community_repository: CommunityRepositoryDependency):
-    return CommunityService(community_repository=community_repository)
+def get_community_service(session: SessionDependency):
+    return CommunityService(session=session)
 
 
 def get_child_service(

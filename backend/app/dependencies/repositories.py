@@ -1,3 +1,4 @@
+import logging
 from typing import Annotated
 
 from dependencies.database import DatabaseDependency, SessionDependency, get_session
@@ -11,22 +12,28 @@ from repositories import (
 )
 from sqlmodel import Session
 
+logger = logging.getLogger(__name__)
+
 
 class UnitOfWork:
     """Internal class to make each API request act as
     on a unit of work on the database."""
 
     def __enter__(self):
+        logger.info("Starting unit of work.")
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
         """On exit rollback any staged database changes."""
+        logger.info("Ending unit of work.")
         self.rollback()
 
     def commit(self):
+        logger.info("Committing changes.")
         self._session.commit()
 
     def rollback(self):
+        logger.error("Rolling back changes.")
         self._session.rollback()
 
 
@@ -46,19 +53,12 @@ class Repositories(UnitOfWork):
 
 
 def get_repositories(session: SessionDependency) -> Repositories:
-    """Callable for repositories dependency."""
+    """Callable for repositories dependency. Note this is automatically
+    injecteced as context manager on each router by FastAPI."""
     return Repositories(session=session)
 
 
 RepositoriesDependency = Annotated[Repositories, Depends(get_repositories)]
-
-# idea for yielding
-# def get_team_repository(session: SessionDependency):
-#     with TeamService(session=session) as service:
-#         yield service
-#     return TeamRepository(session=session)
-#
-#
 
 
 def get_team_repository(session: SessionDependency):

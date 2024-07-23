@@ -13,7 +13,7 @@ router = APIRouter(prefix="/health")
     status_code=200,
 )
 async def get_health(db: DatabaseDependency):
-    """Health endpoint for backend and databse."""
+    """Health endpoint to ping database."""
     try:
         # TODO use db.ping() to check for connection
         db.query(Community).first()

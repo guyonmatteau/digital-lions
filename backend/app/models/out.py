@@ -59,6 +59,12 @@ class CommunityOutBasic(CommunityBase):
     id: int
 
 
+class CommunityOutGetById(CommunityOutBasic, MetadataColumns):
+    """Response model or GET /communities/:id"""
+
+    pass
+
+
 class UserOut(UserBase):
     id: int
 
