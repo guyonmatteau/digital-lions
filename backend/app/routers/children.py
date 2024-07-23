@@ -11,11 +11,8 @@ router = APIRouter(prefix="/children")
 async def get_child(child_id: int, child_service: ChildServiceDependency):
     try:
         return child_service.get(child_id)
-    except exceptions.ItemNotFoundException:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Child with ID {child_id} not found",
-        )
+    except exceptions.ChildNotFoundException as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
 
 
 @router.get(

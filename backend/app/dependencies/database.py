@@ -1,5 +1,5 @@
 from functools import lru_cache
-from typing import Annotated, Callable
+from typing import Annotated
 
 from alembic import command
 from alembic.config import Config

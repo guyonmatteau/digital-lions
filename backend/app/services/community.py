@@ -1,29 +1,39 @@
 import logging
 
 import exceptions
-from dependencies.database import SessionDependency
-from dependencies.repositories import Repositories
+from dependencies.repositories import UnitOfWork
 from models.community import CommunityCreate
-from repositories import CommunityRepository
-from services.base import BaseService
 
 logger = logging.getLogger(__name__)
 
 
-class CommunityService(BaseService):
+class CommunityService(UnitOfWork):
     """Community service layer to do anything related to communities."""
 
-    def __init__(self, session: SessionDependency):
-        self._session = session
-        self._repositories = Repositories(session=self._session)
-        self._repository: CommunityRepository = self._repositories.community
-
     def create(self, obj: CommunityCreate):
-        """Create a new object on the repository."""
-        if self._repository.where([("name", obj.name)]):
+        """Create a new community in the database.
+
+        Args:
+            obj (CommunityCreate): Community object to create.
+        """
+        if self._communities.where([("name", obj.name)]):
             raise exceptions.CommunityAlreadyExistsException(
                 f"Community with name {obj.name} already exists."
             )
-        community = self._repository.create(obj)
-        self._repositories.commit()
+        community = self._communities.create(obj)
+        self.commit()
         return community
+
+    def get_all(self):
+        """Get all objects from the table."""
+        return self._communities.read_all()
+
+    def get(self, object_id):
+        """Get an object from the table by id."""
+        return self._communities.read(object_id=object_id)
+
+    def update(self, object_id: int, obj):
+        return self._communities.update(object_id=object_id, obj=obj)
+
+    def delete(self, object_id: int):
+        return self._communities.delete(object_id=object_id)
