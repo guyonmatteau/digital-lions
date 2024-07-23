@@ -1,24 +1,15 @@
-FROM node:lts-alpine
+FROM node:22-alpine3.19
 
-RUN npm install -g http-server typescript
-ENV API_URL=
+RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 
-WORKDIR /app
+WORKDIR /home/node/app
 
-# copy both 'package.json' and 'package-lock.json' (if available)
-COPY package*.json ./
+COPY --chown=node:node . .
 
-# install project dependencies
 RUN npm install
 
-# copy project files and folders to the current working directory (i.e. 'app' folder)
-COPY . .
+USER node
 
-# Compile TypeScript files
-RUN tsc
+EXPOSE 3000
 
-# build app for production with minification
-RUN npm run build
-
-EXPOSE 5173
-CMD [ "npm", "run", "dev", "--", "--host", "--port", "5173"]
+CMD [ "npm", "run", "dev"]
