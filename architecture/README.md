@@ -17,7 +17,7 @@ Table to track development status of the endpoints which are heavily under const
 |                    | `/children/{child_id}`        | `DELETE`   | :white_check_mark: | :white_check_mark: |         :x:        |
 | **Teams**          | `/teams`                      | `GET`      | :white_check_mark: | :white_check_mark: |         :x:        |
 |                    | `/teams`                      | `POST`     | :white_check_mark: | :white_check_mark: |         :x:        |
-|                    | `/teams/{team_id}`            | `GET`      | :white_check_mark: | :white_check_mark: |         :x:        |
+|                    | `/teams/{team_id}`            | `GET`      | :white_check_mark: | :white_check_mark: |         :white_check_mark:        |
 |                    | `/teams/{team_id}`            | `DELETE`   | :white_check_mark: |         :x:        |                    |
 |                    | `/teams/{team_id}`            | `PATCH`    |         :x:        |                    |                    |
 |                    | `/teams/{team_id}/workshops`  | `POST`     | :white_check_mark: |         :x:        |                    |

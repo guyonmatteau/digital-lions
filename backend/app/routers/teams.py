@@ -47,8 +47,8 @@ async def post_team(team_service: TeamServiceDependency, team: TeamCreate):
     status_code=status.HTTP_200_OK,
     summary="Get teams",
 )
-async def get_teams(team_service: TeamServiceDependency):
-    return team_service.get_all()
+async def get_teams(team_service: TeamServiceDependency, community_id: int = None):
+    return team_service.get_all([("community_id", community_id)])
 
 
 @router.get(
@@ -58,7 +58,13 @@ async def get_teams(team_service: TeamServiceDependency):
     summary="Get team by id",
 )
 async def get_team(team_service: TeamServiceDependency, team_id: int):
-    return team_service.get(object_id=team_id)
+    try:
+        return team_service.get(object_id=team_id)
+    except exceptions.TeamNotFoundException as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        )
 
 
 @router.post(

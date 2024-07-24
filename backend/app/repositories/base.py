@@ -128,5 +128,6 @@ class BaseRepository(Generic[Model]):
         """
         filter_list = []
         for expr in filters:
-            filter_list.append(getattr(self._model, expr[0]) == expr[1])
+            if expr[1] is not None:
+                filter_list.append(getattr(self._model, expr[0]) == expr[1])
         return filter_list

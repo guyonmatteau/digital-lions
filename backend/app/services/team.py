@@ -95,13 +95,20 @@ class TeamService(AbstractService, BaseService):
 
         return workshop_record
 
-    def get_all(self):
+    def get_all(self, filters=list[tuple]):
         """Get all objects from the table."""
+        if filters:
+            return self._teams.where(filters=filters)
         return self._teams.read_all()
 
     def get(self, object_id):
         """Get a team from the table by id."""
-        return self._teams.read(object_id=object_id)
+        try:
+            return self._teams.read(object_id=object_id)
+        except exceptions.ItemNotFoundException:
+            error_msg = f"Team with ID {object_id} not found"
+            logger.error(error_msg)
+            raise exceptions.TeamNotFoundException(error_msg)
 
     def update(self, object_id: int, obj):
         return self._teams.update(object_id=object_id, obj=obj)
