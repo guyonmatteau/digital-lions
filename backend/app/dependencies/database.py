@@ -27,16 +27,6 @@ def run_migrations():
     command.upgrade(alembic_cfg, "head")
 
 
-def get_database() -> Session:
-    """Get a database session"""
-    engine = get_engine()
-    db = Session(engine)
-    try:
-        yield db
-    finally:
-        db.close()
-
-
 def get_session() -> Session:
     """Get a database session.
 
@@ -48,4 +38,3 @@ def get_session() -> Session:
 
 
 SessionDependency = Annotated[Session, Depends(get_session)]
-DatabaseDependency = Annotated[Session, Depends(get_database)]

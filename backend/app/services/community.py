@@ -1,13 +1,13 @@
 import logging
 
 import exceptions
-from dependencies.repositories import UnitOfWork
 from models.community import CommunityCreate
+from services.base import BaseService
 
 logger = logging.getLogger(__name__)
 
 
-class CommunityService(UnitOfWork):
+class CommunityService(BaseService):
     """Community service layer to do anything related to communities."""
 
     def create(self, obj: CommunityCreate):

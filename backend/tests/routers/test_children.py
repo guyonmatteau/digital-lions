@@ -18,20 +18,24 @@ def test_post_child_non_existing_team(client):
     assert response.status_code == status.HTTP_400_BAD_REQUEST, repsonse.text
 
 
-def test_post_child_success(client, mocker):
-    # test successfull creation of a child
-    post_community = client.post(
+@pytest.fixture(name="client")
+def client_with_community_and_team(client):
+    # arrange a community with a team without children
+    client.post(
         "/communities",
         json={
             "name": "Community 1",
         },
     )
-    assert post_community.status_code == status.HTTP_201_CREATED, post_community.text
-    team_community = client.post(
+    client.post(
         "/teams",
         json={"name": "Team 1", "community_id": 1, "children": []},
     )
-    assert team_community.status_code == status.HTTP_201_CREATED, team_community.text
+    return client
+
+
+def test_post_child_success(client):
+    # test successfull creation of a child
     child_name = "Firstname"
     data = {"first_name": child_name, "last_name": "Lastname", "team_id": 1}
     response = client.post(ENDPOINT, json=data)
@@ -42,3 +46,29 @@ def test_post_child_success(client, mocker):
     response_get = client.get(f"{ENDPOINT}/{id_}")
     assert response_get.status_code == status.HTTP_200_OK, response_get.text
     assert response_get.json().get("first_name") == child_name
+
+
+def test_update_child_success(client):
+    # test updating a child
+    data = {
+        "first_name": "Firstname",
+        "last_name": "Lastname",
+        "team_id": 1,
+        "age": 10,
+        "dob": None,
+    }
+    response = client.post(ENDPOINT, json=data)
+    assert response.status_code == status.HTTP_201_CREATED
+    id_ = response.json().get("id")
+
+    update_data = {"is_active": False, "last_name": "New Lastname"}
+    response_patch = client.patch(f"{ENDPOINT}/{id_}", json=update_data)
+    assert response_patch.status_code == status.HTTP_200_OK, response_patch.text
+
+    # assert that first name still same, but last name updated
+    response_json = response_patch.json()
+
+    assert response_json.get("first_name") == "Firstname"
+    assert response_json.get("last_name") == "New Lastname"
+    assert not response_json.get("is_active")
+    assert response_json.get("last_updated_at") != response_json.get("created_at")

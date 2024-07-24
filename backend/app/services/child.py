@@ -1,22 +1,40 @@
 import logging
 
 import exceptions
-from dependencies.repositories import UnitOfWork
 from models.child import ChildCreate
+from services.base import BaseService
 
 logger = logging.getLogger(__name__)
 
 
-class ChildService(UnitOfWork):
+class ChildService(BaseService):
     """Service layer to interact with children."""
 
     def create(self, child: ChildCreate):
         """Create a new child."""
         self._validate_team_exists(child.team_id)
 
+        self._validate_child_unique(child)
+
         child = self._children.create(child)
         self.commit()
         return child
+
+    def _validate_child_unique(self, child: ChildCreate):
+        """Validate that a child is unique in a team."""
+        if self._children.where(
+            [
+                ("team_id", child.team_id),
+                ("first_name", child.first_name),
+                ("last_name", child.last_name),
+            ]
+        ):
+            error_msg = (
+                f"Child {child.first_name} {child.last_name} already "
+                f"exists in team {child.team_id}"
+            )
+            logger.error(error_msg)
+            raise exceptions.ChildAlreadyExistsException(error_msg)
 
     def delete(self, object_id: int, cascade: bool = False):
         """Delete a child."""

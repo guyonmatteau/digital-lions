@@ -1,15 +1,15 @@
 import logging
 
 import exceptions
-from dependencies.repositories import UnitOfWork
 from models.child import ChildCreate
 from models.team import TeamCreate
 from models.workshop import WorkshopCreate, WorkshopCreateAttendanceInDB, WorkshopCreateInDB
+from services.base import BaseService
 
 logger = logging.getLogger(__name__)
 
 
-class TeamService(UnitOfWork):
+class TeamService(BaseService):
     """Team service layer to do anything related to teams."""
 
     def create(self, team: TeamCreate):

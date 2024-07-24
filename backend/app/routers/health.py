@@ -1,7 +1,8 @@
-from dependencies.database import DatabaseDependency
+from datetime import datetime, timezone
+
+from dependencies.services import CommunityServiceDependency
 from fastapi import APIRouter, status
 from fastapi.responses import JSONResponse
-from models.community import Community
 
 router = APIRouter(prefix="/health")
 
@@ -12,12 +13,15 @@ router = APIRouter(prefix="/health")
     summary="Health check",
     status_code=200,
 )
-async def get_health(db: DatabaseDependency):
+async def get_health(community_service: CommunityServiceDependency):
     """Health endpoint to ping database."""
     try:
-        # TODO use db.ping() to check for connection
-        db.query(Community).first()
-        return JSONResponse(status_code=status.HTTP_200_OK, content={"status": "ok"})
+        # TODO use db.ping() to check for connection instead of relying on service
+        community_service.get_all()
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content={"status": "ok", "datetime": str(datetime.now(timezone.utc))},
+        )
     except Exception as exc:
         if "psycopg2.OperationalError" in str(exc):
             output = "Database connection error"
