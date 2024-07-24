@@ -19,21 +19,6 @@ docker compose up frontend
 ```
 The frontend should now be available at `http://localhost:5173`.
 
-## Endpoint status
-
-Table to track which endpoints exist on the API, whether they are functional, tested, and their payload is correct.
-
-| Endpoint group  | Endpoint                             | Existing | Functional | Tested | Payload/response final |
-|-----------------|--------------------------------------|----------|------------|--------|------------------------|
-| **Health**      | `GET /health`                        | [ ]      | yes        | yes    | yes                    |
-| **Communities** | `POST /communities`                  | - [x]      | yes        | yes    | yes                    |
-|                 | `GET /communities`                   | [x]      | yes        | yes    | yes                    |
-|                 | `PATCH /communities`                 |          | yes        | yes    | yes                    |
-|                 | `DELETE /communities/{community_id}` | [ ]      | no         |        |                        |
-|                 | `GET /communities/{community_id}`    |          | yes        | yes    |                        |
-|                 |                                      |          |            |        |                        |
-|                 |                                      |          |            |        |                        |
-|                 |                                      |          |            |        |                        |#
 ## Design
 
 The application is a frontend that talks to a backend API, which in turn talks to a Postgres database. The Postgres Database is designed with the following concepts in mind. Each block in the schematic overview (community, team, children, workshop, attendances, users, program) translates to a table in the databse.
