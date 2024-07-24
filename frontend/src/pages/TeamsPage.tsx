@@ -1,21 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Accordion from "@/components/Accordion";
 import getTeams from "@/api/services/teams/getTeams";
 import getTeamById from "@/api/services/teams/getTeamById";
 import createChild from "@/api/services/children/createChild";
+import updateChild from "@/api/services/children/updateChild";
 import SelectInput from "@/components/SelectInput";
 import CustomButton from "@/components/CustomButton";
 import Modal from "@/components/Modal";
 import TextInput from "@/components/TextInput";
 import Loader from "@/components/Loader";
-
 import { TeamWithChildren } from "@/types/teamWithChildren.interface";
 
-
 interface Team {
-  name: string,
-  id: number
+  name: string;
+  id: number;
 }
 
 const TeamsPage: React.FC = () => {
@@ -27,13 +26,15 @@ const TeamsPage: React.FC = () => {
   const [editChildId, setEditChildId] = useState<number | null>(null);
   const [editFirstName, setEditFirstName] = useState("");
   const [editLastName, setEditLastName] = useState("");
-  const [editAge, setEditAge] = useState<number | null>(null); // Assuming age is a number
+  const [editAge, setEditAge] = useState<number | null>(null);
   const [editDateOfBirth, setEditDateOfBirth] = useState("");
   const [editGender, setEditGender] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isLoadingTeam, setIsLoadingTeam] = useState(false)
+  const [isLoadingTeam, setIsLoadingTeam] = useState(false);
   const [isEditingChild, setIsEditingChild] = useState(false);
   const [isAddingChild, setIsAddingChild] = useState(false);
+  
+  const navigate = useNavigate(); // Add navigate
 
   useEffect(() => {
     const fetchTeams = async () => {
@@ -56,20 +57,23 @@ const TeamsPage: React.FC = () => {
     const selected = teams.find((team) => team.id === selectedId);
 
     if (selected) {
-      setIsLoadingTeam(true)
+      setIsLoadingTeam(true);
       try {
         const teamDetails = await getTeamById(selected.id);
         setSelectedTeam(teamDetails);
+
+        // Update the URL parameter
+        navigate(`/teams/${selected.id}`);
       } catch (error) {
         console.error("Failed to fetch team details:", error);
       } finally {
-        setIsLoadingTeam(false)
+        setIsLoadingTeam(false);
       }
     }
   };
 
   const handleAddChild = () => {
-    setIsAddingChild(true)
+    setIsAddingChild(true);
     setModalVisible(true);
   };
 
@@ -106,7 +110,7 @@ const TeamsPage: React.FC = () => {
   };
 
   const handleEditChild = (childId: number) => {
-    setIsEditingChild(true)
+    setIsEditingChild(true);
     const child = selectedTeam?.children.find((c) => c.id === childId);
     if (child) {
       setEditChildId(child.id);
@@ -120,29 +124,57 @@ const TeamsPage: React.FC = () => {
   };
 
   const handleSaveChild = async () => {
-    if (isAddingChild) {
-      const newChild = {
-        teamId: selectedTeam?.id!,
-        age: editAge!,
-        dateOfBirth: editDateOfBirth,
-        gender: editGender,
-        firstName: editFirstName,
-        lastName: editLastName,
-      };
-      try {
-        await createChild(newChild);
-        const updatedTeam = await getTeamById(selectedTeam?.id!);
-        setSelectedTeam(updatedTeam);
-        closeModal();
-      } catch (error) {
-        console.error("Failed to create child:", error);
+    if (isEditingChild && editChildId !== null) {
+      if (editAge !== null && editFirstName && editLastName) {
+        const updatedChild = {
+          childId: editChildId,
+          isActive: true,
+          age: editAge,
+          dateOfBirth: editDateOfBirth || null,
+          gender: editGender || null,
+          firstName: editFirstName,
+          lastName: editLastName,
+        };
+
+        try {
+          await updateChild(updatedChild);
+          const updatedTeam = await getTeamById(selectedTeam?.id!);
+          setSelectedTeam(updatedTeam);
+          closeModal();
+        } catch (error) {
+          console.error("Failed to update child:", error);
+        }
+      } else {
+        console.error("Missing required fields for updating child");
+      }
+    } else if (isAddingChild) {
+      if (editAge !== null && editFirstName && editLastName && selectedTeam) {
+        const newChild = {
+          teamId: selectedTeam.id,
+          age: editAge,
+          dateOfBirth: editDateOfBirth,
+          gender: editGender,
+          firstName: editFirstName,
+          lastName: editLastName,
+        };
+
+        try {
+          await createChild(newChild);
+          const updatedTeam = await getTeamById(selectedTeam.id);
+          setSelectedTeam(updatedTeam);
+          closeModal();
+        } catch (error) {
+          console.error("Failed to create child:", error);
+        }
+      } else {
+        console.error("Missing required fields for adding child");
       }
     }
   };
-  
+
   return (
     <div className="p-8">
-      {isLoading || isLoadingTeam && <Loader loadingText={"Loading teams"} />}
+      {isLoading || (isLoadingTeam && <Loader loadingText={"Loading teams"} />)}
       {!isLoading && (
         <>
           <SelectInput
@@ -191,30 +223,40 @@ const TeamsPage: React.FC = () => {
           )}
 
           {modalVisible && (
-            <Modal onClose={closeModal} title={isEditingChild ? 'Edit child' : 'Add child'} acceptText="Add" onAccept={handleSaveChild}>
+            <Modal
+              onClose={closeModal}
+              title={isEditingChild ? "Edit child" : "Add child"}
+              acceptText={isEditingChild ? "Edit" : "Add"}
+              onAccept={handleSaveChild}
+            >
               <TextInput
                 className="mb-2"
                 label="First Name"
                 value={editFirstName}
                 onChange={handleFirstNameChange}
+                required={true}
+                errorMessage="Please enter your first name"
               />
               <TextInput
                 className="mb-2"
                 label="Last Name"
                 value={editLastName}
                 onChange={handleLastNameChange}
+                required={true}
               />
               <TextInput
                 className="mb-2"
                 label="Age"
                 value={editAge?.toString() || ""}
                 onChange={handleAgeChange}
+                required={true}
               />
               <TextInput
                 className="mb-2"
                 label="Date of Birth"
                 value={editDateOfBirth}
                 onChange={handleDateOfBirthChange}
+                required={true}
               />
               <SelectInput
                 className="mb-2"
@@ -225,7 +267,6 @@ const TeamsPage: React.FC = () => {
                 <option value="">Select gender</option>
                 <option value="male">Male</option>
                 <option value="female">Female</option>
-                <option value="other">Other</option>
               </SelectInput>
             </Modal>
           )}

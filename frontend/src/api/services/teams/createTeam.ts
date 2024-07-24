@@ -1,34 +1,20 @@
-interface Child {
-  first_name: string;
-  last_name: string;
-  age: number;
-  date_of_birth: string;
-  gender: string;
+interface ApiResponse {
+  id: number;
 }
 
 export interface BodyInput {
   name: string;
-  children: Child[];
+  children: [];
   community_id: number;
 }
 
 const createTeam = async ({
-  firstName,
-  lastName,
-  age,
-  dateOfBirth,
-  gender,
   name,
   communityId,
 }: {
-  firstName: string;
-  lastName: string;
-  age: number;
-  dateOfBirth: string;
-  gender: string;
   name: string;
   communityId: number;
-}): Promise<void> => {
+}): Promise<ApiResponse> => {
   try {
     const response = await fetch(
       "https://backend-production-7bbc.up.railway.app/api/v1/teams",
@@ -39,11 +25,6 @@ const createTeam = async ({
         },
         body: JSON.stringify(
           createInput({
-            firstName,
-            lastName,
-            age,
-            dateOfBirth,
-            gender,
             name,
             communityId,
           })
@@ -51,43 +32,34 @@ const createTeam = async ({
       }
     );
 
-    if (!response.ok) {
-      throw new Error(`Error: ${response.statusText}`);
+    if (response.status === 409) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail || "Conflict: Team already exists");
     }
+
+    if (!response.ok) {
+      throw new Error("Failed to create team");
+    }
+
+    const data: ApiResponse = await response.json();
+    return data;
   } catch (error) {
-    console.error("Error fetching data:", error);
+    console.error("Error creating team:", error);
     throw error;
   }
 };
 
 function createInput({
-  firstName,
-  lastName,
-  age,
-  dateOfBirth,
-  gender,
   name,
   communityId,
 }: {
-  firstName: string;
-  lastName: string;
-  age: number;
-  dateOfBirth: string;
-  gender: string;
   name: string;
   communityId: number;
 }): BodyInput {
-  const child: Child = {
-    first_name: firstName,
-    last_name: lastName,
-    age: age,
-    date_of_birth: dateOfBirth,
-    gender: gender,
-  };
 
   return {
     name: name,
-    children: [child],
+    children: [],
     community_id: communityId,
   };
 }

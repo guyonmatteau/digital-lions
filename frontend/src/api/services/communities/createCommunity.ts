@@ -3,20 +3,21 @@ interface ApiResponse {
   id: number;
 }
 
-const getCommunities = async (): Promise<ApiResponse[]> => {
+const getCommunities = async (communityName: string): Promise<ApiResponse> => {
   try {
     const response = await fetch('https://backend-production-7bbc.up.railway.app/api/v1/communities', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
-      }
+      },
+      body: JSON.stringify({ "name": communityName })
     });
 
     if (!response.ok) {
       throw new Error(`Error: ${response.statusText}`);
     }
 
-    const data: ApiResponse[] = await response.json();
+    const data: ApiResponse = await response.json();
     return data;
   } catch (error) {
     console.error('Error fetching data:', error);

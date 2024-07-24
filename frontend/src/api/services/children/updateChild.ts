@@ -7,11 +7,33 @@ interface ApiBody {
   last_name: string;
 }
 
-const getChildrenById = async (
-  childId: number,
-  input: ApiBody
-): Promise<void> => {
+const updateChildById = async ({
+  childId,
+  isActive,
+  age,
+  dateOfBirth,
+  gender,
+  firstName,
+  lastName,
+}: {
+  childId: number;
+  isActive: boolean;
+  age: number;
+  dateOfBirth: string | null;
+  gender: string | null;
+  firstName: string;
+  lastName: string;
+}): Promise<void> => {
   try {
+    const body: ApiBody = {
+      is_active: isActive,
+      age: age,
+      dob: dateOfBirth,
+      gender: gender,
+      first_name: firstName,
+      last_name: lastName,
+    };
+
     const response = await fetch(
       `https://backend-production-7bbc.up.railway.app/api/v1/children/${childId}`,
       {
@@ -19,16 +41,16 @@ const getChildrenById = async (
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(input),
+        body: JSON.stringify(body),
       }
     );
     if (!response.ok) {
       throw new Error(`Error: ${response.statusText}`);
     }
   } catch (error) {
-    console.error("Error fetching data:", error);
+    console.error("Error updating child data:", error);
     throw error;
   }
 };
 
-export default getChildrenById;
+export default updateChildById;
