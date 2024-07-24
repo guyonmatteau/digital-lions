@@ -4,12 +4,12 @@ import exceptions
 from models.child import ChildCreate
 from models.team import TeamCreate
 from models.workshop import WorkshopCreate, WorkshopCreateAttendanceInDB, WorkshopCreateInDB
-from services.base import BaseService
+from services.base import AbstractService, BaseService
 
 logger = logging.getLogger(__name__)
 
 
-class TeamService(BaseService):
+class TeamService(AbstractService, BaseService):
     """Team service layer to do anything related to teams."""
 
     def create(self, team: TeamCreate):
@@ -94,6 +94,17 @@ class TeamService(BaseService):
             self._attendances.create(attendance_in)
 
         return workshop_record
+
+    def get_all(self):
+        """Get all objects from the table."""
+        return self._teams.read_all()
+
+    def get(self, object_id):
+        """Get a team from the table by id."""
+        return self._teams.read(object_id=object_id)
+
+    def update(self, object_id: int, obj):
+        return self._teams.update(object_id=object_id, obj=obj)
 
     def delete(self, object_id: int, cascade: bool = False):
         """Delete a team."""

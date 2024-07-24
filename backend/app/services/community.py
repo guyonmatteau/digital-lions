@@ -2,12 +2,12 @@ import logging
 
 import exceptions
 from models.community import CommunityCreate
-from services.base import BaseService
+from services.base import AbstractService, BaseService
 
 logger = logging.getLogger(__name__)
 
 
-class CommunityService(BaseService):
+class CommunityService(AbstractService, BaseService):
     """Community service layer to do anything related to communities."""
 
     def create(self, obj: CommunityCreate):

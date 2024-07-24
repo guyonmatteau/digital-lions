@@ -1,4 +1,5 @@
 import logging
+from abc import ABC, abstractmethod
 from typing import TypeVar
 
 import repositories
@@ -13,6 +14,39 @@ ModelOut = TypeVar("ModelOut", bound=SQLModel)
 
 
 logger = logging.getLogger(__name__)
+
+
+class AbstractService(ABC):
+    """Abstract class to be used as a parent class for all services,
+    defining the methods that each service should implement."""
+
+    @abstractmethod
+    def get_all(self):
+        """Get all objects from the table."""
+        pass
+
+    @abstractmethod
+    def get(self, object_id):
+        """Get an object from the repository that is
+        represented by the service, by ID."""
+        pass
+
+    @abstractmethod
+    def create(self, obj: ModelCreate):
+        """Create a new object on the repository that is
+        represented by the service."""
+        pass
+
+    @abstractmethod
+    def update(self, object_id: int, obj):
+        """Update an object on the repository that is represented
+        by the service."""
+        pass
+
+    @abstractmethod
+    def delete(self, object_id: int):
+        """Delete an object from the repository."""
+        pass
 
 
 class BaseService:
@@ -57,30 +91,3 @@ class BaseService:
     def rollback(self) -> None:
         """Rollback all staged changes in the database."""
         self._session.rollback()
-
-
-# class BaseService:
-#     """BaseService to act as a parent class for all services.
-#     Each service should instantiate it's own repositories, where the
-#     `_repository` should be the repository that the service maps to."""
-#
-#     _repository: type[BaseRepository]
-#     cols: Columns
-#
-#     def get_all(self):
-#         """Get all objects from the table."""
-#         return self._repository.read_all()
-#
-#     def get(self, object_id):
-#         """Get an object from the table by id."""
-#         return self._repository.read(object_id=object_id)
-#
-#     def create(self, obj: ModelCreate):
-#         """Create a new object on the repository."""
-#         return self._repository.create(obj)
-#
-#     def update(self, object_id: int, obj):
-#         return self._repository.update(object_id=object_id, obj=obj)
-#
-#     def delete(self, object_id: int):
-#         return self._repository.delete(object_id=object_id)
