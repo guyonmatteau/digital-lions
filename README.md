@@ -26,7 +26,7 @@ Table to track which endpoints exist on the API, whether they are functional, te
 | Endpoint group  | Endpoint                             | Existing | Functional | Tested | Payload/response final |
 |-----------------|--------------------------------------|----------|------------|--------|------------------------|
 | **Health**      | `GET /health`                        | [ ]      | yes        | yes    | yes                    |
-| **Communities** | `POST /communities`                  | [x]      | yes        | yes    | yes                    |
+| **Communities** | `POST /communities`                  | - [x]      | yes        | yes    | yes                    |
 |                 | `GET /communities`                   | [x]      | yes        | yes    | yes                    |
 |                 | `PATCH /communities`                 |          | yes        | yes    | yes                    |
 |                 | `DELETE /communities/{community_id}` | [ ]      | no         |        |                        |
