@@ -39,7 +39,7 @@ class TeamService(AbstractService, BaseService):
         """Create a workshop for a team."""
         self._validate_team_exists(team_id)
 
-        # validate that workshop does not exist yet
+        # validate that workshop does not exist yet for the team
         if self._workshops.where(
             [
                 (self.cols.team_id, team_id),
@@ -49,6 +49,19 @@ class TeamService(AbstractService, BaseService):
             error_msg = f"Workshop {workshop.workshop_number} for team {team_id} already exists."
             logger.error(error_msg)
             raise exceptions.WorkshopExistsException(error_msg)
+
+        # validate that the workshop number is the next valid workshop for the team
+        workshops = self._workshops.where([(self.cols.team_id, team_id)])
+        valid_workshop_number = (
+            max(w.workshop_number for w in workshops) + 1 if len(workshops) > 0 else 1
+        )
+        if workshop.workshop_number != valid_workshop_number:
+            error_msg = (
+                f"Workshop number {workshop.workshop_number} is not the next correct "
+                + f"workshop for team {team_id}. Should be {valid_workshop_number}"
+            )
+            logger.error(error_msg)
+            raise exceptions.WorkshopNumberInvalidException(error_msg)
 
         # validate that all children in the payload are part of the team
         payload_child_ids = set([child.child_id for child in workshop.attendance])
@@ -93,6 +106,7 @@ class TeamService(AbstractService, BaseService):
             )
             self._attendances.create(attendance_in)
 
+        self.commit()
         return workshop_record
 
     def get_all(self, filters=list[tuple]):
@@ -143,3 +157,8 @@ class TeamService(AbstractService, BaseService):
             error_msg = f"Team with ID {team_id} not found"
             logger.error(error_msg)
             raise exceptions.TeamNotFoundException(error_msg)
+
+    @classmethod
+    def factory(cls):
+        """Factory method to get service when not in dependency context."""
+        raise NotImplementedError()

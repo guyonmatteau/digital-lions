@@ -53,12 +53,6 @@ class BaseService:
     """Internal class to make each API request act as
     on a unit of work on the database."""
 
-    attendances: repositories.AttendanceRepository
-    children: repositories.ChildRepository
-    communities: repositories.CommunityRepository
-    teams: repositories.TeamRepository
-    workshops: repositories.WorkshopRepository
-
     cols = Columns
 
     def __init__(self, session: SessionDependency) -> None:

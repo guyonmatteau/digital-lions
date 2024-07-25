@@ -12,7 +12,7 @@ def test_get_team_not_found(client):
 
 
 @pytest.fixture(name="client")
-def client_with_community_and_team(client):
+def client_with_communities(client):
     # arrange two communities
     for i in range(2):
         client.post(
@@ -53,3 +53,169 @@ def test_get_team_filter_community(client):
     assert response_get.status_code == status.HTTP_200_OK
     assert len(response_get.json()) == 1
     assert response_get.json()[0].get("name") == team_1
+
+
+def test_get_team_by_id(client):
+    # test that we can get a team by id
+    team_x = "Team X"
+    children = [
+        {"first_name": "Child 1", "last_name": "Last name", "age": 10},
+        {"first_name": "Child 2", "last_name": "Last name", "dob": "2001-01-01"},
+    ]
+    data = {"community_id": 1, "name": team_x, "children": children}
+    response = client.post(ENDPOINT, json=data)
+    assert response.status_code == status.HTTP_201_CREATED
+    id_ = response.json().get("id")
+    response_get = client.get(f"{ENDPOINT}/{id_}")
+    assert response_get.json().get("name") == team_x
+
+
+"""
+Test adding workshops to team.
+"""
+
+
+@pytest.fixture(name="client_with_team")
+def client_with_community_and_team(client):
+    # arrange two communities
+    children = [
+        {"first_name": "Child 1", "last_name": "Last name", "age": 10},
+        {"first_name": "Child 2", "last_name": "Last name", "dob": "2001-01-01"},
+    ]
+
+    client.post(
+        "/communities",
+        json={"name": "Community 1"},
+    )
+    client.post("/teams", json={"community_id": 1, "name": "Team 1", "children": children})
+    client.post("/teams", json={"community_id": 1, "name": "Team 2", "children": children})
+    return client
+
+
+def test_add_workshop_with_attendance(client_with_team):
+    # test that we can add a workshop to a team
+    team_id = 1
+    attendance = [
+        {"attendance": "present", "child_id": 1},
+        {"attendance": "absent", "child_id": 2},
+    ]
+    payload = {
+        "date": "2021-01-01",
+        "workshop_number": 1,
+        "attendance": attendance,
+    }
+
+    response = client_with_team.post(f"{ENDPOINT}/{team_id}/workshops", json=payload)
+    assert response.status_code == status.HTTP_201_CREATED, response.text
+
+
+def test_add_workshop_missing_child_id(client_with_team):
+    # test that we get a bad request when we are missing children
+    team_id = 1
+    attendance = [{"attendance": "present", "child_id": 1}]
+    response = client_with_team.post(
+        f"{ENDPOINT}/{team_id}/workshops",
+        json={
+            "workshop_number": 1,
+            "date": "2021-01-01",
+            "attendance": attendance,
+        },
+    )
+    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
+
+
+def test_add_workshop_incorrect_child_id(client_with_team):
+    # test that we get a bad request when we have extra children
+    team_id = 1
+    attendance = [
+        {"attendance": "present", "child_id": 1},
+        {"attendance": "cancelled", "child_id": 2},
+        {"attendance": "present", "child_id": 3},
+    ]
+    response = client_with_team.post(
+        f"{ENDPOINT}/{team_id}/workshops",
+        json={
+            "date": "2021-01-01",
+            "workshop_number": 1,
+            "attendance": attendance,
+        },
+    )
+    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
+
+
+def test_workshop_invalid_number(client_with_team):
+    # assert that only a workshop can be added between 1 and 12
+    team_id = 1
+    attendance = [
+        {"attendance": "present", "child_id": 1},
+        {"attendance": "cancelled", "child_id": 2},
+    ]
+    response = client_with_team.post(
+        f"{ENDPOINT}/{team_id}/workshops",
+        json={
+            "workshop_number": 0,
+            "date": "2021-01-01",
+            "attendance": attendance,
+        },
+    )
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
+
+
+def test_workshop_already_exists(client_with_team):
+    # given a workshop has been created with a number,
+    # assert that the workshop cannot be created again
+    team_id = 1
+    attendance = [
+        {"attendance": "present", "child_id": 1},
+        {"attendance": "absent", "child_id": 2},
+    ]
+    payload = {
+        "date": "2021-01-01",
+        "workshop_number": 1,
+        "attendance": attendance,
+    }
+
+    response = client_with_team.post(
+        f"{ENDPOINT}/{team_id}/workshops",
+        json=payload,
+    )
+    assert response.status_code == status.HTTP_201_CREATED, response.text
+    response = client_with_team.post(
+        f"{ENDPOINT}/{team_id}/workshops",
+        json=payload,
+    )
+    assert response.status_code == status.HTTP_409_CONFLICT, response.text
+
+
+def test_workshop_number_not_subsequent(client_with_team):
+    # given a team has done a workshop, assert that the next workshop added
+    # can only have the workshop number of the last + 1
+    team_id = 1
+    attendance = [
+        {"attendance": "present", "child_id": 1},
+        {"attendance": "absent", "child_id": 2},
+    ]
+
+    # create workshop number 1
+    response = client_with_team.post(
+        f"{ENDPOINT}/{team_id}/workshops",
+        json={
+            "date": "2021-01-01",
+            "workshop_number": 1,
+            "attendance": attendance,
+        },
+    )
+    assert response.status_code == status.HTTP_201_CREATED, response.text
+
+    # try to create workshop 3, which should fail
+    response_post_second_workshop = client_with_team.post(
+        f"{ENDPOINT}/{team_id}/workshops",
+        json={
+            "date": "2021-01-01",
+            "workshop_number": 1 + 2,
+            "attendance": attendance,
+        },
+    )
+    assert (
+        response_post_second_workshop.status_code == status.HTTP_400_BAD_REQUEST
+    ), response_post_second_workshop.text

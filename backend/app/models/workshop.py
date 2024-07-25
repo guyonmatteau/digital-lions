@@ -1,3 +1,4 @@
+import datetime
 from typing import TYPE_CHECKING
 
 from pydantic import field_validator
@@ -9,10 +10,15 @@ if TYPE_CHECKING:
 
 
 class WorkshopBase(SQLModel):
-    date: str = Field(description="The date of the workshop in the format YYYY-MM-DD")
-    workshop_number: int = Field(
-        description="The number of the workshop in the program", default=0
-    )
+    date: datetime.date = Field(description="The date of the workshop in the format YYYY-MM-DD")
+    workshop_number: int = Field(description="The number of the workshop in the program")
+
+    @field_validator("workshop_number")
+    def workshop_number_in_default_range(cls, v):
+        """Validate that the workshop number is between 1 and 12."""
+        if v not in range(1, 13):
+            raise ValueError("Workshop number must be between 1 and 12.")
+        return v
 
 
 class WorkshopCreateAttendance(SQLModel):

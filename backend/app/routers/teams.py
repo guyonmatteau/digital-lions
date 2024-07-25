@@ -84,7 +84,7 @@ async def get_team(team_service: TeamServiceDependency, team_id: int):
         },
     },
 )
-async def create_workshop(
+async def post_workshop(
     team_service: TeamServiceDependency, team_id: int, workshop: WorkshopCreate
 ):
     """Add a workshop to a team."""
@@ -97,7 +97,11 @@ async def create_workshop(
             status_code=status.HTTP_409_CONFLICT,
             detail=str(exc),
         )
-    except (exceptions.WorkshopIncompleteAttendance, exceptions.ChildNotInTeam) as exc:
+    except (
+        exceptions.WorkshopIncompleteAttendance,
+        exceptions.ChildNotInTeam,
+        exceptions.WorkshopNumberInvalidException,
+    ) as exc:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(exc),

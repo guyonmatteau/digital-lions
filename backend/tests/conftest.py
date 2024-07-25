@@ -16,11 +16,13 @@ from sqlmodel.pool import StaticPool
 def session_fixture():
     """Create an in-memory SQLite database for testing."""
     engine = create_engine(
-        "sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool
+        "sqlite://",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
     )
     SQLModel.metadata.create_all(engine)
 
-    with Session(engine) as session:
+    with Session(engine, autocommit=False, autoflush=False) as session:
         yield session
 
 
