@@ -34,7 +34,11 @@ def get_session() -> Session:
         engine: SQLModel engine."""
     engine = get_engine()
     session = Session(bind=engine, autocommit=False, autoflush=False)
-    yield session
+    try:
+        yield session
+    finally:
+        # close connection at end of request
+        session.close()
 
 
 SessionDependency = Annotated[Session, Depends(get_session)]
