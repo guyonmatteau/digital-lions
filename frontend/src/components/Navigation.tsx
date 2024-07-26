@@ -6,25 +6,27 @@ const Navigation: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => {
-    setIsOpen(!isOpen);
+    setIsOpen(prevState => !prevState);
   };
 
   return (
     <nav className="bg-gray-800 p-4">
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between">
+          {/* Logo and Title */}
           <div className="flex-shrink-0">
             <Link to="/" className="text-white font-bold text-xl">
               Digital Lions
             </Link>
           </div>
+
+          {/* Desktop Navigation Links */}
           <div className="hidden md:flex space-x-4">
-            <NavLink to="/login">Login</NavLink>
-            <NavLink to="/community">Community</NavLink>
-            <NavLink to="/teams">Teams</NavLink>
-            <NavLink to="/workshop">Workshop</NavLink>
+            <NavLink to="/communities">Community</NavLink>
+            <NavLink to="/teams">Teams info</NavLink>
           </div>
-          {/* Hamburger menu button */}
+
+          {/* Mobile Hamburger Menu Button */}
           <div className="md:hidden">
             <button
               className="text-white hover:text-gray-300 focus:outline-none"
@@ -55,19 +57,15 @@ const Navigation: React.FC = () => {
             </button>
           </div>
         </div>
+
+        {/* Mobile Menu Links */}
         {isOpen && (
-          <div className="md:hidden mt-4">
-            <NavLink to="/login" onClick={toggleMenu}>
-              Login
-            </NavLink>
-            <NavLink to="/community" onClick={toggleMenu}>
+          <div className="md:hidden mt-4 space-y-2">
+            <NavLink to="/communities" onClick={toggleMenu}>
               Community
             </NavLink>
             <NavLink to="/teams" onClick={toggleMenu}>
-              Teams
-            </NavLink>
-            <NavLink to="/workshop" onClick={toggleMenu}>
-              Workshop
+              Teams info
             </NavLink>
           </div>
         )}
