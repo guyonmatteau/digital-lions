@@ -5,14 +5,14 @@ interface LinkCardProps {
   title: string;
   className?: string;
   to: string; 
-  state?: any; // Add optional state prop
+  state?: any; 
 }
 
 const LinkCard: React.FC<LinkCardProps> = ({
   title,
   className,
   to,
-  state, // Destructure state prop
+  state, 
 }) => {
   const navigate = useNavigate();
 
@@ -20,7 +20,7 @@ const LinkCard: React.FC<LinkCardProps> = ({
     if (state) {
       localStorage.setItem('linkCardState', JSON.stringify(state));
     }
-    navigate(to, { state }); // Pass state to navigate
+    navigate(to, { state }); 
   };
 
   return (

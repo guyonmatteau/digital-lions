@@ -54,14 +54,13 @@ const TeamsDetailPage: React.FC = () => {
     }
   }, []);
 
-  const breadcrumbs = [
+  const showBreadcrumbs = new URLSearchParams(location.search).get('source') !== 'menu';
+
+  const breadcrumbs = showBreadcrumbs ? [
     { label: "Communities", path: "/communities" },
-    { label: `${communityName}`, path: `/communities/${communityId}/teams` },
-    {
-      label: `${teamName}`,
-      path: `/communities/${communityId}/teams/${teamId}`,
-    },
-  ];
+    { label: `${communityName || "Unknown Community"}`, path: `/communities/${communityId}/teams` },
+    { label: `${teamName || "Unknown Team"}`, path: `/communities/${communityId}/teams/${teamId}` },
+  ] : null;
 
   const navigate = useNavigate();
 

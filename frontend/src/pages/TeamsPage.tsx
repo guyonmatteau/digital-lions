@@ -97,7 +97,7 @@ const TeamsPage: React.FC = () => {
         <LinkCard
           key={team.id}
           title={team.name}
-          to={`/communities/${communityId}/teams/${encodeURIComponent(team.id)}`}
+          to={`/communities/${encodeURIComponent(String(communityId))}/teams/${encodeURIComponent(team.id)}`}
           state={{ communityName: communityName, teamName: team.name }}
           className="mb-2"
         />
