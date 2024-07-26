@@ -5,7 +5,7 @@ import Breadcrumbs from './Breadcrumbs';
 
 interface LayoutProps {
   children: ReactNode;
-  breadcrumbs?: { label: string; path?: string }[]; 
+  breadcrumbs?: { label: string; path?: string }[] | null; 
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, breadcrumbs }) => {
