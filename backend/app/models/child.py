@@ -1,7 +1,7 @@
+import datetime
 from typing import TYPE_CHECKING
 
-from models.base import CreateProperties, MetadataColumns, UpdateProperties
-from pydantic import field_validator
+from models.base import MetadataColumns
 from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
@@ -9,63 +9,23 @@ if TYPE_CHECKING:
     from models.team import Team
 
 
-class ChildValidator:
-    """Methods to validate child input on creation or updating."""
+class Child(SQLModel, MetadataColumns, table=True):
+    """Schema for child model in database."""
 
-    @field_validator("gender")
-    def validate_gender(cls, v) -> str:
-        if v is not None and v not in ["male", "female"]:
-            raise ValueError("Invalid gender")
-        return v
-
-    @field_validator("age")
-    def validate_age(cls, v) -> int:
-        if v is not None and v <= 0:
-            raise ValueError("Negative age is invalid")
-        return v
-
-
-class ChildBase(SQLModel):
-    """Base schema for child model."""
-
+    __tablename__ = "children"
+    id: int = Field(default=None, primary_key=True)
     first_name: str
     last_name: str
-
-
-class ChildPersonalInfo:
-    """Additional information about child."""
 
     age: int | None = Field(
         default=None,
         description="Age in years at the time of registration",
     )
-    dob: str | None = Field(default=None, description="Date of birth in the format YYYY-MM-DD")
+    dob: datetime.date | None = Field(
+        default=None, description="Date of birth in the format YYYY-MM-DD"
+    )
     gender: str | None = Field(default=None, description="Gender of child. Either male or female.")
 
-
-class ChildRelations:
-    """Relationships for child model with other tables."""
-
-    team_id: int = Field(foreign_key="teams.id")
-
-
-class Child(ChildBase, ChildRelations, ChildPersonalInfo, MetadataColumns, table=True):
-    """Schema for child model in database."""
-
-    __tablename__ = "children"
-    id: int = Field(default=None, primary_key=True)
     team: "Team" = Relationship(back_populates="children")
+    team_id: int = Field(foreign_key="teams.id")
     attendances: list["Attendance"] = Relationship(back_populates="child")
-
-
-class ChildCreate(ChildBase, ChildValidator, ChildPersonalInfo, ChildRelations, CreateProperties):
-    """Schema for creating a child."""
-
-    pass
-
-
-class ChildUpdate(SQLModel, ChildPersonalInfo, ChildValidator, UpdateProperties):
-    """Schema for updating a child."""
-
-    first_name: str | None = None
-    last_name: str | None = None

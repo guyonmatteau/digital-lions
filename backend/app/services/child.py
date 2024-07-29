@@ -1,7 +1,7 @@
 import logging
 
 import exceptions
-from models.child import ChildCreate
+from models.api.child import ChildPostIn, ChildUpdateIn
 from services.base import BaseService
 
 logger = logging.getLogger(__name__)
@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 class ChildService(BaseService):
     """Service layer to interact with children."""
 
-    def create(self, child: ChildCreate):
+    def create(self, child: ChildPostIn):
         """Create a new child."""
         self._validate_team_exists(child.team_id)
 
@@ -20,7 +20,7 @@ class ChildService(BaseService):
         self.commit()
         return child
 
-    def _validate_child_unique(self, child: ChildCreate):
+    def _validate_child_unique(self, child: ChildPostIn | ChildUpdateIn):
         """Validate that a child is unique in a team."""
         if self._children.where(
             [

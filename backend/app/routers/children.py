@@ -1,13 +1,13 @@
 import exceptions
 from dependencies.services import ChildServiceDependency
 from fastapi import APIRouter, HTTPException, status
-from models.child import ChildCreate, ChildUpdate
-from models.out import ChildOut, ChildOutBasic, RecordCreated
+from models.api.child import ChildGetByIdOut, ChildPostIn, ChildUpdateIn
+from models.out import ChildOut, RecordCreated
 
 router = APIRouter(prefix="/children")
 
 
-@router.get("/{child_id}", summary="Get a child by id", response_model=ChildOut)
+@router.get("/{child_id}", summary="Get a child by id", response_model=ChildGetByIdOut)
 async def get_child(child_id: int, child_service: ChildServiceDependency):
     try:
         return child_service.get(child_id)
@@ -18,7 +18,7 @@ async def get_child(child_id: int, child_service: ChildServiceDependency):
 @router.get(
     "",
     summary="Get children",
-    response_model=list[ChildOutBasic],
+    response_model=list[ChildGetByIdOut],
     status_code=status.HTTP_200_OK,
 )
 async def get_children(
@@ -36,13 +36,13 @@ async def get_children(
     status_code=status.HTTP_201_CREATED,
     response_model=RecordCreated,
 )
-async def add_child(child: ChildCreate, child_service: ChildServiceDependency):
+async def add_child(child_service: ChildServiceDependency, child: ChildPostIn):
     try:
         return child_service.create(child)
-    except exceptions.ItemAlreadyExistsException:
+    except exceptions.ChildAlreadyExistsException:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="There already exists a child with the same first and last name.",
+            detail="There already exists a child with this name in team {child.team_id}",
         )
     except exceptions.TeamNotFoundException:
         raise HTTPException(
@@ -58,9 +58,9 @@ async def add_child(child: ChildCreate, child_service: ChildServiceDependency):
     status_code=status.HTTP_200_OK,
 )
 async def update_child(
-    child_id: int,
-    child: ChildUpdate,
     child_service: ChildServiceDependency,
+    child_id: int,
+    child: ChildUpdateIn,
 ):
     try:
         return child_service.update(object_id=child_id, obj=child)

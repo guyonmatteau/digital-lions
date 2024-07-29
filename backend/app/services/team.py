@@ -1,7 +1,7 @@
 import logging
 
 import exceptions
-from models.child import ChildCreate
+from models.api.child import ChildPostIn
 from models.team import TeamCreate
 from models.workshop import WorkshopCreate, WorkshopCreateAttendanceInDB, WorkshopCreateInDB
 from services.base import AbstractService, BaseService
@@ -28,7 +28,7 @@ class TeamService(AbstractService, BaseService):
         logger.info(f"Team with ID {new_team.id} created.")
 
         for child in children:
-            child_in = ChildCreate(team_id=new_team.id, **child.dict())
+            child_in = ChildPostIn(team_id=new_team.id, **child.dict())
             child_created = self._children.create(child_in)
             logger.info("Child with ID %d added to team %d.", child_created.id, new_team.id)
 
