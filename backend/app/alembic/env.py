@@ -7,10 +7,10 @@ from sqlalchemy import engine_from_config, pool
 from sqlmodel import SQLModel
 
 from app.models.attendance import Attendance
-from app.models.child import Child
 from app.models.community import Community
+from app.models.db.child import Child
+from app.models.db.team import Team
 from app.models.program import Program
-from app.models.team import Team
 from app.models.user import User
 from app.models.workshop import Workshop
 from app.settings import get_settings
@@ -21,7 +21,7 @@ config = context.config
 section = config.config_ini_section
 
 settings = get_settings()
-config.set_main_option("sqlalchemy.url", os.environ.get("POSTGRES_DATABASE_URL_PROD"))
+config.set_main_option("sqlalchemy.url", os.environ.get("POSTGRES_DATABASE_URL"))
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.

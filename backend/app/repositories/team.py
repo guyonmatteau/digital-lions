@@ -1,4 +1,4 @@
-from models.team import Team
+from models.db.team import Team
 from repositories import BaseRepository
 
 

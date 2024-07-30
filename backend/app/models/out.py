@@ -5,7 +5,6 @@ from __future__ import annotations
 from models.attendance import AttendanceBase
 from models.base import MetadataColumns
 from models.community import CommunityBase
-from models.team import TeamBase
 from models.user import UserBase
 from models.workshop import WorkshopBase
 from pydantic import BaseModel, Field
@@ -48,21 +47,6 @@ class ChildOut(ChildBase, ChildPersonalInfo, MetadataColumns):
 class ChildOutBasic(ChildBase):
     """Response model containing only basic properties, to be used when
     returning a list of objects."""
-
-    id: int
-
-
-class TeamOut(TeamBase, MetadataColumns):
-    """Response model containing all info on a team, including
-    children in it, workshops, etc."""
-
-    id: int
-    children: list[ChildOutBasic]
-    community: CommunityOutBasic
-
-
-class TeamOutBasic(TeamBase):
-    """Response model containing basic properties of a team."""
 
     id: int
 

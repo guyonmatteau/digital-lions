@@ -21,9 +21,7 @@ class Child(SQLModel, MetadataColumns, table=True):
         default=None,
         description="Age in years at the time of registration",
     )
-    dob: datetime.date | None = Field(
-        default=None, description="Date of birth in the format YYYY-MM-DD"
-    )
+    dob: str | None = Field(default=None, description="Date of birth in the format YYYY-MM-DD")
     gender: str | None = Field(default=None, description="Gender of child. Either male or female.")
 
     team: "Team" = Relationship(back_populates="children")
