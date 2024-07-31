@@ -35,6 +35,8 @@ const AttendancePage: React.FC<AttendanceProps> = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [teams, setTeams] = useState<Team[]>([]);
   const navigate = useNavigate();
+  const [selectedTeamWithAttendance, setSelectedTeamWithAttendance] = useState<any[]>([]);
+
 
   useEffect(() => {
     const fetchTeams = async () => {
@@ -97,10 +99,10 @@ const AttendancePage: React.FC<AttendanceProps> = () => {
     }
   };
 
-  const handleFetchWorkshops = async (workshopId: number) => {
+  const handleFetchWorkshops = async () => {
     try {
-      const data = await getWorkshopsByTeam(selectedTeam?.id ?? 0);
-      return data.filter(workshop => workshop.workshop_id === workshopId);
+      const teamsDetailsWithAttendance = await getWorkshopsByTeam(selectedTeam?.id ?? 0);
+      setSelectedTeamWithAttendance(teamsDetailsWithAttendance);
     } catch (error) {
       console.error("Failed to fetch workshop data:", error);
       return [];
@@ -142,23 +144,16 @@ const AttendancePage: React.FC<AttendanceProps> = () => {
         </SelectInput>
 
         {selectedTeam && (
-          <>
             <VerticalStepper
               workshops={workshops}
               current={currentWorkshopIndex}
               onAttendanceChange={handleAttendanceChange}
               onFetchWorkshops={handleFetchWorkshops} 
+              onSaveAttendance={handleSaveAttendance}
+              selectedTeamWithAttendance={selectedTeamWithAttendance}
             >
               {selectedTeam.children}
             </VerticalStepper>
-
-            <button
-              onClick={handleSaveAttendance}
-              className='mt-4 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded'
-            >
-              Save Attendance
-            </button>
-          </>
         )}
       </>
     </Layout>

@@ -46,7 +46,7 @@ const TeamsDetailPage: React.FC = () => {
 
   useEffect(() => {
     // Retrieve and parse state from localStorage
-    const storedState = localStorage.getItem('linkCardState');
+    const storedState = localStorage.getItem("linkCardState");
     if (storedState) {
       const { communityName, teamName } = JSON.parse(storedState);
       setCommunityName(communityName);
@@ -54,13 +54,22 @@ const TeamsDetailPage: React.FC = () => {
     }
   }, []);
 
-  const showBreadcrumbs = new URLSearchParams(location.search).get('source') !== 'menu';
+  const showBreadcrumbs =
+    new URLSearchParams(location.search).get("source") !== "menu";
 
-  const breadcrumbs = showBreadcrumbs ? [
-    { label: "Communities", path: "/communities" },
-    { label: `${communityName || "Unknown Community"}`, path: `/communities/${communityId}/teams` },
-    { label: `${teamName || "Unknown Team"}`, path: `/communities/${communityId}/teams/${teamId}` },
-  ] : null;
+  const breadcrumbs = showBreadcrumbs
+    ? [
+        { label: "Communities", path: "/communities" },
+        {
+          label: `${communityName || "Unknown Community"}`,
+          path: `/communities/${communityId}/teams`,
+        },
+        {
+          label: `${teamName || "Unknown Team"}`,
+          path: `/communities/${communityId}/teams/${teamId}`,
+        },
+      ]
+    : null;
 
   const navigate = useNavigate();
 
