@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import CommunityPage from '@/pages/CommunityPage';
 import TeamsPage from '@/pages/TeamsPage';
 import TeamsDetailPage from '@/pages/TeamsDetailPage';
-import AttendancePage from './pages/AttendancePage';
+import AttendancePage from '@/pages/AttendancePage';
 
 const App: React.FC = () => {
   return (
