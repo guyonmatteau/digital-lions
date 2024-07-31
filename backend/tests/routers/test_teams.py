@@ -108,6 +108,13 @@ def test_add_workshop_with_attendance(client_with_team):
     response = client_with_team.post(f"{ENDPOINT}/{team_id}/workshops", json=payload)
     assert response.status_code == status.HTTP_201_CREATED, response.text
 
+    # assert that team progress is updated
+    response_team = client_with_team.get(f"{ENDPOINT}/{team_id}")
+    assert response_team.json().get("progress").get("workshop") == 1
+
+    response_workshop = client_with_team.get(f"{ENDPOINT}/{team_id}/workshops")
+    assert response_workshop.json()[0].get("workshop_number") == 1
+
 
 def test_add_workshop_missing_child_id(client_with_team):
     # test that we get a bad request when we are missing children

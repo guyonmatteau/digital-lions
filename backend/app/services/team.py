@@ -1,8 +1,8 @@
 import logging
 
 import exceptions
-from models.child import ChildCreate
-from models.team import TeamCreate
+from models.api.child import ChildPostIn
+from models.api.team import TeamGetByIdOut, TeamGetWorkshopOut, TeamPostIn
 from models.workshop import WorkshopCreate, WorkshopCreateAttendanceInDB, WorkshopCreateInDB
 from services.base import AbstractService, BaseService
 
@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 class TeamService(AbstractService, BaseService):
     """Team service layer to do anything related to teams."""
 
-    def create(self, team: TeamCreate):
+    def create(self, team: TeamPostIn):
         """Create a new team."""
         try:
             self._communities.read(object_id=team.community_id)
@@ -28,7 +28,7 @@ class TeamService(AbstractService, BaseService):
         logger.info(f"Team with ID {new_team.id} created.")
 
         for child in children:
-            child_in = ChildCreate(team_id=new_team.id, **child.dict())
+            child_in = ChildPostIn(team_id=new_team.id, **child.dict())
             child_created = self._children.create(child_in)
             logger.info("Child with ID %d added to team %d.", child_created.id, new_team.id)
 
@@ -118,11 +118,22 @@ class TeamService(AbstractService, BaseService):
     def get(self, object_id):
         """Get a team from the table by id."""
         try:
-            return self._teams.read(object_id=object_id)
+            team = self._teams.read(object_id=object_id)
         except exceptions.ItemNotFoundException:
             error_msg = f"Team with ID {object_id} not found"
             logger.error(error_msg)
             raise exceptions.TeamNotFoundException(error_msg)
+
+        team_workshops = self._workshops.where([("team_id", object_id)])
+        latest_workshop = max([w.workshop_number for w in team_workshops]) if team_workshops else 0
+
+        # TODO find a Pythonic way to do this
+        return TeamGetByIdOut(
+            **team.model_dump(),
+            children=[child.model_dump() for child in team.children],
+            community=team.community.model_dump(),
+            progress={"workshop": latest_workshop},
+        )
 
     def update(self, object_id: int, obj):
         return self._teams.update(object_id=object_id, obj=obj)
@@ -146,8 +157,26 @@ class TeamService(AbstractService, BaseService):
         """Get all workshops for a team."""
         self._validate_team_exists(team_id)
 
-        # TODO return workshop in context of program
-        return self._workshops.where([(self.cols.team_id, team_id)])
+        workshops = self._workshops.where([(self.cols.team_id, team_id)])
+
+        workshops_out = [
+            TeamGetWorkshopOut(
+                workshop_id=w.id,
+                workshop_number=w.workshop_number,
+                date=w.date,
+                attendance=[
+                    {
+                        "attendance": a.attendance,
+                        "child_id": a.child_id,
+                        "first_name": a.child.first_name,
+                        "last_name": a.child.last_name,
+                    }
+                    for a in w.attendance
+                ],
+            )
+            for w in workshops
+        ]
+        return workshops_out
 
     def _validate_team_exists(self, team_id: int) -> None:
         """Check if a team exists."""

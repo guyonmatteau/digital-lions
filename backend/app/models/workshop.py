@@ -1,4 +1,3 @@
-import datetime
 from typing import TYPE_CHECKING
 
 from pydantic import field_validator
@@ -10,7 +9,7 @@ if TYPE_CHECKING:
 
 
 class WorkshopBase(SQLModel):
-    date: datetime.date = Field(description="The date of the workshop in the format YYYY-MM-DD")
+    date: str = Field(description="The date of the workshop in the format YYYY-MM-DD")
     workshop_number: int = Field(description="The number of the workshop in the program")
 
     @field_validator("workshop_number")

@@ -4,16 +4,32 @@ from __future__ import annotations
 
 from models.attendance import AttendanceBase
 from models.base import MetadataColumns
-from models.child import ChildBase, ChildPersonalInfo
 from models.community import CommunityBase
-from models.team import TeamBase
 from models.user import UserBase
 from models.workshop import WorkshopBase
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class RecordCreated(BaseModel):
     id: int
+
+
+class ChildBase(BaseModel):
+    """Base schema for child model."""
+
+    first_name: str
+    last_name: str
+
+
+class ChildPersonalInfo:
+    """Additional information about child."""
+
+    age: int | None = Field(
+        default=None,
+        description="Age in years at the time of registration",
+    )
+    dob: str | None = Field(default=None, description="Date of birth in the format YYYY-MM-DD")
+    gender: str | None = Field(default=None, description="Gender of child. Either male or female.")
 
 
 # each model has two output types to be returned by the API:
@@ -31,21 +47,6 @@ class ChildOut(ChildBase, ChildPersonalInfo, MetadataColumns):
 class ChildOutBasic(ChildBase):
     """Response model containing only basic properties, to be used when
     returning a list of objects."""
-
-    id: int
-
-
-class TeamOut(TeamBase, MetadataColumns):
-    """Response model containing all info on a team, including
-    children in it, workshops, etc."""
-
-    id: int
-    children: list[ChildOutBasic]
-    community: CommunityOutBasic
-
-
-class TeamOutBasic(TeamBase):
-    """Response model containing basic properties of a team."""
 
     id: int
 

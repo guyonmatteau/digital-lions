@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 logger.info("Logging configuration: %s", logging_conf)
 
 ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS").split(",")
-ALLOWED_METHODS = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+ALLOWED_METHODS = ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"]
 ALLOWED_HEADERS = ["Content-Type", "Authorization"]
 logger.info(f"CORSMiddleware allowed origins: {ALLOWED_ORIGINS}")
 
@@ -49,7 +49,7 @@ app.add_middleware(
     allow_headers=ALLOWED_HEADERS,
 )
 
-app.middleware("http")(catch_any_exception)
+# app.middleware("http")(catch_any_exception)
 app.include_router(health.router, tags=["health"])
 app.include_router(teams.router, tags=["teams"])
 app.include_router(children.router, tags=["children"])

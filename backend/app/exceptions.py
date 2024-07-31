@@ -1,13 +1,16 @@
 """Custom exceptions for the app."""
 
 
+class ChildAlreadyExistsException(Exception): ...
+
+
+class ChildHasAttendanceException(Exception): ...
+
+
 class ChildNotFoundException(Exception): ...
 
 
 class ChildNotInTeam(Exception): ...
-
-
-class ChildHasAttendanceException(Exception): ...
 
 
 class CommunityNotFoundException(Exception): ...

@@ -15,7 +15,7 @@ def test_post_child_non_existing_team(client):
     # assert that we can't create a child for a non-existing team
     data = {"first_name": "Firstname", "last_name": "Lastname", "team_id": 0}
     response = client.post(ENDPOINT, json=data)
-    assert response.status_code == status.HTTP_400_BAD_REQUEST, repsonse.text
+    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
 
 
 @pytest.fixture(name="client")

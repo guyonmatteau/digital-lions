@@ -29,9 +29,7 @@ format: lint
 # Railway database service vars
 TCP_PROXY=monorail.proxy.rlwy.net:19362
 HTTP_HOST=postgres.railway.internal:5432
-# POSTGRES_DATABASE_URL_PROD=$(shell railway variables -k | grep POSTGRES_DATABASE_URL | sed "s@$HTTP_HOST@$TCP_PROXY@g")
-
-POSTGRES_DATABASE_URL_PROD=postgresql://postgres:A2CCD64FD34BfG5g2**d1c3A2E4DD5a-@monorail.proxy.rlwy.net:19362/railway
+POSTGRES_DATABASE_URL_PROD=$(shell railway variables -k | grep POSTGRES_DATABASE_URL | sed "s@$HTTP_HOST@$TCP_PROXY@g")
 
 db.check:
 	cd app; poetry run alembic check
