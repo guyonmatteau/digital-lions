@@ -1,9 +1,8 @@
-interface ApiResponse {
-  name: string
-  id: number
-}
 
-const getTeams = async (): Promise<ApiResponse[]> => {
+
+import { Team } from "@/types/team.interface";
+
+const getTeams = async (): Promise<Team[]> => {
 try {
   const response = await fetch('https://backend-production-7bbc.up.railway.app/api/v1/teams', {
     method: 'GET',
@@ -16,7 +15,7 @@ try {
     throw new Error(`Error: ${response.statusText}`);
   }
 
-  const data: ApiResponse[] = await response.json();
+  const data: Team[] = await response.json();
   return data;
 } catch (error) {
   console.error('Error fetching data:', error);

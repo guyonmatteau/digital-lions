@@ -1,10 +1,17 @@
 import { Child } from "./child.interface";
 import { Community } from "./community.interface";
 
+interface Progress {
+  workshop: number;
+}
+
 export interface TeamWithChildren {
   is_active: boolean;
-  name: string;
+  last_updated_at: string;
+  created_at: string;
   id: number;
-  children: Child[];
+  name: string;
   community: Community;
+  children: Child[];
+  progress: Progress;
 }

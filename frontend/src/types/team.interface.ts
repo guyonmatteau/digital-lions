@@ -1,7 +1,8 @@
-import { Child } from "./child.interface";
+import { Community } from "./community.interface";
 
 export interface Team {
   id: number;
   name: string;
-  children: Child[];
+  is_active: boolean;
+  community: Community;
 }

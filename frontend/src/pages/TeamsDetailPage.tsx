@@ -184,7 +184,6 @@ const TeamsDetailPage: React.FC = () => {
           firstName: editFirstName,
           lastName: editLastName,
         };
-
         try {
           await updateChild(updatedChild);
           const updatedTeam = await getTeamById(selectedTeam?.id!);
@@ -258,6 +257,9 @@ const TeamsDetailPage: React.FC = () => {
                   <div>
                     <p>{`First Name: ${child.first_name}`}</p>
                     <p>{`Last Name: ${child.last_name}`}</p>
+                    <p>{`Age: ${child.age}`}</p>
+                    <p>{`Date of Birth: ${child.date_of_birth}`}</p>
+                    <p>{`Gender: ${child.gender}`}</p>
                     <div className="flex items-center justify-end border-t mt-4 border-gray-200 rounded-b dark:border-gray-600">
                       <CustomButton
                         className="mt-4"

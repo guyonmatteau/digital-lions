@@ -24,6 +24,7 @@ const Navigation: React.FC = () => {
           <div className="hidden md:flex space-x-4">
             <NavLink to="/communities">Community</NavLink>
             <NavLink to="/teams" includeSourceMenu={true}>Teams info</NavLink>
+            <NavLink to="/attendance">Attendance</NavLink>
           </div>
 
           {/* Mobile Hamburger Menu Button */}
@@ -67,6 +68,7 @@ const Navigation: React.FC = () => {
             <NavLink to="/teams" includeSourceMenu={true} onClick={toggleMenu}>
               Teams info
             </NavLink>
+            <NavLink to="/attendance" onClick={toggleMenu}>Attendance</NavLink>
           </div>
         )}
       </div>
