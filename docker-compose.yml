@@ -20,7 +20,6 @@ services:
   backend:
     container_name: backend
     hostname: backend
-    image: "digitallionsbackend:latest"
     build:
       context: ./backend
     environment:
@@ -35,7 +34,6 @@ services:
       
   frontend:
     container_name: frontend
-    image: "digitallionsfrontend:latest"
     build:
       context: ./frontend
     environment:

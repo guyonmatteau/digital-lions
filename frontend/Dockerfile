@@ -1,15 +1,13 @@
-FROM node:22-alpine3.19
+FROM node:20.12.2
 
-RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
+WORKDIR /usr/src/app
 
-WORKDIR /home/node/app
+COPY package.json ./
 
-COPY --chown=node:node . .
+RUN npm install --omit=dev
 
-RUN npm install
+COPY . .
 
-USER node
+RUN npm run build
 
-EXPOSE 3000
-
-CMD [ "npm", "run", "dev"]
+CMD [ "npm", "run", "dev" ]
