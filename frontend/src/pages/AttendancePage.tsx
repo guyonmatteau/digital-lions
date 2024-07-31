@@ -11,11 +11,6 @@ import Layout from '@/components/Layout';
 import { Team } from '@/types/team.interface';
 import { TeamWithChildren } from '@/types/teamWithChildren.interface';
 
-interface AttendanceProps {
-  getTeamById: (id: number) => Promise<Team>;
-  addWorkShopToTeam: (teamId: number, data: Attendance) => Promise<void>;
-}
-
 interface AttendanceRecord {
   attendance: string;
   child_id: number;
@@ -27,7 +22,7 @@ interface Attendance {
   attendance: AttendanceRecord[];
 }
 
-const AttendancePage: React.FC<AttendanceProps> = () => {
+const AttendancePage: React.FC = () => {
   const { teamId } = useParams<{ teamId: string }>();
   const [selectedTeam, setSelectedTeam] = useState<TeamWithChildren | null>(null);
   const [isLoadingTeam, setIsLoadingTeam] = useState(false);
@@ -36,7 +31,6 @@ const AttendancePage: React.FC<AttendanceProps> = () => {
   const [teams, setTeams] = useState<Team[]>([]);
   const navigate = useNavigate();
   const [selectedTeamWithAttendance, setSelectedTeamWithAttendance] = useState<any[]>([]);
-
 
   useEffect(() => {
     const fetchTeams = async () => {
@@ -148,7 +142,7 @@ const AttendancePage: React.FC<AttendanceProps> = () => {
               workshops={workshops}
               current={currentWorkshopIndex}
               onAttendanceChange={handleAttendanceChange}
-              onFetchWorkshops={handleFetchWorkshops} 
+              onFetchWorkshops={handleFetchWorkshops}
               onSaveAttendance={handleSaveAttendance}
               selectedTeamWithAttendance={selectedTeamWithAttendance}
             >
