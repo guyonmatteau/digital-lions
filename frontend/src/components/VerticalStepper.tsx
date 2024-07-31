@@ -114,7 +114,7 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
                     return (
                       <div
                         key={child.id}
-                        className="flex flex-col sm:flex-row items-center my-2"
+                        className="flex flex-col sm:flex-row my-2"
                       >
                         <span className="flex-1 min-w-0 mb-2 sm:mb-0 sm:mr-4">
                           {child.first_name} {child.last_name}
