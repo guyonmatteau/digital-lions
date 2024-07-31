@@ -27,8 +27,13 @@ The status of the team in the program is included in the response of the `GET /t
     "name": "Nokulunga",
     "id": 3
   },
-  "progress": {
-    "workshop": 0,
+  "program": {
+    "id": 1,
+    "name": "Default program",
+    "workshop": {
+      "current": 1,
+      "total" 12
+    }
   }
 }
 ```
