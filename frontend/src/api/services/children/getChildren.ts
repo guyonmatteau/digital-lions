@@ -6,7 +6,7 @@ interface ApiResponse {
 
 const getChildren = async (communityId: number): Promise<ApiResponse[]> => {
 try {
-  const response = await fetch(`https://backend-production-7bbc.up.railway.app/api/v1/children?community_id=${communityId}`, {
+  const response = await fetch(`https://backend-staging-ffae.up.railway.app/api/v1/children?community_id=${communityId}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json'

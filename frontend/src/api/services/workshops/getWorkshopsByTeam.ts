@@ -3,7 +3,7 @@ import { Workshop } from "@/types/workshop.interface";
 const getWorkShopsByTeam = async (teamId: number): Promise<Workshop[]> => {
   try {
     const response = await fetch(
-      `https://backend-production-7bbc.up.railway.app/api/v1/teams/${teamId}/workshops`,
+      `https://backend-staging-ffae.up.railway.app/api/v1/teams/${teamId}/workshops`,
       {
         method: "GET",
         headers: {

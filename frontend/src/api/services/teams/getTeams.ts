@@ -4,7 +4,7 @@ import { Team } from "@/types/team.interface";
 
 const getTeams = async (): Promise<Team[]> => {
 try {
-  const response = await fetch('https://backend-production-7bbc.up.railway.app/api/v1/teams', {
+  const response = await fetch('https://backend-staging-ffae.up.railway.app/api/v1/teams', {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json'

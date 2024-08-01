@@ -35,7 +35,7 @@ const updateChildById = async ({
     };
 
     const response = await fetch(
-      `https://backend-production-7bbc.up.railway.app/api/v1/children/${childId}`,
+      `https://backend-staging-ffae.up.railway.app/api/v1/children/${childId}`,
       {
         method: "PATCH",
         headers: {

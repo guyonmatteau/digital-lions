@@ -11,7 +11,7 @@ const deleteTeam = async ({
 }: ApiInput): Promise<TeamWithChildren> => {
   try {
     const response = await fetch(
-      `https://backend-production-7bbc.up.railway.app/api/v1/teams/${teamId}?cascade=${cascade}
+      `https://backend-staging-ffae.up.railway.app/api/v1/teams/${teamId}?cascade=${cascade}
 `,
       {
         method: "DELETE",

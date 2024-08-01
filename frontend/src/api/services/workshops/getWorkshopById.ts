@@ -8,7 +8,7 @@ interface ApiResponse {
 
 const getWorkShopById = async (workshopId: number): Promise<ApiResponse> => {
 try {
-  const response = await fetch(`https://backend-production-7bbc.up.railway.app/api/v1/workshops/${workshopId}`, {
+  const response = await fetch(`https://backend-staging-ffae.up.railway.app/api/v1/workshops/${workshopId}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json'

@@ -25,7 +25,7 @@ interface ApiResponse {
 const getAttendancePerChild = async (attendanceId: number): Promise<ApiResponse[]> => {
   try {
     const response = await fetch(
-      `https://backend-production-7bbc.up.railway.app/api/v1/attendance/${attendanceId}`,
+      `https://backend-staging-ffae.up.railway.app/api/v1/attendance/${attendanceId}`,
       {
         method: "GET",
         headers: {

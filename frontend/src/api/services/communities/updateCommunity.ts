@@ -9,7 +9,7 @@ const getCommunities = async (
 ): Promise<void> => {
   try {
     const response = await fetch(
-      `https://backend-production-7bbc.up.railway.app/api/v1/communities/${communityId}`,
+      `https://backend-staging-ffae.up.railway.app/api/v1/communities/${communityId}`,
       {
         method: "PATCH",
         headers: {

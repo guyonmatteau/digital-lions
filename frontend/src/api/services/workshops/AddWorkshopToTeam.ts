@@ -14,7 +14,7 @@ interface AttendanceRecord {
   const AddWorkshopToTeam = async (teamId: number, data: ApiBody): Promise<Workshop[]> => {
     try {
       const response = await fetch(
-        `https://backend-production-7bbc.up.railway.app/api/v1/teams/${teamId}/workshops`,
+        `https://backend-staging-ffae.up.railway.app/api/v1/teams/${teamId}/workshops`,
         {
           method: "POST",
           headers: {

@@ -11,7 +11,7 @@
   
   const createWorkshopToTeam = async (teamId: number, input: ApiBody): Promise<void> => {
     try {
-      const response = await fetch(`https://backend-production-7bbc.up.railway.app/api/v1/teams/${teamId}/workshops`, {
+      const response = await fetch(`https://backend-staging-ffae.up.railway.app/api/v1/teams/${teamId}/workshops`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
