@@ -1,3 +1,5 @@
+import datetime
+
 from models.base import CreateProperties, MetadataColumns
 from pydantic import BaseModel, Field
 
@@ -14,7 +16,9 @@ class TeamPostIn(BaseModel, CreateProperties):
             default=None,
             description="Age in years at the time of registration",
         )
-        dob: str | None = Field(default=None, description="Date of birth in the format YYYY-MM-DD")
+        dob: datetime.date | None = Field(
+            default=None, description="Date of birth in the format YYYY-MM-DD"
+        )
         gender: str | None = Field(default=None, description="Gender of child")
 
     name: str = Field(description="Name of the team")
@@ -84,6 +88,8 @@ class TeamGetWorkshopOut(BaseModel):
         last_name: str = Field(description="Last name of the child", example="Mandela")
 
     date: str = Field(description="Date of the workshop", example="2021-01-01")
-    workshop_number: int = Field(description="Number of the workshop in the program", example=1)
+    workshop_number: int = Field(
+        description="Number of the workshop in the program", example=1
+    )
     workshop_id: int = Field(description="Unique workshop ID reference", example=1000)
     attendance: list[ChildAttendance]

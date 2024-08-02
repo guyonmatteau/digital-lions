@@ -1,4 +1,4 @@
-from models.base import CreateProperties, MetadataColumns, UpdateProperties
+from models.api.generic import CreateProperties, UpdateProperties
 from pydantic import BaseModel, EmailStr, field_validator
 from sqlmodel import AutoString, Field, SQLModel
 
@@ -32,12 +32,3 @@ class UserUpdate(UserBase, UpdateProperties):
     email_address: EmailStr | None = None
     role: str | None = None
     password: str | None = None
-
-
-class User(UserBase, MetadataColumns, table=True):
-    """User model in database."""
-
-    __tablename__ = "users"
-    id: int | None = Field(default=None, primary_key=True)
-    hashed_password: bytes = Field(description="Hashed password in bytes")
-    salt: bytes = Field(description="Random byte string with which the password is encrypted")

@@ -3,8 +3,8 @@ import logging
 import exceptions
 from dependencies.services import CommunityServiceDependency
 from fastapi import APIRouter, HTTPException, status
+from models.api.community import CommunityPatchIn, CommunityPostIn
 from models.api.generic import RecordCreated
-from models.community import CommunityCreate, CommunityUpdate
 from models.out import CommunityOutBasic, CommunityOutGetById
 
 logger = logging.getLogger(__name__)
@@ -45,7 +45,7 @@ async def get_communities(service: CommunityServiceDependency):
     status_code=status.HTTP_201_CREATED,
     response_model=RecordCreated,
 )
-async def post_community(community: CommunityCreate, service: CommunityServiceDependency):
+async def post_community(community: CommunityPostIn, service: CommunityServiceDependency):
     """Add a community."""
     try:
         return service.create(community)
@@ -66,7 +66,7 @@ async def post_community(community: CommunityCreate, service: CommunityServiceDe
     status_code=status.HTTP_200_OK,
 )
 async def update_community(
-    community_id: int, community: CommunityUpdate, service: CommunityServiceDependency
+    community_id: int, community: CommunityPatchIn, service: CommunityServiceDependency
 ):
     """Update a community."""
     try:

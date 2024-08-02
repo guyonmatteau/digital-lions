@@ -1,7 +1,7 @@
 import logging
 
 import exceptions
-from models.community import CommunityCreate
+from models.api.community import CommunityPostIn
 from services.base import AbstractService, BaseService
 
 logger = logging.getLogger(__name__)
@@ -10,11 +10,11 @@ logger = logging.getLogger(__name__)
 class CommunityService(AbstractService, BaseService):
     """Community service layer to do anything related to communities."""
 
-    def create(self, obj: CommunityCreate):
+    def create(self, obj: CommunityPostIn):
         """Create a new community in the database.
 
         Args:
-            obj (CommunityCreate): Community object to create.
+            obj (CommunityPostIn): Community object to create.
         """
         if self._communities.where([("name", obj.name)]):
             raise exceptions.CommunityAlreadyExistsException(

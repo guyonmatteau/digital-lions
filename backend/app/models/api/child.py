@@ -11,7 +11,9 @@ class ChildValidators:
     def validate_gender(cls, v) -> str:
         """Validate that the gender is either male, female or null."""
         if v is not None and v not in ["male", "female"]:
-            raise ValueError(f"Invalid gender, should be male, female or null. Got: {v}")
+            raise ValueError(
+                f"Invalid gender, should be male, female or null. Got: {v}"
+            )
         return v
 
     @field_validator("age")

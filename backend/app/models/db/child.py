@@ -2,6 +2,7 @@ import datetime
 from typing import TYPE_CHECKING
 
 from models.base import MetadataColumns
+from sqlalchemy import Column, ForeignKey, Integer
 from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
@@ -21,9 +22,12 @@ class Child(SQLModel, MetadataColumns, table=True):
         default=None,
         description="Age in years at the time of registration",
     )
-    dob: str | None = Field(default=None, description="Date of birth in the format YYYY-MM-DD")
+    # TODO dob in db is a string
+    dob: datetime.date | None = Field(default=None, description="Date of birth in the format YYYY-MM-DD")
     gender: str | None = Field(default=None, description="Gender of child. Either male or female.")
 
     team: "Team" = Relationship(back_populates="children")
-    team_id: int = Field(foreign_key="teams.id")
-    attendances: list["Attendance"] = Relationship(back_populates="child")
+    team_id: int = Field(sa_column=Column(Integer, ForeignKey("teams.id", ondelete="CASCADE")))
+    attendances: list["Attendance"] = Relationship(
+        sa_relationship_kwargs={"cascade": "delete"}, back_populates="child"
+    )

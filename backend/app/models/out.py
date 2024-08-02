@@ -2,12 +2,33 @@
 
 from __future__ import annotations
 
-from models.attendance import AttendanceBase
-from models.base import MetadataColumns
-from models.community import CommunityBase
-from models.user import UserBase
+from models.api.generic import MetadataColumns
 from models.workshop import WorkshopBase
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, EmailStr, Field, field_validator
+from sqlmodel import AutoString
+
+
+class UserBase(BaseModel):
+    first_name: str
+    last_name: str = Field(default=None)
+    email_address: EmailStr = Field(unique=True, index=True, sa_type=AutoString)
+    role: str | None = Field(default=None, description="User role on platform")
+
+
+class CommunityBase(BaseModel):
+    name: str
+
+
+class AttendanceBase(BaseModel):
+    """Base class for attendance model."""
+
+    attendance: str
+
+    @field_validator("attendance")
+    def validate_attendance(cls, v):
+        if v not in ["present", "absent", "cancelled"]:
+            raise ValueError("Attendance must be either 'present' or 'absent' or 'cancelled'")
+        return v
 
 
 class RecordCreated(BaseModel):
@@ -61,7 +82,7 @@ class CommunityOutBasic(CommunityBase):
 
 
 class CommunityOutGetById(CommunityOutBasic, MetadataColumns):
-    """Response model or GET /communities/:id"""
+    """Response model for GET /communities/:id"""
 
     pass
 

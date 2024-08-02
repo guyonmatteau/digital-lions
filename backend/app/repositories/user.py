@@ -1,13 +1,10 @@
 import logging
 
 import bcrypt
-from exceptions import (
-    ItemAlreadyExistsException,
-    ItemNotFoundException,
-    UserUnauthorizedException,
-)
+from exceptions import ItemAlreadyExistsException, ItemNotFoundException, UserUnauthorizedException
+from models.api.user import UserCreate, UserUpdate
+from models.db.user import User
 from models.out import UserOut
-from models.user import User, UserCreate, UserUpdate
 from repositories.base import BaseRepository
 
 logger = logging.getLogger()

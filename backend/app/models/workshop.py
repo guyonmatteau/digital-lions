@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 
 from pydantic import field_validator
+from sqlalchemy import Column, ForeignKey, Integer
 from sqlmodel import Field, Relationship, SQLModel, UniqueConstraint
 
 if TYPE_CHECKING:
@@ -61,6 +62,11 @@ class Workshop(WorkshopBase, table=True):
     )
 
     id: int = Field(default=None, primary_key=True)
-    team_id: int = Field(foreign_key="teams.id")
-    team: "Team" = Relationship(back_populates="workshops")
-    attendance: list["Attendance"] = Relationship(back_populates="workshop")
+    team_id: int = Field(sa_column=Column(Integer, ForeignKey("teams.id", ondelete="CASCADE")))
+
+    team: "Team" = Relationship(
+        sa_relationship_kwargs={"cascade": "delete"}, back_populates="workshops"
+    )
+    attendance: list["Attendance"] = Relationship(
+        sa_relationship_kwargs={"cascade": "delete"}, back_populates="workshop"
+    )

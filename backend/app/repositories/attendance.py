@@ -1,4 +1,4 @@
-from models.attendance import Attendance
+from models.db.attendance import Attendance
 from repositories.base import BaseRepository
 
 
