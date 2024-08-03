@@ -1,4 +1,4 @@
-from models.workshop import Workshop
+from models.db.workshop import Workshop
 from repositories.base import BaseRepository
 
 

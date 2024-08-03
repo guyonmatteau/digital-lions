@@ -1,4 +1,4 @@
-from models.base import CreateProperties, UpdateProperties
+from models.generic import CreateProperties, UpdateProperties
 from pydantic import BaseModel
 from sqlmodel import Field
 

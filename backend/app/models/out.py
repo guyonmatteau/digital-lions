@@ -2,10 +2,23 @@
 
 from __future__ import annotations
 
-from models.api.generic import MetadataColumns
-from models.workshop import WorkshopBase
+from models.generic import MetadataColumns
 from pydantic import BaseModel, EmailStr, Field, field_validator
 from sqlmodel import AutoString
+
+
+class WorkshopBase(BaseModel):
+    date: str = Field(description="The date of the workshop in the format YYYY-MM-DD")
+    workshop_number: int = Field(
+        description="The number of the workshop in the program"
+    )
+
+    @field_validator("workshop_number")
+    def workshop_number_in_default_range(cls, v):
+        """Validate that the workshop number is between 1 and 12."""
+        if v not in range(1, 13):
+            raise ValueError("Workshop number must be between 1 and 12.")
+        return v
 
 
 class UserBase(BaseModel):
@@ -27,7 +40,8 @@ class AttendanceBase(BaseModel):
     @field_validator("attendance")
     def validate_attendance(cls, v):
         if v not in ["present", "absent", "cancelled"]:
-            raise ValueError("Attendance must be either 'present' or 'absent' or 'cancelled'")
+            raise ValueError(
+                "Attendance must be either 'present' or 'absent' or 'cancelled'")
         return v
 
 
@@ -49,8 +63,12 @@ class ChildPersonalInfo:
         default=None,
         description="Age in years at the time of registration",
     )
-    dob: str | None = Field(default=None, description="Date of birth in the format YYYY-MM-DD")
-    gender: str | None = Field(default=None, description="Gender of child. Either male or female.")
+    dob: str | None = Field(
+        default=None, description="Date of birth in the format YYYY-MM-DD"
+    )
+    gender: str | None = Field(
+        default=None, description="Gender of child. Either male or female."
+    )
 
 
 # each model has two output types to be returned by the API:

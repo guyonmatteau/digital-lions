@@ -2,8 +2,9 @@ import logging
 
 import exceptions
 from models.api.child import ChildPostIn
-from models.api.team import TeamGetByIdOut, TeamGetWorkshopOut, TeamPostIn
-from models.workshop import WorkshopCreate, WorkshopCreateAttendanceInDB, WorkshopCreateInDB
+from models.api.team import TeamGetByIdOut, TeamGetWorkshopOut, TeamPostIn, TeamPostWorkshopIn
+from models.db.attendance import Attendance
+from models.db.workshop import Workshop
 from services.base import AbstractService, BaseService
 
 logger = logging.getLogger(__name__)
@@ -30,12 +31,14 @@ class TeamService(AbstractService, BaseService):
         for child in children:
             child_in = ChildPostIn(team_id=new_team.id, **child.dict())
             child_created = self._children.create(child_in)
-            logger.info("Child with ID %d added to team %d.", child_created.id, new_team.id)
+            logger.info(
+                "Child with ID %d added to team %d.", child_created.id, new_team.id
+            )
 
         self.commit()
         return new_team
 
-    def create_workshop(self, team_id: int, workshop: WorkshopCreate):
+    def create_workshop(self, team_id: int, workshop: TeamPostWorkshopIn):
         """Create a workshop for a team."""
         self._validate_team_exists(team_id)
 
@@ -69,7 +72,9 @@ class TeamService(AbstractService, BaseService):
             [child.id for child in self._children.where([(self.cols.team_id, team_id)])]
         )
 
-        payload_child_ids_not_in_team = [i for i in payload_child_ids if i not in team_child_ids]
+        payload_child_ids_not_in_team = [
+            i for i in payload_child_ids if i not in team_child_ids
+        ]
         if payload_child_ids_not_in_team:
             error_msg = (
                 "Payload attendance field contains children ID's that "
@@ -79,7 +84,9 @@ class TeamService(AbstractService, BaseService):
             raise exceptions.ChildNotInTeam(error_msg)
 
         # validate that all children from the team are in the payload
-        team_child_ids_not_in_payload = [i for i in team_child_ids if i not in payload_child_ids]
+        team_child_ids_not_in_payload = [
+            i for i in team_child_ids if i not in payload_child_ids
+        ]
         if team_child_ids_not_in_payload:
             error_msg = (
                 "Attendance payload incomplete. Missing child ID's from "
@@ -90,7 +97,7 @@ class TeamService(AbstractService, BaseService):
 
         # create workshop
         attendance = workshop.attendance
-        workshop_in = WorkshopCreateInDB(
+        workshop_in = Workshop(
             team_id=team_id,
             date=workshop.date,
             workshop_number=workshop.workshop_number,
@@ -99,7 +106,7 @@ class TeamService(AbstractService, BaseService):
 
         # create attendance records for all children in team
         for child_attendance in attendance:
-            attendance_in = WorkshopCreateAttendanceInDB(
+            attendance_in = Attendance(
                 workshop_id=workshop_record.id,
                 child_id=child_attendance.child_id,
                 attendance=child_attendance.attendance,
@@ -125,7 +132,9 @@ class TeamService(AbstractService, BaseService):
             raise exceptions.TeamNotFoundException(error_msg)
 
         team_workshops = self._workshops.where([("team_id", object_id)])
-        latest_workshop = max([w.workshop_number for w in team_workshops]) if team_workshops else 0
+        latest_workshop = (
+            max([w.workshop_number for w in team_workshops]) if team_workshops else 0
+        )
 
         # TODO find a Pythonic way to do this
         return TeamGetByIdOut(

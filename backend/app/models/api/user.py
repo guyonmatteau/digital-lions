@@ -1,4 +1,4 @@
-from models.api.generic import CreateProperties, UpdateProperties
+from models.generic import CreateProperties, UpdateProperties
 from pydantic import BaseModel, EmailStr, field_validator
 from sqlmodel import AutoString, Field, SQLModel
 

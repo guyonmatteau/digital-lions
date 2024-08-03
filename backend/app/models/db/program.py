@@ -22,5 +22,6 @@ class Program(SQLModel, table=False):
 # for V1 there will not be a program table in the databse, instead
 # we just hardcode a default program of 12 workshops
 DefaultProgram = [
-    Program(id=n, program_id=1, workshop=n, workshop_name=f"Workshop {n}") for n in range(1, 13)
+    Program(id=n, program_id=1, workshop=n, workshop_name=f"Workshop {n}")
+    for n in range(1, 13)
 ]

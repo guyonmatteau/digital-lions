@@ -4,8 +4,13 @@ import exceptions
 from dependencies.services import TeamServiceDependency
 from fastapi import APIRouter, HTTPException, status
 from models.api.generic import Message, RecordCreated
-from models.api.team import TeamGetByIdOut, TeamGetOut, TeamGetWorkshopOut, TeamPostIn
-from models.workshop import WorkshopCreate
+from models.api.team import (
+    TeamGetByIdOut,
+    TeamGetOut,
+    TeamGetWorkshopOut,
+    TeamPostIn,
+    TeamPostWorkshopIn,
+)
 
 logger = logging.getLogger()
 
@@ -79,7 +84,9 @@ async def get_team(team_service: TeamServiceDependency, team_id: int):
         },
     },
 )
-async def delete_team(team_service: TeamServiceDependency, team_id: int, cascade: bool = False):
+async def delete_team(
+    team_service: TeamServiceDependency, team_id: int, cascade: bool = False
+):
     """Delete a team. This will delete all children if cascade is set to True.
     If you want to deactivate a team use PATCH /teams/{team_id} instead."""
     try:
@@ -131,7 +138,7 @@ async def get_workshops(team_service: TeamServiceDependency, team_id: int):
     },
 )
 async def post_workshop(
-    team_service: TeamServiceDependency, team_id: int, workshop: WorkshopCreate
+    team_service: TeamServiceDependency, team_id: int, workshop: TeamPostWorkshopIn
 ):
     """Add a workshop to a team."""
     try:

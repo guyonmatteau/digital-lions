@@ -1,6 +1,6 @@
 import datetime
 
-from models.api.generic import CreateProperties, MetadataColumns, UpdateProperties
+from models.generic import CreateProperties, MetadataColumns, UpdateProperties
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 

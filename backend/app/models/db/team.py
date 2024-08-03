@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from models.base import MetadataColumns
+from models.generic import MetadataColumns
 from sqlalchemy import Column, ForeignKey, Integer
 from sqlmodel import Field, Relationship, SQLModel
 

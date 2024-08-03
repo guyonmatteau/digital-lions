@@ -1,4 +1,4 @@
-"""Metadata properties for all database models."""
+"""Generic metadata properties for all database- and API models."""
 
 from datetime import datetime
 
