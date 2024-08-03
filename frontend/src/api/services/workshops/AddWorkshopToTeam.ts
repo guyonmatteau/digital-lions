@@ -29,7 +29,6 @@ interface AttendanceRecord {
       }
   
       const responseData: Workshop[] = await response.json();
-      console.log("Data:", responseData);
       return responseData;
     } catch (error) {
       console.error("Error fetching data:", error);

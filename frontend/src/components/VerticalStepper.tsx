@@ -1,50 +1,40 @@
 import React, { useState, useEffect } from "react";
-import { Child } from "@/types/child.interface";
-import { Workshop } from "@/types/workshop.interface";
 import CustomButton from "@/components/CustomButton";
-
+import { TeamWithChildren } from "@/types/teamWithChildren.interface";
+import { WorkshopInfo } from "@/types/workshopInfo.interface";
+import  { AttendanceRecord } from '@/types/workshopAttendance.interface'
 interface VerticalStepperProps {
   workshops: string[];
   current: number;
-  children: Child[];
   onAttendanceChange: (childId: number, status: string) => void;
-  onFetchWorkshops: (workshopId: number) => void;
+  onFetchWorkshops: () => void;
   onSaveAttendance: () => void;
-  selectedTeamWithAttendance: Workshop[];
+  selectedTeamWithAttendance: AttendanceRecord[];
+  teamDetails: TeamWithChildren;
+  workshopDetails: WorkshopInfo[]
 }
-
 const VerticalStepper: React.FC<VerticalStepperProps> = ({
   workshops,
   current,
-  children,
   onAttendanceChange,
   onFetchWorkshops,
   onSaveAttendance,
   selectedTeamWithAttendance,
+  teamDetails,
+  workshopDetails,
 }) => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-  // Set the default open index
-  useEffect(() => {
-    setOpenIndex(current);
-  }, [current]);
-
-  // Get the workshop data for the current step
-  const getWorkshopDataForCurrent = () => {
-    return selectedTeamWithAttendance.find(
-      (workshop) => workshop.workshop_number === current + 1
-    );
-  };
-
-  const workshopData = getWorkshopDataForCurrent();
-  const attendanceData = workshopData ? workshopData.attendance : [];
+  const attendanceData = selectedTeamWithAttendance
 
   const handleAccordionToggle = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
     if (openIndex !== index) {
-      onFetchWorkshops(index + 1); // Assuming workshop IDs are 1-based and match the index
+      onFetchWorkshops();
     }
   };
+
+  const currentWorkshopAttendance = workshopDetails[current]?.attendance || { present: 0, total: 0 };
 
   return (
     <div className="w-full mx-auto">
@@ -88,6 +78,29 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
               <div className={`${isCurrent ? "font-bold" : ""}`}>
                 {workshop}
               </div>
+              {isCurrent && workshopDetails && (
+                  <div className={`${isCurrent ? "font-bold" : ""}`}>
+                  {currentWorkshopAttendance.present} / {currentWorkshopAttendance.total}
+                </div>
+              )}
+              {isCurrent && (
+                <svg
+                  data-accordion-icon
+                  className={`w-3 h-3 ${!isOpen ? "rotate-180" : ""} transition-transform`}
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 10 6"
+                >
+                  <path
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M9 5 5 1 1 5"
+                  />
+                </svg>
+              )}
             </div>
             {isCurrent && isOpen && (
               <div
@@ -97,27 +110,20 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
                   isOpen ? "max-h-screen" : "max-h-0 overflow-hidden"
                 }`}
               >
-                {children.length === 0 ? (
+                {selectedTeamWithAttendance.length === 0 ? (
                   <h3 className="text-lg font-semibold">
-                    No children in current team
+                    No children in current workshop
                   </h3>
                 ) : (
-                  children.map((child) => {
-                    // Find the attendance status for the current child
-                    const childAttendance = attendanceData.find(
-                      (attendance) => attendance.child_id === child.id
-                    );
-                    const attendanceStatus = childAttendance
-                      ? childAttendance.attendance
-                      : "absent"; // Default to "absent" if no data is found
-
+                  selectedTeamWithAttendance.map((entry) => {
+                    const { child_id, first_name, last_name, attendance } = entry;
                     return (
                       <div
-                        key={child.id}
+                        key={child_id}
                         className="flex flex-col sm:flex-row my-2"
                       >
                         <span className="flex-1 min-w-0 mb-2 sm:mb-0 sm:mr-4">
-                          {child.first_name} {child.last_name}
+                          {first_name} {last_name}
                         </span>
                         <div className="flex space-x-4">
                           {["present", "absent", "cancelled"].map((status) => (
@@ -127,11 +133,11 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
                             >
                               <input
                                 type="radio"
-                                name={`attendance-${child.id}`}
+                                name={`attendance-${child_id}`}
                                 value={status}
-                                checked={attendanceStatus === status}
+                                checked={attendance === status}
                                 onChange={() =>
-                                  onAttendanceChange(child.id, status)
+                                  onAttendanceChange(child_id, status)
                                 }
                               />
                               <span className="ml-2 capitalize">{status}</span>
@@ -142,7 +148,7 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
                     );
                   })
                 )}
-                {children.length > 0 && (
+                {attendanceData.length > 0 && (
                   <div className="flex items-center justify-end border-t mt-4 border-gray-200 rounded-b dark:border-gray-600">
                     <CustomButton
                       className="mt-4"

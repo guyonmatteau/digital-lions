@@ -16,7 +16,6 @@ try {
       'Content-Type': 'application/json'
     }
   });
-  console.log('Data:', response.json());
   if (!response.ok) {
     throw new Error(`Error: ${response.statusText}`);
   }

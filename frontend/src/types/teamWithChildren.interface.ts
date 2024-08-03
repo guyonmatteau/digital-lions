@@ -1,8 +1,20 @@
-import { Child } from "./child.interface";
 import { Community } from "./community.interface";
 
+interface Child {
+  id: number;
+  first_name: string;
+  last_name: string;
+}
+
 interface Progress {
-  workshop: number;
+  current: number;
+  total: number;
+}
+
+interface Program {
+  id: number;
+  name: string;
+  progress: Progress;
 }
 
 export interface TeamWithChildren {
@@ -13,5 +25,5 @@ export interface TeamWithChildren {
   name: string;
   community: Community;
   children: Child[];
-  progress: Progress;
+  program: Program;
 }

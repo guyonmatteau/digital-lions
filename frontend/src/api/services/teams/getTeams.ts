@@ -1,5 +1,3 @@
-
-
 import { Team } from "@/types/team.interface";
 
 const getTeams = async (): Promise<Team[]> => {

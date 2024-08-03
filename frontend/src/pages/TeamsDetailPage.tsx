@@ -34,7 +34,7 @@ const TeamsDetailPage: React.FC = () => {
   const [editFirstName, setEditFirstName] = useState("");
   const [editLastName, setEditLastName] = useState("");
   const [editAge, setEditAge] = useState<number | null>(null);
-  const [editDateOfBirth, setEditDateOfBirth] = useState("");
+  const [editDateOfBirth, setEditDateOfBirth] = useState(null);
   const [editGender, setEditGender] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingTeam, setIsLoadingTeam] = useState(false);
@@ -266,9 +266,9 @@ const TeamsDetailPage: React.FC = () => {
                   <div>
                     <p>{`First Name: ${child.first_name}`}</p>
                     <p>{`Last Name: ${child.last_name}`}</p>
-                    <p>{`Age: ${child.age}`}</p>
+                    {/* <p>{`Age: ${child.age}`}</p>
                     <p>{`Date of Birth: ${child.date_of_birth}`}</p>
-                    <p>{`Gender: ${child.gender}`}</p>
+                    <p>{`Gender: ${child.gender}`}</p> */}
                     <div className="flex items-center justify-end border-t mt-4 border-gray-200 rounded-b dark:border-gray-600">
                       <CustomButton
                         className="mt-4"
@@ -310,14 +310,12 @@ const TeamsDetailPage: React.FC = () => {
                 label="Age"
                 value={editAge?.toString() || ""}
                 onChange={handleAgeChange}
-                required={true}
               />
               <TextInput
                 className="mb-2"
                 label="Date of Birth"
                 value={editDateOfBirth}
                 onChange={handleDateOfBirthChange}
-                required={true}
               />
               <SelectInput
                 className="mb-2"

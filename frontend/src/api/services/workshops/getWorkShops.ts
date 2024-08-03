@@ -6,7 +6,7 @@ interface ApiResponse {
   team_id: number;
 }
 
-const getWorkShops = async (): Promise<ApiResponse[]> => {
+const getWorkshops = async (): Promise<ApiResponse[]> => {
   try {
     const response = await fetch(
       `https://backend-staging-ffae.up.railway.app/api/v1/workshops`,
@@ -17,7 +17,6 @@ const getWorkShops = async (): Promise<ApiResponse[]> => {
         },
       }
     );
-    console.log("Data:", response.json());
     if (!response.ok) {
       throw new Error(`Error: ${response.statusText}`);
     }
@@ -29,4 +28,4 @@ const getWorkShops = async (): Promise<ApiResponse[]> => {
   }
 };
 
-export default getWorkShops;
+export default getWorkshops;
