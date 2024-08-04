@@ -135,8 +135,13 @@ class TeamService(AbstractService, BaseService):
     def get_all(self, filters=list[tuple]):
         """Get all objects from the table."""
         if filters:
-            return self._teams.where(filters=filters)
-        return self._teams.read_all()
+            teams = self._teams.where(filters=filters)
+        else:
+            teams = self._teams.read_all()
+
+        # TODO add progress from
+        # self.workshops.get_last_workshop_per_team_()
+        return teams
 
     def get(self, object_id):
         """Get a team from the table by id."""
@@ -144,6 +149,7 @@ class TeamService(AbstractService, BaseService):
 
         team = self._teams.read(object_id=object_id)
 
+        # this should be done by the database
         team_workshops = self._workshops.where([("team_id", object_id)])
         latest_workshop = (
             max([w.workshop_number for w in team_workshops]) if team_workshops else 0
@@ -195,6 +201,8 @@ class TeamService(AbstractService, BaseService):
 
         workshops = self._workshops.where([(self.cols.team_id, team_id)])
 
+        # TODO this is quite inefficient because we do a query for each workshop (at most 12)
+        # we could do a single query to get all the scores at once and let the db do the lifting
         workshops_out = [
             TeamGetWorkshopOut(
                 **{

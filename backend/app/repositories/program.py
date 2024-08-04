@@ -1,4 +1,4 @@
-from models.program import Program
+from models.db.schema import Program
 from repositories.base import BaseRepository
 
 

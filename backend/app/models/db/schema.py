@@ -47,7 +47,7 @@ class Team(SQLModel, MetadataColumns, table=True):
     community_id: int = Field(
         sa_column=Column(Integer, ForeignKey("communities.id", ondelete="CASCADE"))
     )
-    community: "Community" = Relationship()
+    community: "Community" = Relationship(back_populates="teams")
     children: list["Child"] | None = Relationship(
         sa_relationship_kwargs={"cascade": "delete"}, back_populates="team"
     )
@@ -63,7 +63,9 @@ class Community(SQLModel, MetadataColumns, table=True):
     id: int = Field(default=None, primary_key=True)
 
     name: str
-    teams: list["Team"] = Relationship(sa_relationship_kwargs={"cascade": "delete"})
+    teams: list["Team"] = Relationship(
+        sa_relationship_kwargs={"cascade": "delete"}, back_populates="community"
+    )
 
 
 class Attendance(SQLModel, table=True):
