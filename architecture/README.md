@@ -18,7 +18,7 @@ Table to track development status of the endpoints which are heavily under const
 | **Teams**          | `/teams`                      | `GET`      | :white_check_mark: | :white_check_mark: | :white_check_mark: | - [ ] add `is_active` flag to response                         |
 |                    | `/teams`                      | `POST`     | :white_check_mark: | :white_check_mark: | :white_check_mark: |                                                                |
 |                    | `/teams/{team_id}`            | `GET`      | :white_check_mark: | :white_check_mark: | :white_check_mark: |                                                                |
-|                    | `/teams/{team_id}`            | `DELETE`   | :white_check_mark: |         :x:        |                    |                                                                |
+|                    | `/teams/{team_id}`            | `DELETE`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | - cascading children implemented, cascading to attendance not yet.                                                           |
 |                    | `/teams/{team_id}`            | `PATCH`    |         :x:        |                    |                    |                                                                |
 |                    | `/teams/{team_id}/workshops`  | `POST`     | :white_check_mark: | :white_check_mark: | :white_check_mark: | - autoset `in_active` to `False` when `workhshop_number` is 12 |
 |                    | `/teams/{team_id}/workshops`  | `GET`      | :white_check_mark: | :white_check_mark: | :white_check_mark: | - response model to be improved                                |

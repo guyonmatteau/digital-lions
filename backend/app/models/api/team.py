@@ -82,24 +82,37 @@ class TeamGetByIdOut(BaseModel, MetadataColumns):
 
 
 class TeamGetWorkshopOut(BaseModel):
-    """API response model for GET /teams/:id/workshops."""
+    """API response model for GET /teams/:id/workshops.
+    This response contains aggregated information about a workshop,
+    but not the per child attendance."""
 
-    class ChildAttendance(BaseModel):
-        """API response model for child attendance at a workshop."""
+    class Workshop(BaseModel):
+        """Workshop info."""
 
-        attendance: str = Field(
-            description="Attendance status of the child", examples=["present", "absent"]
+        name: str
+        id: int = Field(description="Unique identifier of workshop in database.")
+        number: int = Field(description="Number of workshop in the program")
+        date: str = Field(
+            description="Date the workshop took place in format YYYY-MM-DD",
+            example="2021-01-01",
         )
-        child_id: int = Field(description="ID of the child", example=1)
-        first_name: str = Field(description="First name of the child", example="Nelson")
-        last_name: str = Field(description="Last name of the child", example="Mandela")
 
-    date: str = Field(description="Date of the workshop", example="2021-01-01")
-    workshop_number: int = Field(
-        description="Number of the workshop in the program", example=1
-    )
-    workshop_id: int = Field(description="Unique workshop ID reference", example=1000)
-    attendance: list[ChildAttendance]
+    class Attendance(BaseModel):
+        """Aggregated attendance score of a workshop."""
+
+        present: int = Field(
+            description="Number of children that were present at the workshop."
+        )
+        cancelled: int = Field(
+            description="Number of children that cancelled the workshop."
+        )
+        absent: int = Field(
+            description="Number of children that were absent at the workshop."
+        )
+        total: int = Field(description="Total number of children in the team.")
+
+    workshop: Workshop
+    attendance: Attendance
 
 
 class TeamPostWorkshopIn(BaseModel):

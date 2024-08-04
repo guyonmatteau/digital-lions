@@ -1,11 +1,19 @@
 import logging
+from enum import Enum
 
 import exceptions
 from models.api.generic import Message
-from models.api.team import TeamGetByIdOut, TeamGetWorkshopOut, TeamPostIn, TeamPostWorkshopIn
+from models.api.team import (TeamGetByIdOut, TeamGetWorkshopOut, TeamPostIn,
+                             TeamPostWorkshopIn)
 from services.base import AbstractService, BaseService
 
 logger = logging.getLogger(__name__)
+
+
+class Attendance(Enum):
+    present: str = "present"
+    cancelled: str = "cancelled"
+    absent: str = "absent"
 
 
 class TeamService(AbstractService, BaseService):
@@ -189,22 +197,39 @@ class TeamService(AbstractService, BaseService):
 
         workshops_out = [
             TeamGetWorkshopOut(
-                workshop_id=w.id,
-                workshop_number=w.workshop_number,
-                date=w.date,
-                attendance=[
-                    {
-                        "attendance": a.attendance,
-                        "child_id": a.child_id,
-                        "first_name": a.child.first_name,
-                        "last_name": a.child.last_name,
-                    }
-                    for a in w.attendance
-                ],
+                **{
+                    "workshop": {
+                        "id": w.id,
+                        "number": w.workshop_number,
+                        "date": w.date,
+                        "name": f"Workshop {w.workshop_number}",
+                    },
+                    "attendance": self.get_aggregated_attendance(workshop_id=w.id),
+                }
             )
             for w in workshops
         ]
         return workshops_out
+
+    def get_aggregated_attendance(self, workshop_id: int) -> dict:
+        """Get aggregated attendance score of a workshop."""
+        attendance = self._attendances.where([("workshop_id", workshop_id)])
+
+        total = len(attendance)
+        present = len(
+            [x for x in attendance if x.attendance == Attendance.present.value]
+        )
+        cancelled = len(
+            [x for x in attendance if x.attendance == Attendance.cancelled.value]
+        )
+        absent = len([x for x in attendance if x.attendance == Attendance.absent.value])
+
+        return {
+            "total": total,
+            "present": present,
+            "cancelled": cancelled,
+            "absent": absent,
+        }
 
     def _validate_team_exists(self, team_id: int) -> None:
         """Check if a team exists."""
