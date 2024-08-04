@@ -70,9 +70,47 @@ def test_get_team_by_id(client):
     assert response_get.json().get("name") == team_x
 
 
-"""
-Test adding workshops to team.
-"""
+def test_delete_team_with_children(client):
+    # test that we can't delete a team with children if cascade is not set
+    team_x = "Team Y"
+    children = [
+        {"first_name": "Child 1", "last_name": "Last name", "age": 10},
+        {"first_name": "Child 2", "last_name": "Last name", "dob": "2001-01-01"},
+    ]
+    data = {"community_id": 1, "name": team_x, "children": children}
+    response = client.post(ENDPOINT, json=data)
+    assert response.status_code == status.HTTP_201_CREATED
+    id_ = response.json().get("id")
+
+    # assert team cannot be deleted
+    response_delete = client.delete(f"{ENDPOINT}/{id_}")
+    assert response_delete.status_code == status.HTTP_409_CONFLICT, response_delete.text
+
+
+def test_delete_team_with_children_cascade(client):
+    # test that we can't delete a team with children if cascade is not set
+    team_x = "Team Y"
+    children = [
+        {"first_name": "Child 1", "last_name": "Last name", "age": 10},
+        {"first_name": "Child 2", "last_name": "Last name", "dob": "2001-01-01"},
+    ]
+    data = {"community_id": 1, "name": team_x, "children": children}
+    response = client.post(ENDPOINT, json=data)
+    assert response.status_code == status.HTTP_201_CREATED
+    id_ = response.json().get("id")
+
+    team = client.get(f"{ENDPOINT}/{id_}")
+    child_id_0 = team.json().get("children")[0].get("id")
+
+    # assert team cannot be deleted
+    response_delete = client.delete(f"{ENDPOINT}/{id_}", params={"cascade": True})
+    assert response_delete.status_code == status.HTTP_200_OK, response_delete.text
+
+    # assert that team and child have been deleted
+    assert (
+        client.get(f"/children/{child_id_0}").status_code == status.HTTP_404_NOT_FOUND
+    )
+    assert client.get(f"{ENDPOINT}/{id_}").status_code == status.HTTP_404_NOT_FOUND
 
 
 @pytest.fixture(name="client_with_team")
@@ -87,8 +125,12 @@ def client_with_community_and_team(client):
         "/communities",
         json={"name": "Community 1"},
     )
-    client.post("/teams", json={"community_id": 1, "name": "Team 1", "children": children})
-    client.post("/teams", json={"community_id": 1, "name": "Team 2", "children": children})
+    client.post(
+        "/teams", json={"community_id": 1, "name": "Team 1", "children": children}
+    )
+    client.post(
+        "/teams", json={"community_id": 1, "name": "Team 2", "children": children}
+    )
     return client
 
 
@@ -226,3 +268,8 @@ def test_workshop_number_not_subsequent(client_with_team):
     assert (
         response_post_second_workshop.status_code == status.HTTP_400_BAD_REQUEST
     ), response_post_second_workshop.text
+
+
+def test_team_non_active_after_completed_program(client_with_team):
+    # given a team has completed all workshops, assert that the team is non-active
+    pass

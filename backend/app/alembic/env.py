@@ -6,14 +6,7 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 from sqlmodel import SQLModel
 
-# from app.models.db import schema
-from app.models.db.attendance import Attendance
-from app.models.db.child import Child
-from app.models.db.community import Community
-from app.models.db.program import Program
-from app.models.db.team import Team
-from app.models.db.user import User
-from app.models.workshop import Workshop
+from app.models.db import schema
 from app.settings import get_settings
 
 # this is the Alembic Config object, which provides

@@ -2,7 +2,8 @@ import logging
 
 import bcrypt
 from exceptions import ItemAlreadyExistsException, ItemNotFoundException, UserUnauthorizedException
-from models.user import User, UserCreate, UserOut, UserUpdate
+from models.api.user import UserCreate, UserGetByIdOut, UserUpdate
+from models.db.schema import User
 from repositories import UserRepository
 from services.base import BaseService
 
@@ -29,7 +30,7 @@ class UserService(BaseService):
     def delete_user(self, user_id):
         return self._user_repository.delete_user(user_id)
 
-    def add_user(self, user: UserCreate) -> UserOut:
+    def add_user(self, user: UserCreate) -> UserGetByIdOut:
         if self.db.query(User).filter(User.email_address == user.email_address).first():
             raise ItemAlreadyExistsException()
 
@@ -42,7 +43,7 @@ class UserService(BaseService):
         self.db.refresh(db_user)
         return db_user
 
-    def update_user(self, user_id: int, user: UserUpdate) -> UserOut:
+    def update_user(self, user_id: int, user: UserUpdate) -> UserGetByIdOut:
         db_user = self.db.get(User, user_id)
         if not db_user:
             raise ItemNotFoundException()
@@ -53,8 +54,10 @@ class UserService(BaseService):
         self.db.refresh(db_user)
         return db_user
 
-    def login_user(self, user: User) -> UserOut:
-        db_user = self.db.query(User).filter(User.email_address == user.email_address).first()
+    def login_user(self, user: User) -> UserGetByIdOut:
+        db_user = (
+            self.db.query(User).filter(User.email_address == user.email_address).first()
+        )
         if not db_user:
             raise ItemNotFoundException()
         hashed_password, _ = self._hash_password(user.password, db_user.salt)

@@ -1,7 +1,7 @@
 import logging
 
 import exceptions
-from models.api.child import ChildPostIn, ChildUpdateIn
+from models.api.child import ChildPatchIn, ChildPostIn
 from services.base import BaseService
 
 logger = logging.getLogger(__name__)
@@ -20,7 +20,7 @@ class ChildService(BaseService):
         self.commit()
         return child
 
-    def _validate_child_unique(self, child: ChildPostIn | ChildUpdateIn):
+    def _validate_child_unique(self, child: ChildPostIn | ChildPatchIn):
         """Validate that a child is unique in a team."""
         if self._children.where(
             [
@@ -69,9 +69,11 @@ class ChildService(BaseService):
         try:
             return self._children.read(object_id=object_id)
         except exceptions.ItemNotFoundException:
-            raise exceptions.ChildNotFoundException(f"Child with ID {object_id} not found")
+            raise exceptions.ChildNotFoundException(
+                f"Child with ID {object_id} not found"
+            )
 
-    def update(self, object_id: int, obj):
+    def update(self, object_id: int, obj: ChildPatchIn):
         """Update a child.
 
         Args:

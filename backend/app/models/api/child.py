@@ -30,6 +30,13 @@ class ChildValidators:
             raise ValueError("Either age or dob should be provided, not both.")
         return self
 
+    @field_validator("dob")
+    def convert_dob_to_str(cls, v) -> str:
+        """Convert dob to date format YYYY-MM-DD if it is provided."""
+        if v is not None:
+            v = v.strftime("%Y-%m-%d")
+        return v
+
 
 class ChildPostIn(BaseModel, CreateProperties, ChildValidators):
     """API payload model for creating a child. Either age
@@ -55,9 +62,9 @@ class ChildPostIn(BaseModel, CreateProperties, ChildValidators):
     team_id: int = Field(description="Team ID to which the child belongs", example=1)
 
 
-class ChildUpdateIn(BaseModel, UpdateProperties, ChildValidators):
-    """API payload model for updating a child. Either age
-    or dob can be provided, not both."""
+class ChildPatchIn(BaseModel, UpdateProperties, ChildValidators):
+    """API payload model for PATCH /children/:id for updating a child. 
+    Either age or dob can be provided, not both."""
 
     first_name: str | None = Field(
         description="First name of child", example="Nelson", default=None
@@ -82,13 +89,30 @@ class ChildUpdateIn(BaseModel, UpdateProperties, ChildValidators):
     )
 
 
+
 class ChildGetByIdOut(BaseModel, MetadataColumns):
-    """API response model for getting a child by ID."""
+    """Response model for GET /children/{id}."""
 
     id: int
     first_name: str
     last_name: str
-    age: int | None
-    dob: str | None
-    gender: str | None
+    age: int | None = Field(
+        default=None,
+        description="Age in years at the time of registration",
+    )
+    dob: str | None = Field(
+        default=None, description="Date of birth in the format YYYY-MM-DD"
+    )
+    gender: str | None = Field(
+        default=None, description="Gender of child. Either male or female."
+    )
     team_id: int
+
+class ChildGetOut(BaseModel):
+    """Response model for list response of GET /children."""
+
+    first_name: str
+    last_name: str
+    id: int
+
+

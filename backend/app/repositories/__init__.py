@@ -3,6 +3,7 @@ from repositories.base import BaseRepository
 from repositories.child import ChildRepository
 from repositories.community import CommunityRepository
 from repositories.team import TeamRepository
+from repositories.user import UserRepository
 from repositories.workshop import WorkshopRepository
 
 __all__ = [
@@ -11,5 +12,6 @@ __all__ = [
     "ChildRepository",
     "CommunityRepository",
     "TeamRepository",
+    "UserRepository",
     "WorkshopRepository",
 ]

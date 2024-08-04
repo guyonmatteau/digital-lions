@@ -32,3 +32,11 @@ class UserUpdate(UserBase, UpdateProperties):
     email_address: EmailStr | None = None
     role: str | None = None
     password: str | None = None
+
+
+class UserGetByIdOut(BaseModel):
+    id: int
+    first_name: str
+    last_name: str = Field(default=None)
+    email_address: EmailStr = Field(unique=True, index=True, sa_type=AutoString)
+    role: str | None = Field(default=None, description="User role on platform")

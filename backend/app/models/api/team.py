@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field, field_validator
 
 
 class TeamPostIn(BaseModel, CreateProperties):
-    """API request model for creating a team."""
+    """API payload model for POST /teams."""
 
     class TeamCreateChild(BaseModel, CreateProperties):
         """API sub request model to create a child within a team."""
@@ -20,6 +20,13 @@ class TeamPostIn(BaseModel, CreateProperties):
             default=None, description="Date of birth in the format YYYY-MM-DD"
         )
         gender: str | None = Field(default=None, description="Gender of child")
+
+        @field_validator("dob")
+        def convert_dob_to_str(cls, v) -> str:
+            """Convert dob to date format YYYY-MM-DD if it is provided."""
+            if v is not None:
+                v = v.strftime("%Y-%m-%d")
+            return v
 
     name: str = Field(description="Name of the team")
     children: list[TeamCreateChild] | None = Field(
@@ -44,7 +51,7 @@ class TeamGetOut(BaseModel):
 
 
 class TeamGetByIdOut(BaseModel, MetadataColumns):
-    """API response model for getting a team by ID."""
+    """API response model for GET /teams/:id."""
 
     class CommunityOut(BaseModel):
         """API response model community as part of team."""
@@ -75,7 +82,7 @@ class TeamGetByIdOut(BaseModel, MetadataColumns):
 
 
 class TeamGetWorkshopOut(BaseModel):
-    """API response model for getting workshop for a team."""
+    """API response model for GET /teams/:id/workshops."""
 
     class ChildAttendance(BaseModel):
         """API response model for child attendance at a workshop."""
@@ -96,18 +103,17 @@ class TeamGetWorkshopOut(BaseModel):
 
 
 class TeamPostWorkshopIn(BaseModel):
-    """API payload model for POST /teams/:id/workshops endpoint."""
+    """API payload model for POST /teams/:id/workshops."""
 
     class Attendance(BaseModel):
         """Model for adding attendance to a workshop, part
         of the WorkshopPostIn payload."""
 
         attendance: str = Field(
-            description="Attendance status of the child to the workshop. Must be 'present', 'absent', or 'cancelled'."
+            description="Attendance status of the child to the workshop. "
+            "Must be 'present', 'absent', or 'cancelled'."
         )
-
-        # TODO remove this foreign key constraint as this is the API interface
-        child_id: int = Field(foreign_key="children.id")
+        child_id: int = Field(description="ID of the child")
 
         @field_validator("attendance")
         def validate_attendance(cls, v):
@@ -132,4 +138,11 @@ class TeamPostWorkshopIn(BaseModel):
         """Validate that the workshop number is between 1 and 12."""
         if v not in range(1, 13):
             raise ValueError("Workshop number must be between 1 and 12.")
+        return v
+
+    @field_validator("date")
+    def convert_dob_to_str(cls, v) -> str:
+        """Convert date to date format YYYY-MM-DD if it is provided."""
+        if v is not None:
+            v = v.strftime("%Y-%m-%d")
         return v

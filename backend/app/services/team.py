@@ -1,10 +1,8 @@
 import logging
 
 import exceptions
-from models.api.child import ChildPostIn
+from models.api.generic import Message
 from models.api.team import TeamGetByIdOut, TeamGetWorkshopOut, TeamPostIn, TeamPostWorkshopIn
-from models.db.attendance import Attendance
-from models.db.workshop import Workshop
 from services.base import AbstractService, BaseService
 
 logger = logging.getLogger(__name__)
@@ -29,17 +27,26 @@ class TeamService(AbstractService, BaseService):
         logger.info(f"Team with ID {new_team.id} created.")
 
         for child in children:
-            child_in = ChildPostIn(team_id=new_team.id, **child.dict())
-            child_created = self._children.create(child_in)
+            child_created = self._children.create(
+                {"team_id": new_team.id, **child.dict()}
+            )
             logger.info(
-                "Child with ID %d added to team %d.", child_created.id, new_team.id
+                f"Child with ID {child_created.id} added to team {new_team.id}."
             )
 
         self.commit()
         return new_team
 
-    def create_workshop(self, team_id: int, workshop: TeamPostWorkshopIn):
-        """Create a workshop for a team."""
+    def create_workshop(self, team_id: int, workshop: TeamPostWorkshopIn) -> dict:
+        """Create a workshop for a team.
+
+        Args:
+            team_id (int): Team ID to create the workshop for.
+            workshop (TeamPostWorkshopIn): Workshop object to create.
+
+        Returns:
+            dict: Workshop object created.
+        """
         self._validate_team_exists(team_id)
 
         # validate that workshop does not exist yet for the team
@@ -97,21 +104,22 @@ class TeamService(AbstractService, BaseService):
 
         # create workshop
         attendance = workshop.attendance
-        workshop_in = Workshop(
-            team_id=team_id,
-            date=workshop.date,
-            workshop_number=workshop.workshop_number,
+        workshop_record = self._workshops.create(
+            {
+                "team_id": team_id,
+                "date": workshop.date,
+                "workshop_number": workshop.workshop_number,
+            }
         )
-        workshop_record = self._workshops.create(workshop_in)
-
         # create attendance records for all children in team
         for child_attendance in attendance:
-            attendance_in = Attendance(
-                workshop_id=workshop_record.id,
-                child_id=child_attendance.child_id,
-                attendance=child_attendance.attendance,
+            self._attendances.create(
+                {
+                    "workshop_id": workshop_record.id,
+                    "child_id": child_attendance.child_id,
+                    "attendance": child_attendance.attendance,
+                }
             )
-            self._attendances.create(attendance_in)
 
         self.commit()
         return workshop_record
@@ -124,18 +132,14 @@ class TeamService(AbstractService, BaseService):
 
     def get(self, object_id):
         """Get a team from the table by id."""
-        try:
-            team = self._teams.read(object_id=object_id)
-        except exceptions.ItemNotFoundException:
-            error_msg = f"Team with ID {object_id} not found"
-            logger.error(error_msg)
-            raise exceptions.TeamNotFoundException(error_msg)
+        self._validate_team_exists(object_id)
+
+        team = self._teams.read(object_id=object_id)
 
         team_workshops = self._workshops.where([("team_id", object_id)])
         latest_workshop = (
             max([w.workshop_number for w in team_workshops]) if team_workshops else 0
         )
-
         # TODO find a Pythonic way to do this
         return TeamGetByIdOut(
             **team.model_dump(),
@@ -148,19 +152,34 @@ class TeamService(AbstractService, BaseService):
         return self._teams.update(object_id=object_id, obj=obj)
 
     def delete(self, object_id: int, cascade: bool = False):
-        """Delete a team."""
+        """Delete a team and its children (including attendances).
+        Raises an exception if the team has children and cascade is False.
 
+        Args:
+            object_id (int): Team ID to delete.
+            cascade (bool, optional): Delete children and attendances if
+                present. Defaults to False.
+        """
+        self._validate_team_exists(object_id)
+
+        deleted_children = False
         if self._children.where([(self.cols.team_id, object_id)]):
+            deleted_children = True
             if not cascade:
                 error_msg = f"Team with ID {object_id} not empty: has children."
                 logger.error(error_msg)
                 raise exceptions.TeamHasChildrenException(error_msg)
 
-            logger.info(f"Deleting children from team with ID {object_id}")
-            self._children.delete_bulk(attr="team_id", value=object_id)
-
         logger.info(f"Deleting team with ID {object_id}")
         self._teams.delete(object_id=object_id)
+        self.commit()
+
+        msg = (
+            f"Team with ID {object_id} deleted, no children deleted."
+            if not deleted_children
+            else f"Team with ID {object_id} and related children deleted."
+        )
+        return Message(detail=msg)
 
     def get_workshops(self, team_id: int) -> list | None:
         """Get all workshops for a team."""

@@ -33,16 +33,10 @@ router = APIRouter(prefix="/teams")
 async def post_team(team_service: TeamServiceDependency, team: TeamPostIn):
     try:
         return team_service.create(team)
-    except exceptions.CommunityNotFoundException:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Community with ID {team.community_id} not found",
-        )
-    except exceptions.ItemAlreadyExistsException:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail=f"Team with name {team.name} already exists",
-        )
+    except exceptions.CommunityNotFoundException as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc))
+    except exceptions.TeamAlreadyExistsException as exc:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc))
 
 
 @router.get(
@@ -73,9 +67,9 @@ async def get_team(team_service: TeamServiceDependency, team_id: int):
 
 @router.delete(
     "/{team_id}",
-    status_code=status.HTTP_204_NO_CONTENT,
+    status_code=status.HTTP_200_OK,
     summary="Delete a team",
-    response_model=None,
+    response_model=Message,
     responses={
         404: {"model": Message, "description": "Not found"},
         409: {
@@ -97,11 +91,8 @@ async def delete_team(
             detail=f"Cannot delete team with ID {team_id} because it has related children record "
             + "and 'cascade' is set to False",
         )
-    except exceptions.ItemNotFoundException:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Team with ID {team_id} not found",
-        )
+    except exceptions.TeamNotFoundException as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
 
 
 @router.get(

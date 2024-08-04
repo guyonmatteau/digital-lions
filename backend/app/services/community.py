@@ -1,6 +1,7 @@
 import logging
 
 import exceptions
+from models.api import Message
 from models.api.community import CommunityPostIn
 from services.base import AbstractService, BaseService
 
@@ -30,10 +31,34 @@ class CommunityService(AbstractService, BaseService):
 
     def get(self, object_id):
         """Get an object from the table by id."""
+        self._validate_community_exists(object_id)
         return self._communities.read(object_id=object_id)
 
     def update(self, object_id: int, obj):
-        return self._communities.update(object_id=object_id, obj=obj)
+        self._validate_community_exists(object_id)
+        updated_community = self._communities.update(object_id=object_id, obj=obj)
+        self.commit()
+        return updated_community
 
-    def delete(self, object_id: int):
-        return self._communities.delete(object_id=object_id)
+    def delete(self, object_id: int, cascade: bool = False):
+        """Delete an object from the table by id."""
+        self._validate_community_exists(object_id)
+
+        if self._teams.where([("community_id", object_id)]):
+            if not cascade:
+                raise exceptions.CommunityHasTeamsException(
+                    f"Community with ID {object_id} has teams assigned to it."
+                )
+
+        self._communities.delete(object_id=object_id)
+        self.commit()
+        return Message(detail=f"Community with ID {object_id} deleted.")
+
+    def _validate_community_exists(self, community_id: int) -> None:
+        """Validate that community exists."""
+        try:
+            self._communities.read(object_id=community_id)
+        except exceptions.ItemNotFoundException:
+            error_msg = f"Community with ID {community_id} not found"
+            logger.error(error_msg)
+            raise exceptions.CommunityNotFoundException(error_msg)

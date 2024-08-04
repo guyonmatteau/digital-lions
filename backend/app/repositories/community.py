@@ -1,4 +1,4 @@
-from models.db.community import Community
+from models.db.schema import Community
 from repositories import BaseRepository
 
 

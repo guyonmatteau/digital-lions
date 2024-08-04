@@ -1,4 +1,4 @@
-from models.db.child import Child
+from models.db.schema import Child
 from repositories.base import BaseRepository
 
 

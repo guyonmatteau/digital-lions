@@ -1,8 +1,8 @@
 import exceptions
 from dependencies.services import ChildServiceDependency
 from fastapi import APIRouter, HTTPException, status
-from models.api.child import ChildGetByIdOut, ChildPostIn, ChildUpdateIn
-from models.out import ChildOut, RecordCreated
+from models.api.child import ChildGetByIdOut, ChildGetOut, ChildPatchIn, ChildPostIn
+from models.api.generic import RecordCreated
 
 router = APIRouter(prefix="/children")
 
@@ -18,7 +18,7 @@ async def get_child(child_id: int, child_service: ChildServiceDependency):
 @router.get(
     "",
     summary="Get children",
-    response_model=list[ChildGetByIdOut],
+    response_model=list[ChildGetOut] | None,
     status_code=status.HTTP_200_OK,
 )
 async def get_children(
@@ -54,13 +54,13 @@ async def add_child(child_service: ChildServiceDependency, child: ChildPostIn):
 @router.patch(
     "/{child_id}",
     summary="Update a child",
-    response_model=ChildOut,
+    response_model=ChildGetByIdOut,
     status_code=status.HTTP_200_OK,
 )
 async def update_child(
     child_service: ChildServiceDependency,
     child_id: int,
-    child: ChildUpdateIn,
+    child: ChildPatchIn,
 ):
     try:
         return child_service.update(object_id=child_id, obj=child)
