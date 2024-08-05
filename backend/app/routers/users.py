@@ -1,11 +1,11 @@
 import logging
 from typing import Annotated
 
+from database.repositories import UserRepository
 from exceptions import ItemAlreadyExistsException, ItemNotFoundException, UserUnauthorizedException
 from fastapi import APIRouter, Depends, HTTPException, status
 from models.api.generic import RecordCreated
 from models.api.user import UserCreate, UserGetByIdOut, UserLogin, UserUpdate
-from repositories.user import UserRepository
 
 logger = logging.getLogger()
 
@@ -27,9 +27,7 @@ async def login(user: UserLogin, user_repository: Annotated[UserRepository, Depe
             detail=f"User {user.email_address} not found",
         )
     except UserUnauthorizedException:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="User unauthorized"
-        )
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User unauthorized")
 
 
 @router.get(
@@ -48,9 +46,7 @@ async def get_users(user_repository: Annotated[UserRepository, Depends()]):
     status_code=status.HTTP_201_CREATED,
     summary="Create a new user",
 )
-async def create_user(
-    user: UserCreate, user_repository: Annotated[UserRepository, Depends()]
-):
+async def create_user(user: UserCreate, user_repository: Annotated[UserRepository, Depends()]):
     try:
         return user_repository.add_user(user)
     except ItemAlreadyExistsException:
@@ -65,15 +61,11 @@ async def create_user(
     status_code=status.HTTP_200_OK,
     summary="Get a user by ID",
 )
-async def read_user(
-    user_id: int, user_repository: Annotated[UserRepository, Depends()]
-):
+async def read_user(user_id: int, user_repository: Annotated[UserRepository, Depends()]):
     try:
         return user_repository.get_user(user_id=user_id)
     except ItemNotFoundException:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
 
 @router.patch(
@@ -89,13 +81,7 @@ async def update_user(
     try:
         return user_repository.update_user(user_id=user_id, user=user)
     except ItemNotFoundException:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     except ItemNotFoundException:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
-        )
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")

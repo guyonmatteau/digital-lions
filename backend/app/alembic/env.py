@@ -6,7 +6,7 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 from sqlmodel import SQLModel
 
-from app.models.db import schema
+from app.database import schema
 from app.settings import get_settings
 
 # this is the Alembic Config object, which provides
@@ -15,7 +15,7 @@ config = context.config
 section = config.config_ini_section
 
 settings = get_settings()
-config.set_main_option("sqlalchemy.url", os.environ.get("POSTGRES_DATABASE_URL"))
+config.set_main_option("sqlalchemy.url", os.environ.get("POSTGRES_DATABASE_URL_PROD"))
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.

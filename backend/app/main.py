@@ -4,7 +4,7 @@ import os
 from contextlib import asynccontextmanager
 from typing import Any
 
-from dependencies.database import init_db
+from database.session import init_db
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse

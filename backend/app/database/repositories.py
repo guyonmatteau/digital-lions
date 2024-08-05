@@ -1,9 +1,15 @@
+"""Repositories for CRUD operations on the database.
+Each table in the database translate to a repository class."""
+
 from enum import Enum
 from typing import Generic, TypeVar
 
-from dependencies.database import SessionDependency
-from exceptions import ItemNotFoundException
-from sqlalchemy import and_, delete
+import bcrypt
+from database import schema
+from database.session import SessionDependency
+from exceptions import ItemAlreadyExistsException, ItemNotFoundException
+from models.api.user import UserCreate, UserGetByIdOut, UserUpdate
+from sqlalchemy import and_, delete, func
 from sqlmodel import SQLModel
 
 Model = TypeVar("Model", bound=SQLModel)
@@ -131,3 +137,128 @@ class BaseRepository(Generic[Model]):
             if expr[1] is not None:
                 filter_list.append(getattr(self._model, expr[0]) == expr[1])
         return filter_list
+
+
+class AttendanceRepository(BaseRepository[schema.Attendance]):
+    """Repository to interact with attendances table."""
+
+    _model = schema.Attendance
+
+
+class ChildRepository(BaseRepository[schema.Child]):
+    """Repository to interact with children table."""
+
+    _model = schema.Child
+
+
+class CommunityRepository(BaseRepository[schema.Community]):
+    """Repository to interact with communities table."""
+
+    _model = schema.Community
+
+
+class ProgramRepository(BaseRepository[schema.Program]):
+    """Repository to interact with Program table."""
+
+    _model = schema.Program
+
+
+class TeamRepository(BaseRepository[schema.Team]):
+    """Repository to interact with Community table."""
+
+    _model = schema.Team
+
+
+class WorkshopRepository(BaseRepository[schema.Workshop]):
+    """Repository to interact with Workshop table."""
+
+    _model = schema.Workshop
+
+    def get_last_workshop_per_team(self, team_ids: list[int]) -> dict:
+        """For a list of team ID's, get the highest workshop number
+        for each team.
+
+        Args:
+            team_ids (list[int]): List of team ID's to get aggregation for.
+
+        Returns:
+            dict: Dictionary with team ID as key and highest workshop number as value.
+        """
+        results = (
+            self._session.query(self._model.team_id, func.max(self._model.workshop_number))
+            .filter(self._model.team_id.in_(team_ids))
+            .group_by(self._model.team_id)
+            .all()
+        )
+
+        result_dict = {team_id: workshop_number for team_id, workshop_number in results}
+        return result_dict
+
+
+# hashing should actually be part of the service
+def _hash_password(password: str, salt: bytes = None) -> [bytes, bytes]:
+    """Hash password."""
+    salt = salt or bcrypt.gensalt()
+    # logger.info(f"SALT: {salt}")
+    # hashed_password = bcrypt.hashpw(bytes(password, "utf-8"), salt)
+    # return hashed_password, salt
+    #
+    #
+
+
+class UserRepository(BaseRepository[schema.User]):
+    """Repository to interact with users table."""
+
+    _model = schema.User
+
+    # note this class currently does also some business logic, to be moved to service layer later
+    def get_users(self) -> list[schema.User]:
+        return self.db.query(schema.User).all()
+
+    def get_user(self, user_id: int) -> schema.User:
+        user = self.db.get(schema.User, user_id)
+        if not user:
+            raise ItemNotFoundException()
+        return user
+
+    def add_user(self, user: UserCreate):
+        if (
+            self.db.query(schema.User)
+            .filter(schema.User.email_address == user.email_address)
+            .first()
+        ):
+            raise ItemAlreadyExistsException()
+
+        # this should be part of the service
+        hashed_password, salt = _hash_password(user.password)
+        extra_data = {"hashed_password": hashed_password, "salt": salt}
+        db_user = schema.User.model_validate(user, update=extra_data)
+        self.db.add(db_user)
+        self.db.commit()
+        self.db.refresh(db_user)
+        return db_user
+
+    def update_user(self, user_id: int, user: UserUpdate) -> UserGetByIdOut:
+        db_user = self.db.get(schema.User, user_id)
+        if not db_user:
+            raise ItemNotFoundException()
+        user_data = user.model_dump(exclude_unset=True)
+        db_user.sqlmodel_update(user_data)
+        self.db.add(db_user)
+        self.db.commit()
+        self.db.refresh(db_user)
+        return db_user
+
+    def login_user(self, user: schema.User) -> UserGetByIdOut:
+        """Login user."""
+        db_user = (
+            self.db.query(schema.User)
+            .filter(schema.User.email_address == user.email_address)
+            .first()
+        )
+        if not db_user:
+            raise ItemNotFoundException()
+        hashed_password, _ = _hash_password(user.password, db_user.salt)
+        if db_user.hashed_password != hashed_password:
+            raise schema.UserUnauthorizedException()
+        return db_user

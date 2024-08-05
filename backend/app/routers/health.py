@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-from dependencies.services import CommunityServiceDependency
+from dependencies import CommunityServiceDependency
 from fastapi import APIRouter, status
 from fastapi.responses import JSONResponse
 

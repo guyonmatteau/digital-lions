@@ -1,10 +1,10 @@
 import logging
 
 import bcrypt
+from database.repositories import UserRepository
+from database.schema import User
 from exceptions import ItemAlreadyExistsException, ItemNotFoundException, UserUnauthorizedException
 from models.api.user import UserCreate, UserGetByIdOut, UserUpdate
-from models.db.schema import User
-from repositories import UserRepository
 from services.base import BaseService
 
 logger = logging.getLogger()
@@ -55,9 +55,7 @@ class UserService(BaseService):
         return db_user
 
     def login_user(self, user: User) -> UserGetByIdOut:
-        db_user = (
-            self.db.query(User).filter(User.email_address == user.email_address).first()
-        )
+        db_user = self.db.query(User).filter(User.email_address == user.email_address).first()
         if not db_user:
             raise ItemNotFoundException()
         hashed_password, _ = self._hash_password(user.password, db_user.salt)

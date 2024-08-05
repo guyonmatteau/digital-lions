@@ -1,5 +1,5 @@
 import exceptions
-from dependencies.services import ChildServiceDependency
+from dependencies import ChildServiceDependency
 from fastapi import APIRouter, HTTPException, status
 from models.api.child import ChildGetByIdOut, ChildGetOut, ChildPatchIn, ChildPostIn
 from models.api.generic import RecordCreated

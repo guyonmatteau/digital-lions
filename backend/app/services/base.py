@@ -2,9 +2,8 @@ import logging
 from abc import ABC, abstractmethod
 from typing import TypeVar
 
-import repositories
-from dependencies.database import SessionDependency
-from repositories.base import Columns
+from database import repositories
+from database.session import SessionDependency
 from sqlmodel import SQLModel
 
 Model = TypeVar("Model", bound=SQLModel)
@@ -53,7 +52,7 @@ class BaseService:
     """Internal class to make each API request act as
     on a unit of work on the database."""
 
-    cols = Columns
+    cols = repositories.Columns
 
     def __init__(self, session: SessionDependency) -> None:
         """Instantiate all repositories.
@@ -68,7 +67,7 @@ class BaseService:
         self._teams = repositories.TeamRepository(session=self._session)
         self._workshops = repositories.WorkshopRepository(session=self._session)
 
-        self._cols = Columns
+        self._cols = repositories.Columns
 
     def __enter__(self):
         """On entering context start a transaction."""
