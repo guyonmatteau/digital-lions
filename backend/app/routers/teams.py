@@ -7,6 +7,7 @@ from models.api.generic import Message, RecordCreated
 from models.api.team import (
     TeamGetByIdOut,
     TeamGetOut,
+    TeamGetWorkshopByNumberOut,
     TeamGetWorkshopOut,
     TeamPostIn,
     TeamPostWorkshopIn,
@@ -111,6 +112,31 @@ async def get_workshops(team_service: TeamServiceDependency, team_id: int):
         )
 
 
+@router.get(
+    "/{team_id}/workshops/{workshop_number}",
+    status_code=status.HTTP_200_OK,
+    summary="Get a team's workshop by number",
+    response_model=TeamGetWorkshopByNumberOut,
+    responses={
+        404: {
+            "model": Message,
+        },
+    },
+)
+async def get_workshop_by_number(
+    team_service: TeamServiceDependency, team_id: int, workshop_number: int
+):
+    """Get one of the workshops completed by the team, by number
+    of the workshop (i.e. number 1 to 12 for the default program)."""
+    try:
+        return team_service.get_workshop_by_number(team_id, workshop_number)
+    except (
+        exceptions.TeamNotFoundException,
+        exceptions.WorkshopNotFoundException,
+    ) as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
+
+
 @router.post(
     "/{team_id}/workshops",
     status_code=status.HTTP_201_CREATED,
@@ -119,12 +145,10 @@ async def get_workshops(team_service: TeamServiceDependency, team_id: int):
     responses={
         400: {
             "model": Message,
-            "description": "Bad request: missing attendance or child not in team.",
         },
-        409: {"model": Message, "description": "Conflict: workshop already exists"},
+        409: {"model": Message},
         404: {
             "model": Message,
-            "description": "Not found: team or child in team not found",
         },
     },
 )

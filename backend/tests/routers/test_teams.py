@@ -147,15 +147,19 @@ def test_add_workshop_with_attendance(client_with_team):
         "attendance": attendance,
     }
 
+    # assert that team progress is 0 at first
+    response_team = client_with_team.get(f"{ENDPOINT}/{team_id}")
+    assert response_team.json().get("program").get("progress").get("current") == 0
+
     response = client_with_team.post(f"{ENDPOINT}/{team_id}/workshops", json=payload)
     assert response.status_code == status.HTTP_201_CREATED, response.text
 
     # assert that team progress is updated
     response_team = client_with_team.get(f"{ENDPOINT}/{team_id}")
-    assert response_team.json().get("progress").get("workshop") == 1
+    assert response_team.json().get("program").get("progress").get("current") == 1
 
     response_workshop = client_with_team.get(f"{ENDPOINT}/{team_id}/workshops")
-    assert response_workshop.json()[0].get("workshop_number") == 1
+    assert response_workshop.json()[0].get("workshop").get("number") == 1
 
 
 def test_add_workshop_missing_child_id(client_with_team):

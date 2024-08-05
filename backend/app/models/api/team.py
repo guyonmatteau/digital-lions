@@ -53,18 +53,31 @@ class TeamGetOut(BaseModel):
 class TeamGetByIdOut(BaseModel, MetadataColumns):
     """API response model for GET /teams/:id."""
 
-    class CommunityOut(BaseModel):
+    class Community(BaseModel):
         """API response model community as part of team."""
 
         id: int = Field(description="ID of the community", example=1)
         name: str = Field(description="Name of the community", example="Khayelitsha")
 
-    class ProgressOut(BaseModel):
+    class Program(BaseModel):
         """API response model for status of team."""
 
-        workshop: int = Field(description="Number of workshops completed", example=3)
+        class Progress(BaseModel):
+            """API response model for progress of team."""
 
-    class ChildOut(BaseModel):
+            current: int = Field(
+                description="Last completed workshop in the program",
+            )
+            total: int = Field(
+                description="Total number of workshops in the program",
+                default=12,
+            )
+
+        id: int = Field(description="ID of the program", default=1)
+        name: str = Field(description="Name of the program", default="Default Program")
+        progress: Progress
+
+    class Child(BaseModel):
         """API response model for child as part of team."""
 
         id: int = Field(description="ID of the child", example=1)
@@ -73,9 +86,9 @@ class TeamGetByIdOut(BaseModel, MetadataColumns):
 
     id: int = Field(description="ID of the team", example=1)
     name: str = Field(description="Name of the team", example="The A-Team")
-    community: CommunityOut
-    children: list[ChildOut]
-    progress: ProgressOut
+    community: Community
+    children: list[Child]
+    program: Program
     is_active: bool = Field(
         description="Whether the team is still active in the program", example=True
     )
@@ -113,6 +126,38 @@ class TeamGetWorkshopOut(BaseModel):
 
     workshop: Workshop
     attendance: Attendance
+
+
+class TeamGetWorkshopByNumberOut(BaseModel):
+    """API response model for GET /teams/:id/workshops/:workshopNumber.
+    This reponse contains per child attendance information for a workshop."""
+
+    class Workshop(BaseModel):
+        """Workshop info."""
+
+        name: str = Field(description="Name of the workshop", example="Workshop 1")
+        id: int = Field(
+            description="Unique identifier of workshop in database.", example=1000
+        )
+        number: int = Field(description="Number of workshop in the program", example=1)
+        date: str = Field(
+            description="Date the workshop took place in format YYYY-MM-DD",
+            example="2021-01-01",
+        )
+
+    class Attendance(BaseModel):
+        """Attendance of a child to a workshop."""
+
+        attendance: str = Field(
+            description="Attendance status of the child",
+            examples=["present", "absent", "cancelled"],
+        )
+        child_id: int = Field(description="ID of the child")
+        first_name: str = Field(description="First name of the child", example="Nelson")
+        last_name: str = Field(description="Last name of the child", example="Mandela")
+
+    workshop: Workshop
+    attendance: list[Attendance]
 
 
 class TeamPostWorkshopIn(BaseModel):

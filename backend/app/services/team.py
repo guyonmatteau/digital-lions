@@ -3,8 +3,13 @@ from enum import Enum
 
 import exceptions
 from models.api.generic import Message
-from models.api.team import (TeamGetByIdOut, TeamGetWorkshopOut, TeamPostIn,
-                             TeamPostWorkshopIn)
+from models.api.team import (
+    TeamGetByIdOut,
+    TeamGetWorkshopByNumberOut,
+    TeamGetWorkshopOut,
+    TeamPostIn,
+    TeamPostWorkshopIn,
+)
 from services.base import AbstractService, BaseService
 
 logger = logging.getLogger(__name__)
@@ -139,27 +144,26 @@ class TeamService(AbstractService, BaseService):
         else:
             teams = self._teams.read_all()
 
-        # TODO add progress from
-        # self.workshops.get_last_workshop_per_team_()
         return teams
 
-    def get(self, object_id):
-        """Get a team from the table by id."""
-        self._validate_team_exists(object_id)
+    def get(self, object_id: int) -> TeamGetByIdOut:
+        """Get a team from the table by id.
 
-        team = self._teams.read(object_id=object_id)
-
-        # this should be done by the database
-        team_workshops = self._workshops.where([("team_id", object_id)])
-        latest_workshop = (
-            max([w.workshop_number for w in team_workshops]) if team_workshops else 0
+        Args:
+            object_id (int): Team ID to get Team for.
+        """
+        team = self._validate_team_exists(object_id)
+        teams_progresses = self._workshops.get_last_workshop_per_team(
+            team_ids=[team.id]
         )
-        # TODO find a Pythonic way to do this
+        # if the team has no workshops yet, its ID will not be in the dict
+        team_progress = teams_progresses[team.id] if team.id in teams_progresses else 0
+
         return TeamGetByIdOut(
             **team.model_dump(),
             children=[child.model_dump() for child in team.children],
             community=team.community.model_dump(),
-            progress={"workshop": latest_workshop},
+            program={"progress": {"current": team_progress}},
         )
 
     def update(self, object_id: int, obj):
@@ -219,6 +223,54 @@ class TeamService(AbstractService, BaseService):
         ]
         return workshops_out
 
+    def get_workshop_by_number(
+        self, team_id: int, workshop_number: int
+    ) -> TeamGetWorkshopByNumberOut:
+        """Get a workshop by number that was completed by a team.
+
+        Args:
+            team_id (int): Team ID to get workshop for.
+            workshop_number (int): Workshop number to get.
+        """
+        self._validate_team_exists(team_id)
+
+        workshop = self._workshops.where(
+            [(self.cols.team_id, team_id), (self.cols.workshop_number, workshop_number)]
+        )
+        if not workshop:
+            error_msg = f"Workshop {workshop_number} for team {team_id} not found."
+            raise exceptions.WorkshopNotFoundException(error_msg)
+
+        if len(workshop) > 1:
+            error_msg = (
+                "Unexpected error. Found 0 or more than 1 workshop with "
+                + f"number {workshop_number} for team {team_id}."
+            )
+            raise ValueError(error_msg)
+
+        # get per child attendance for the workshop
+        workshop_id = workshop[0].id
+        attendance = self._attendances.where([("workshop_id", workshop_id)])
+
+        workshop = TeamGetWorkshopByNumberOut(
+            workshop={
+                "id": workshop_id,
+                "number": workshop_number,
+                "date": workshop[0].date,
+                "name": f"Workshop {workshop_number}",
+            },
+            attendance=[
+                {
+                    "child_id": a.child.id,
+                    "attendance": a.attendance,
+                    "first_name": a.child.first_name,
+                    "last_name": a.child.last_name,
+                }
+                for a in attendance
+            ],
+        )
+        return workshop
+
     def get_aggregated_attendance(self, workshop_id: int) -> dict:
         """Get aggregated attendance score of a workshop."""
         attendance = self._attendances.where([("workshop_id", workshop_id)])
@@ -239,10 +291,10 @@ class TeamService(AbstractService, BaseService):
             "absent": absent,
         }
 
-    def _validate_team_exists(self, team_id: int) -> None:
+    def _validate_team_exists(self, team_id: int):
         """Check if a team exists."""
         try:
-            self._teams.read(object_id=team_id)
+            return self._teams.read(object_id=team_id)
         except exceptions.ItemNotFoundException:
             error_msg = f"Team with ID {team_id} not found"
             logger.error(error_msg)
