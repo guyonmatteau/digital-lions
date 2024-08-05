@@ -2,16 +2,18 @@ import React, { useState, useEffect } from "react";
 import CustomButton from "@/components/CustomButton";
 import { TeamWithChildren } from "@/types/teamWithChildren.interface";
 import { WorkshopInfo } from "@/types/workshopInfo.interface";
-import  { AttendanceRecord } from '@/types/workshopAttendance.interface'
+import { AttendanceRecord } from "@/types/workshopAttendance.interface";
+import { AttendanceStatus } from "@/types/attendanceStatus.enum";
+
 interface VerticalStepperProps {
   workshops: string[];
   current: number;
-  onAttendanceChange: (childId: number, status: string) => void;
+  onAttendanceChange: (childId: number, status: AttendanceStatus) => void;
   onFetchWorkshops: () => void;
   onSaveAttendance: () => void;
   selectedTeamWithAttendance: AttendanceRecord[];
   teamDetails: TeamWithChildren;
-  workshopDetails: WorkshopInfo[]
+  workshopDetails: WorkshopInfo[];
 }
 const VerticalStepper: React.FC<VerticalStepperProps> = ({
   workshops,
@@ -25,7 +27,21 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
 }) => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-  const attendanceData = selectedTeamWithAttendance
+  const [attendanceData, setAttendanceData] = useState<AttendanceRecord[]>([]);
+
+  useEffect(() => {
+    setAttendanceData(selectedTeamWithAttendance);
+  }, [selectedTeamWithAttendance]);
+
+  const handleAttendanceChange = (childId: number, newAttendance: AttendanceStatus) => {
+    const updatedAttendanceData = attendanceData.map((entry) =>
+      entry.child_id === childId
+        ? { ...entry, attendance: newAttendance }
+        : entry
+    );
+    setAttendanceData(updatedAttendanceData);
+    onAttendanceChange(childId, newAttendance);
+  };
 
   const handleAccordionToggle = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -34,7 +50,10 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
     }
   };
 
-  const currentWorkshopAttendance = workshopDetails[current]?.attendance || { present: 0, total: 0 };
+  const currentWorkshopAttendance = workshopDetails[current]?.attendance || {
+    present: 0,
+    total: 0,
+  };
 
   return (
     <div className="w-full mx-auto">
@@ -79,14 +98,17 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
                 {workshop}
               </div>
               {isCurrent && workshopDetails && (
-                  <div className={`${isCurrent ? "font-bold" : ""}`}>
-                  {currentWorkshopAttendance.present} / {currentWorkshopAttendance.total}
+                <div className={`${isCurrent ? "font-bold" : ""}`}>
+                  {currentWorkshopAttendance.present} /{" "}
+                  {currentWorkshopAttendance.total}
                 </div>
               )}
               {isCurrent && (
                 <svg
                   data-accordion-icon
-                  className={`w-3 h-3 ${!isOpen ? "rotate-180" : ""} transition-transform`}
+                  className={`w-3 h-3 ${
+                    !isOpen ? "rotate-180" : ""
+                  } transition-transform`}
                   aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -110,13 +132,14 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
                   isOpen ? "max-h-screen" : "max-h-0 overflow-hidden"
                 }`}
               >
-                {selectedTeamWithAttendance.length === 0 ? (
+                {attendanceData.length === 0 ? (
                   <h3 className="text-lg font-semibold">
                     No children in current workshop
                   </h3>
                 ) : (
-                  selectedTeamWithAttendance.map((entry) => {
-                    const { child_id, first_name, last_name, attendance } = entry;
+                  attendanceData.map((entry) => {
+                    const { child_id, first_name, last_name, attendance } =
+                      entry;
                     return (
                       <div
                         key={child_id}
@@ -137,7 +160,7 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
                                 value={status}
                                 checked={attendance === status}
                                 onChange={() =>
-                                  onAttendanceChange(child_id, status)
+                                  handleAttendanceChange(child_id, status as AttendanceStatus)
                                 }
                               />
                               <span className="ml-2 capitalize">{status}</span>

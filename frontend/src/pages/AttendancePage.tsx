@@ -88,7 +88,6 @@ const AttendancePage: React.FC = () => {
           attendance: status,
         })),
       };
-
       try {
         await AddWorkshopToTeam(selectedTeam.id, apiBody);
         alert("Attendance saved successfully!");
@@ -102,6 +101,7 @@ const AttendancePage: React.FC = () => {
     try {
       const teamsDetailsWithAttendance = await getWorkshopById(currentWorkshop);
       setSelectedTeamWithAttendance(teamsDetailsWithAttendance.attendance);
+      console.log(teamsDetailsWithAttendance.attendance);
     } catch (error) {
       console.error("Failed to fetch workshop data:", error);
     }
