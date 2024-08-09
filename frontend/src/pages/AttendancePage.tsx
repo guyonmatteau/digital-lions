@@ -32,8 +32,6 @@ const AttendancePage: React.FC = () => {
   const [attendance, setAttendance] = useState<Record<number, string>>({});
   const [isLoadingTeam, setIsLoadingTeam] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedTeamWithAttendance, setSelectedTeamWithAttendance] =
-    useState<any>([]);
 
   useEffect(() => {
     const fetchTeams = async () => {
@@ -98,15 +96,6 @@ const AttendancePage: React.FC = () => {
     }
   };
 
-  const handleFetchWorkshops = async () => {
-    try {
-      // const teamsDetailsWithAttendance = await getWorkshopById(selectedTeam?.id, currentWorkshop + 1);
-      // setSelectedTeamWithAttendance(teamsDetailsWithAttendance.attendance);
-    } catch (error) {
-      console.error("Failed to fetch workshop data:", error);
-    }
-  };
-
   const workshops = [
     "Workshop 1",
     "Workshop 2",
@@ -147,9 +136,7 @@ const AttendancePage: React.FC = () => {
             current={currentWorkshop}
             childs={selectedTeam.children}
             onAttendanceChange={handleAttendanceChange}
-            onFetchWorkshops={handleFetchWorkshops}
             onSaveAttendance={handleSaveAttendance}
-            selectedTeamWithAttendance={selectedTeamWithAttendance}
             teamDetails={selectedTeam}
             workshopDetails={workshopDetails}
           />

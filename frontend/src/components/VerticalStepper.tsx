@@ -10,9 +10,7 @@ interface VerticalStepperProps {
   workshops: string[];
   current: number;
   onAttendanceChange: (childId: number, status: AttendanceStatus) => void;
-  onFetchWorkshops: () => void;
   onSaveAttendance: () => void;
-  selectedTeamWithAttendance: AttendanceRecord[];
   teamDetails: TeamWithChildren;
   workshopDetails: WorkshopInfo[];
   childs: any;
@@ -22,28 +20,13 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
   workshops,
   current,
   onAttendanceChange,
-  onFetchWorkshops,
   onSaveAttendance,
-  selectedTeamWithAttendance,
-  teamDetails,
   workshopDetails,
   childs,
 }) => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [attendanceData, setAttendanceData] = useState<AttendanceRecord[]>([]);
 
-  console.log(workshopDetails);
-
-  useEffect(() => {
-    // Initialize attendanceData with default attendance if not already present
-    const initializedAttendanceData = childs.map((child: any) => {
-      const existingRecord = selectedTeamWithAttendance.find(
-        (record) => record.child_id === child.id
-      );
-      return existingRecord || { child_id: child.id, attendance: "" }; // Default to empty string
-    });
-    setAttendanceData(initializedAttendanceData);
-  }, [selectedTeamWithAttendance, childs]);
 
   const handleAttendanceChange = (
     childId: number,
@@ -55,7 +38,6 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
           ? { ...entry, attendance: newAttendance }
           : entry
       );
-      console.log("updatedAttendanceData", updatedAttendanceData);
       // Add a new entry if not present
       if (!updatedAttendanceData.some((entry) => entry.child_id === childId)) {
         updatedAttendanceData.push({
@@ -65,21 +47,13 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
       }
       return updatedAttendanceData;
     });
-    console.log("attendanceData", attendanceData);
     onAttendanceChange(childId, newAttendance);
   };
 
   const handleAccordionToggle = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
-    if (openIndex !== index) {
-      onFetchWorkshops();
-    }
   };
 
-  const currentWorkshopAttendance = workshopDetails[current]?.attendance || {
-    present: 0,
-    total: 0,
-  };
 
   return (
     <div className="w-full mx-auto">
