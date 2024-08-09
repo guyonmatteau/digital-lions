@@ -26,7 +26,7 @@ const LinkCard: React.FC<LinkCardProps> = ({
   return (
     <div
       onClick={handleClick}
-      className={`${className} rounded-lg bg-card flex items-center justify-between w-full p-5 font-medium text-white dark:text-gray-400 hover:bg-card-dark dark:hover:bg-gray-800 transition-colors cursor-pointer`}
+      className={`${className} rounded-lg bg-card flex items-center justify-between w-full p-5 font-medium text-white hover:bg-card-dark dark:hover:bg-gray-800 transition-colors cursor-pointer`}
     >
       <div className="flex-1">
         <h2 className="flex items-center">{title}</h2>

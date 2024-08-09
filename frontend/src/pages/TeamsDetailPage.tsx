@@ -3,16 +3,20 @@ import { useParams, useNavigate } from "react-router-dom";
 import Accordion from "@/components/Accordion";
 import getTeams from "@/api/services/teams/getTeams";
 import getTeamById from "@/api/services/teams/getTeamById";
+
 import createChild from "@/api/services/children/createChild";
 import updateChild from "@/api/services/children/updateChild";
+import deleteChild from "@/api/services/children/deleteChild";
+
+import Layout from "@/components/Layout";
 import SelectInput from "@/components/SelectInput";
 import CustomButton from "@/components/CustomButton";
 import Modal from "@/components/Modal";
 import TextInput from "@/components/TextInput";
 import Loader from "@/components/Loader";
-import { TeamWithChildren } from "@/types/teamWithChildren.interface";
+import ConfirmModal from "@/components/ConfirmModal";
 
-import Layout from "@/components/Layout";
+import { TeamWithChildren } from "@/types/teamWithChildren.interface";
 
 interface Team {
   name: string;
@@ -34,12 +38,18 @@ const TeamsDetailPage: React.FC = () => {
   const [editFirstName, setEditFirstName] = useState("");
   const [editLastName, setEditLastName] = useState("");
   const [editAge, setEditAge] = useState<number | null>(null);
-  const [editDateOfBirth, setEditDateOfBirth] = useState(null);
-  const [editGender, setEditGender] = useState("");
+  const [editDateOfBirth, setEditDateOfBirth] = useState<string | null>(null);
+  const [editGender, setEditGender] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingTeam, setIsLoadingTeam] = useState(false);
+  const [isLoadingChild, setIsLoadingChild] = useState(false);
+  const [isDeletingChild, setIsDeletingChild] = useState(false);
   const [isEditingChild, setIsEditingChild] = useState(false);
   const [isAddingChild, setIsAddingChild] = useState(false);
+
+const [errorMessage, setErrorMessage] = useState<string>("");
+
+  const [deleteChildModalVisible, setDeleteChildModalVisible] = useState(false);
 
   const [communityName, setCommunityName] = useState<string | null>(null);
   const [teamName, setTeamName] = useState<string | null>(null);
@@ -141,8 +151,8 @@ const TeamsDetailPage: React.FC = () => {
     setEditFirstName("");
     setEditLastName("");
     setEditAge(null);
-    setEditDateOfBirth("");
-    setEditGender("");
+    setEditDateOfBirth(null);
+    setEditGender(null);
     setIsAddingChild(false);
     setIsEditingChild(false);
   };
@@ -163,8 +173,8 @@ const TeamsDetailPage: React.FC = () => {
     setEditDateOfBirth(value);
   };
 
-  const handleGenderChange = (value: string | number) => {
-    setEditGender(value.toString());
+  const handleGenderChange = (value: string) => {
+    setEditGender(value);
   };
 
   const handleEditChild = (childId: number) => {
@@ -183,16 +193,17 @@ const TeamsDetailPage: React.FC = () => {
 
   const handleSaveChild = async () => {
     if (isEditingChild && editChildId !== null) {
-      if (editAge !== null && editFirstName && editLastName) {
+      if (editFirstName && editLastName) {
         const updatedChild = {
           childId: editChildId,
           isActive: true,
-          age: editAge,
+          age: editAge || null,
           dateOfBirth: editDateOfBirth || null,
-          gender: editGender || null,
+          gender: editGender || 'null',
           firstName: editFirstName,
           lastName: editLastName,
         };
+        setIsLoadingChild(true);
         try {
           await updateChild(updatedChild);
           const updatedTeam = await getTeamById(selectedTeam?.id!);
@@ -200,12 +211,14 @@ const TeamsDetailPage: React.FC = () => {
           closeModal();
         } catch (error) {
           console.error("Failed to update child:", error);
+        } finally {
+          setIsLoadingChild(false);
         }
       } else {
         console.error("Missing required fields for updating child");
       }
     } else if (isAddingChild) {
-      if (editAge !== null && editFirstName && editLastName && selectedTeam) {
+      if (editFirstName && editLastName && selectedTeam) {
         const newChild = {
           teamId: selectedTeam.id,
           age: editAge,
@@ -214,18 +227,46 @@ const TeamsDetailPage: React.FC = () => {
           firstName: editFirstName,
           lastName: editLastName,
         };
-
+        setIsLoadingChild(true);
         try {
           await createChild(newChild);
           const updatedTeam = await getTeamById(selectedTeam.id);
           setSelectedTeam(updatedTeam);
           closeModal();
         } catch (error) {
+          setErrorMessage(String(error));
           console.error("Failed to create child:", error);
+        } finally {
+          setIsLoadingChild(false);
         }
       } else {
         console.error("Missing required fields for adding child");
       }
+    }
+  };
+
+  const openDeleteChildModal = (childId: number) => {
+    setEditChildId(childId);
+    setDeleteChildModalVisible(true);
+  };
+
+  const closeDeleteChildModal = () => {
+    setDeleteChildModalVisible(false);
+  };
+
+  const handleDeleteChild = async () => {
+    const childId = editChildId;
+
+    setIsDeletingChild(true);
+    try {
+      await deleteChild(childId as number, false);
+      const updatedTeam = await getTeamById(selectedTeam?.id!);
+      setSelectedTeam(updatedTeam);
+      setDeleteChildModalVisible(false);
+    } catch (error) {
+      console.error("Failed to delete child:", error);
+    } finally {
+      setIsDeletingChild(false);
     }
   };
 
@@ -272,6 +313,13 @@ const TeamsDetailPage: React.FC = () => {
                     <div className="flex items-center justify-end border-t mt-4 border-gray-200 rounded-b dark:border-gray-600">
                       <CustomButton
                         className="mt-4"
+                        label="Delete"
+                        variant="danger"
+                        onClick={() => openDeleteChildModal(child.id)}
+                      />
+
+                      <CustomButton
+                        className="mt-4 ml-2"
                         label="Edit"
                         variant="secondary"
                         onClick={() => handleEditChild(child.id)}
@@ -282,6 +330,17 @@ const TeamsDetailPage: React.FC = () => {
               ))}
             </>
           )}
+          {deleteChildModalVisible && (
+            <ConfirmModal
+              title="Delete child"
+              text="Are you sure you want to delete this child?"
+              onAccept={() => handleDeleteChild()}
+              onClose={() => closeDeleteChildModal()}
+              acceptText="Delete"
+              closeText="Cancel"
+              isBusy={isDeletingChild}
+            />
+          )}
 
           {modalVisible && (
             <Modal
@@ -289,6 +348,16 @@ const TeamsDetailPage: React.FC = () => {
               title={isEditingChild ? "Edit child" : "Add child"}
               acceptText={isEditingChild ? "Edit" : "Add"}
               onAccept={handleSaveChild}
+              isBusy={isLoadingChild}
+              footer={
+                <CustomButton
+                  label="Save"
+                  variant="secondary"
+                  onClick={handleSaveChild}
+                  isBusy={isLoadingChild}
+                  className="hover:text-white"
+                />
+              }
             >
               <TextInput
                 className="mb-2"
@@ -304,6 +373,7 @@ const TeamsDetailPage: React.FC = () => {
                 value={editLastName}
                 onChange={handleLastNameChange}
                 required={true}
+                 errorMessage="Please enter your last name"
               />
               <TextInput
                 className="mb-2"
@@ -314,19 +384,20 @@ const TeamsDetailPage: React.FC = () => {
               <TextInput
                 className="mb-2"
                 label="Date of Birth"
-                value={editDateOfBirth}
+                value={editDateOfBirth ?? ""}
                 onChange={handleDateOfBirthChange}
               />
               <SelectInput
                 className="mb-2"
                 label="Gender"
-                value={editGender}
-                onChange={handleGenderChange}
+                value={editGender ?? ""}
+                onChange={(value: string | number) => handleGenderChange(String(value))} 
               >
                 <option value="">Select gender</option>
                 <option value="male">Male</option>
                 <option value="female">Female</option>
               </SelectInput>
+              {errorMessage && <p className="text-red-500">{errorMessage}</p>}
             </Modal>
           )}
         </>

@@ -1,24 +1,24 @@
 interface ApiResponse {
   team_id: number;
-  age: number;
-  dob: string;
-  gender: string;
+  age: number | null;
+  dob: string | null;
+  gender: string | null;
   first_name: string;
   last_name: string;
 }
 
 const createChild = async ({
   teamId,
-  age,
+  age ,
   dateOfBirth,
   gender,
   firstName,
   lastName,
 }: {
   teamId: number;
-  age: number;
-  dateOfBirth: string;
-  gender: string;
+  age: number  | null;
+  dateOfBirth: string | null;
+  gender: string | null;
   firstName: string;
   lastName: string;
 }): Promise<ApiResponse> => {
@@ -40,6 +40,12 @@ const createChild = async ({
         }),
       }
     );
+
+    if (response.status === 409) {
+      const errorData = await response.json();
+      throw errorData.detail
+      // throw new Error(errorData.detail || "Conflict: Child already exists");
+    }
 
     if (!response.ok) {
       throw new Error(`Error: ${response.statusText}`);

@@ -1,10 +1,5 @@
 import { Community } from "./community.interface";
-
-interface Child {
-  id: number;
-  first_name: string;
-  last_name: string;
-}
+import { Child } from "./child.interface";
 
 interface Progress {
   current: number;

@@ -33,7 +33,7 @@ const SelectInput: React.FC<SelectInputProps> = ({
 
   return (
     <div className={className}>
-      {label && <label htmlFor="default-select-input" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{label}</label>}
+      {label && <label htmlFor="default-select-input" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-900">{label}</label>}
       <div className="relative">
         <select
           disabled={disabled}

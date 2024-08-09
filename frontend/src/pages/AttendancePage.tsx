@@ -12,7 +12,6 @@ import { TeamWithChildren } from "@/types/teamWithChildren.interface";
 import { WorkshopInfo } from "@/types/workshopInfo.interface";
 import { WorkshopAttendance } from "@/types/workshopAttendance.interface";
 
-
 interface AttendanceRecord {
   attendance: string;
   child_id: number;
@@ -80,14 +79,16 @@ const AttendancePage: React.FC = () => {
 
   const handleSaveAttendance = async () => {
     if (selectedTeam) {
+      console.log('attendance', attendance);
       const apiBody: Attendance = {
-        date: new Date().toISOString(),
-        workshop_number: selectedTeam.program.progress.current,
+        date: workshopDetails[0].workshop.date,
+        workshop_number: selectedTeam.program.progress.current + 1,
         attendance: Object.entries(attendance).map(([childId, status]) => ({
-          child_id: parseInt(childId, 10),
           attendance: status,
+          child_id: parseInt(childId, 10),
         })),
       };
+      console.log('apiBody', apiBody);
       try {
         await AddWorkshopToTeam(selectedTeam.id, apiBody);
         alert("Attendance saved successfully!");
@@ -99,9 +100,8 @@ const AttendancePage: React.FC = () => {
 
   const handleFetchWorkshops = async () => {
     try {
-      const teamsDetailsWithAttendance = await getWorkshopById(currentWorkshop);
-      setSelectedTeamWithAttendance(teamsDetailsWithAttendance.attendance);
-      console.log(teamsDetailsWithAttendance.attendance);
+      // const teamsDetailsWithAttendance = await getWorkshopById(selectedTeam?.id, currentWorkshop + 1);
+      // setSelectedTeamWithAttendance(teamsDetailsWithAttendance.attendance);
     } catch (error) {
       console.error("Failed to fetch workshop data:", error);
     }
@@ -144,7 +144,8 @@ const AttendancePage: React.FC = () => {
         {selectedTeam && (
           <VerticalStepper
             workshops={workshops}
-            current={currentWorkshop - 1}
+            current={currentWorkshop}
+            childs={selectedTeam.children}
             onAttendanceChange={handleAttendanceChange}
             onFetchWorkshops={handleFetchWorkshops}
             onSaveAttendance={handleSaveAttendance}

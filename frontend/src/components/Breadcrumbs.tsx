@@ -22,18 +22,18 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ breadcrumbs }) => {
             {breadcrumb.path ? (
               <Link
                 to={breadcrumb.path}
-                className="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white"
+                className="inline-flex items-center text-sm font-medium text-gray-700 dark:text-white hover:text-blue-600 dark:hover:text-white"
               >
                 {breadcrumb.label}
               </Link>
             ) : (
-              <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
+              <span className="text-sm font-medium text-gray-500">
                 {breadcrumb.label}
               </span>
             )}
             {index < breadcrumbs.length - 1 && (
               <svg
-                className="w-3 h-3 mx-1 text-gray-400 dark:text-gray-500"
+                className="w-3 h-3 mx-1 text-gray-400 dark:text-white"
                 aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"

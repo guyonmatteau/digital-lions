@@ -4,7 +4,7 @@ interface CustomButtonProps {
   label: string;
   onClick?: () => void;
   className?: string;
-  isLoading?: boolean;
+  isBusy?: boolean;
   disabled?: boolean;
   variant?:
     | "primary"
@@ -20,7 +20,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   label,
   onClick,
   className,
-  isLoading,
+  isBusy,
   disabled,
   variant = "primary",
 }) => {
@@ -79,12 +79,12 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   return (
     <button
       type="button"
-      className={`${className} ${buttonClass} ${buttonColorClass} ${textColorClass} ${borderColorClass} ${disabled ? "opacity-50 cursor-not-allowed" : ""}`} // Apply opacity and cursor style for disabled state
+      className={`${className} ${buttonClass} ${buttonColorClass} ${textColorClass} ${borderColorClass} ${disabled ? "opacity-50 cursor-not-allowed" : ""}`} 
       onClick={handleClick}
-      disabled={isLoading || disabled}
+      disabled={isBusy || disabled}
       style={{ minWidth: "8rem", minHeight: "2.5rem" }}
     >
-      {isLoading ? (
+      {isBusy ? (
         <div className="absolute inset-0 flex items-center justify-center">
           <svg
             className="h-5 w-5 animate-spin text-white"

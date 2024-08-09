@@ -8,7 +8,7 @@ interface TextInputProps {
   onBlur?: (value: string) => void;
   required?: boolean;
   errorMessage?: string;
-  placeholder?: string; // Added placeholder prop
+  placeholder?: string; 
 }
 
 const TextInput: React.FC<TextInputProps> = ({
@@ -19,7 +19,7 @@ const TextInput: React.FC<TextInputProps> = ({
   onBlur,
   required = false,
   errorMessage = "", 
-  placeholder = "", // Added placeholder default value
+  placeholder = "", 
 }) => {
   const [inputValue, setInputValue] = useState(value);
   const [isTouched, setIsTouched] = useState(false); 
@@ -37,7 +37,7 @@ const TextInput: React.FC<TextInputProps> = ({
   };
 
   const handleBlur = () => {
-    setIsTouched(true); // Mark input as touched when it loses focus
+    setIsTouched(true); 
     if (onBlur) {
       onBlur(inputValue);
     }
@@ -61,7 +61,7 @@ const TextInput: React.FC<TextInputProps> = ({
         value={inputValue}
         onChange={handleInputChange}
         onBlur={handleBlur}
-        placeholder={placeholder} // Added placeholder attribute
+        placeholder={placeholder}
         className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 ${
           showError ? "border-red-500" : ""
         }`}

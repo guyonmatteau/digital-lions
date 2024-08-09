@@ -31,7 +31,7 @@ const Accordion: React.FC<AccordionProps> = ({
         <button
           onClick={toggleAccordion}
           type="button"
-          className={`rounded-t-lg ${isOpen ? "rounded-none" : "rounded-lg"} bg-card flex items-center justify-between w-full p-5 font-medium text-white  dark:text-gray-400 hover:bg-card-dark dark:hover:bg-gray-800`}
+          className={`rounded-t-lg ${isOpen ? "rounded-none" : "rounded-lg"} bg-card flex items-center justify-between w-full p-5 font-medium text-white hover:bg-card-dark dark:bg-gray-900 dark:hover:bg-gray-800`}
           data-accordion-target="#accordion-open-body-1"
           aria-expanded={isOpen}
           aria-controls="accordion-open-body-1"
@@ -66,8 +66,8 @@ const Accordion: React.FC<AccordionProps> = ({
         }}
       >
         <div className="bg-card p-5 dark:bg-gray-900 rounded-b-lg">
-          <p className="mb-2 text-gray-500 dark:text-gray-400">{description}</p>
-          {children}
+          <p className="mb-2 text-gray-500 dark:text-white">{description}</p>
+          <p className="dark:text-white">{children}</p>
         </div>
       </div>
     </div>

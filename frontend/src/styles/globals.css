@@ -25,10 +25,13 @@
   --color-footer-text: #FFFFFF;          /* Text color in footer */
   --color-card: #ABC69E;                 /* Card color */
   --color-card-dark: #8CA47F;            /* Card hover color */
-  --color-card-secondary: #F7CD47;         /* Second card color */
-  --color-card-secondary-dark: #E6B43D; /* Second cad hover color */
+  --color-card-secondary: #F7CD47;       /* Second card color */
+  --color-card-secondary-dark: #E6B43D;  /* Second cad hover color */
   --color-card-text: #FFFFFF;            /* Text color in cards */
   --color-border: #CCCCCC;               /* Gray Border */
+
+  --color-primary-blue: #007BFF;        /* Standard Blue */
+  --color-primary-blue-dark: #0056b3;   /* Dark Blue */
   
   /* Primary, secondary, success, danger, warning mappings */
   --color-primary: #FFFFFF;              /* White */
@@ -45,9 +48,6 @@
   --color-text: #333333;                 /* Dark Text */
   --color-text-light: #FFFFFF;           /* Light Text */
 }
-
-
-
 
 /* Use CSS variables */
 .bg-button-primary {
@@ -122,11 +122,65 @@
 .bg-neutral-light {
   background-color: var(--color-neutral-light);
 }
+
+.bg-primary-blue {
+  background-color: var(--color-primary-blue);
+}
+
+.bg-primary-blue-dark {
+  background-color: var(--color-primary-blue-dark);
+}
+
 .bg-text {
   color: var(--color-text);
 }
+
 .bg-text-light {
   color: var(--color-text-light);
+}
+
+.text-secondary {
+  color: var(--color-secondary)
+}
+
+.text-secondary-dark {
+  color: var(--color-secondary-dark)
+}
+
+.text-success {
+  color: var(--color-success);
+}
+
+.text-success-dark {
+  color: var(--color-success-dark);
+}
+
+.text-danger {
+  color: var(--color-danger)
+}
+
+.text-danger-dark {
+  color: var(--color-danger-dark)
+}
+
+.text-warning {
+  color: var(--color-warning)
+}
+
+.text-warning-dark {
+  color: var(--color-warning-dark)
+}
+
+.text-secondary-dark {
+  color: var(--color-secondary-dark)
+}
+
+.text-primary-blue {
+  color: var(--color-primary-blue);
+}
+
+.text-primary-blue-dark {
+  color: var(--color-primary-blue-dark);
 }
 
 
