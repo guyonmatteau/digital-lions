@@ -1,6 +1,6 @@
 # Attendance page
 
-
+> Date: Aug 2nd, 2024
 
 ## Current 
 On landing 

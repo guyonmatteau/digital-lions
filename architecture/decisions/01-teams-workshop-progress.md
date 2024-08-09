@@ -1,5 +1,7 @@
 # ADR 1: Teams and workshops
 
+> Date: July 20th, 2024
+
 Each team in the app follows a program of workshops. For each workshop we keep track of the attendance of the children in the team. 
 For V1 there will be only one, fixed program, consisting of Workshop 1 to 12. For each workshop the attendance is submitted. The idea is that 
 the frontend will show the progress of the team in the program on a dedicated team page using a vertical progress bar:

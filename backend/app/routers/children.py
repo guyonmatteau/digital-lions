@@ -39,16 +39,10 @@ async def get_children(
 async def add_child(child_service: ChildServiceDependency, child: ChildPostIn):
     try:
         return child_service.create(child)
-    except exceptions.ChildAlreadyExistsException:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="There already exists a child with this name in team {child.team_id}",
-        )
-    except exceptions.TeamNotFoundException:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Team with ID {child.team_id} not found",
-        )
+    except exceptions.ChildAlreadyExistsException as exc:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc))
+    except exceptions.TeamNotFoundException as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc))
 
 
 @router.patch(
@@ -64,11 +58,8 @@ async def update_child(
 ):
     try:
         return child_service.update(object_id=child_id, obj=child)
-    except exceptions.ItemNotFoundException:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Child with ID {child_id} not found",
-        )
+    except exceptions.ChildNotFoundException as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
 
 
 @router.delete(
@@ -83,14 +74,10 @@ async def delete_child(
     related attendances."""
     try:
         child_service.delete(object_id=child_id, cascade=cascade)
-    except exceptions.ChildHasAttendanceException:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail=f"Cannot delete child with id {child_id} because it has related "
-            + "attendance records and 'cascade' is set to false.",
-        )
-    except exceptions.ItemNotFoundException:
+    except exceptions.ChildHasAttendanceException as exc:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc))
+    except exceptions.ChildNotFoundException as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Child with id {child_id} not found",
+            detail=str(exc),
         )

@@ -120,7 +120,7 @@ class User(SQLModel, MetadataColumns, table=True):
     """User model in database."""
 
     __tablename__ = "users"
-    first_name: str
+    first_name: str = Field()
     last_name: str = Field(default=None)
     email_address: EmailStr = Field(unique=True, index=True, sa_type=AutoString)
     role: str | None = Field(default=None, description="User role on platform")
