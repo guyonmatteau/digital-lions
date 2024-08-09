@@ -1,11 +1,27 @@
-# Digital Lions
+# :earth_africa: Digital Lions
 
-Application for coaches, volunteers, and admins of [Little Lions Child Coaching](https://littlelionschildcoaching.com/) to maintain teams, children, (attendance to) workshops. Hosted with [Railway Apps](https://railway.app/) on [staging.digitallions.annelohmeijer.com](https://staging.digitallions.annelohmeijer.com).
+## Table of Contents
+- [About](#-about)
+- [System design](#-system-design)
+- [Development](#-development)
+- [Licence](#-licence)
 
 
-## Components 
+## About
 
-The application is the simplest form of a private web CRUD application, consisting of a frontend (React), a backend (Python FastAPI), and PostgresDB. 
+Digital Lions is the private web application that is part of [Little Lions Child Coaching](https://littlelionschildcoaching.com/). Little Lion's Child Coaching is a Cape Town based NGO that provides workshops in social and emotional skills for children in the townships of Africa. The workshops are given in a 12-week program. This application is designed to help the coaches, volunteers, and administrators to keep track of the children, teams, and workshops. 
+
+  > Maintainers: X & Y
+
+
+## System design
+
+Design decisions, architecture diagrams, and other relevant design information can be found in the [architecture](architecture) folder. A status overview of the backend endpoints can be found in the [development status](architecture/README.md) table.
+The application is a classic web application consisting of three main components:
+- [Frontend in React](frontend)
+- [Backend in Python FastAPI](backend)
+- [PostgresDB](architecture/decisions/00-inital-concept.md)
+
 
 ## Development
 
@@ -23,9 +39,6 @@ docker compose up frontend
 ```
 The frontend should now be available at `http://localhost:5173`.
 
-## System design
-
-For system design, diagrams, and architecture decisions see the [architecture](architecture) folder. Status of the development of the endpoints can be found in the [architecture/README.md](architecture/README.md).
 
 ## Licence
 
