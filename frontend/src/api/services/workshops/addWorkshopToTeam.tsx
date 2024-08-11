@@ -24,6 +24,8 @@ interface AttendanceRecord {
         }
       );
   
+
+      
       if (!response.ok) {
         throw new Error(`Error: ${response.statusText}`);
       }
