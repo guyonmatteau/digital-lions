@@ -3,7 +3,7 @@ import VerticalStepper from "@/components/VerticalStepper";
 import SelectInput from "@/components/SelectInput";
 import getTeams from "@/api/services/teams/getTeams";
 import getTeamById from "@/api/services/teams/getTeamById";
-import AddWorkshopToTeam from "@/api/services/workshops/AddWorkshopToTeam";
+import addWorkshopToTeam from "@/api/services/workshops/addWorkshopToTeam";
 import getWorkshopsByTeam from "@/api/services/workshops/getWorkshopsByTeam";
 import getWorkshopById from "@/api/services/workshops/getWorkshopById";
 import Layout from "@/components/Layout";
@@ -32,6 +32,7 @@ const AttendancePage: React.FC = () => {
   const [attendance, setAttendance] = useState<Record<number, string>>({});
   const [isLoadingTeam, setIsLoadingTeam] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSavingAttendance, setIsSavingAttendance] = useState(false);
 
   useEffect(() => {
     const fetchTeams = async () => {
@@ -77,24 +78,48 @@ const AttendancePage: React.FC = () => {
 
   const handleSaveAttendance = async () => {
     if (selectedTeam) {
-      console.log('attendance', attendance);
+      console.log(workshopDetails);
       const apiBody: Attendance = {
-        date: workshopDetails[0].workshop.date,
+     // if there is no workshpoDetails take the current Date
+     date: workshopDetails.length === 0 ? new Date().toISOString().split("T")[0] : workshopDetails[0].workshop.date.split("T")[0],
         workshop_number: selectedTeam.program.progress.current + 1,
         attendance: Object.entries(attendance).map(([childId, status]) => ({
           attendance: status,
           child_id: parseInt(childId, 10),
         })),
       };
-      console.log('apiBody', apiBody);
+      setIsSavingAttendance(true);
+
+    
       try {
-        await AddWorkshopToTeam(selectedTeam.id, apiBody);
-        alert("Attendance saved successfully!");
+        await addWorkshopToTeam(selectedTeam.id, apiBody);
+        const teamDetails = await getTeamById(selectedTeam.id);
+        const workshops = await getWorkshopsByTeam(selectedTeam.id);
+        setSelectedTeam(teamDetails);
+        setWorkshopDetails(workshops);
+
+        // const initialAttendance: Record<number, string> = {};
+        // teamDetails.children.forEach((child) => {
+        //   initialAttendance[child.id] = null; // or another default value
+        // });
+        // setAttendance(initialAttendance);
       } catch (error) {
-        console.error("Failed to save attendance:", error);
+      } finally {
+        setIsSavingAttendance(false);
       }
     }
   };
+
+  // useEffect(() => {
+  //   if (selectedTeam) {
+  //     // Initialize attendance for the new team
+  //     const initialAttendance: Record<number, string> = {};
+  //     selectedTeam.children.forEach((child) => {
+  //       initialAttendance[child.id] = null;
+  //     });
+  //     setAttendance(initialAttendance);
+  //   }
+  // }, [selectedTeam]);
 
   const workshops = [
     "Workshop 1",
@@ -133,12 +158,13 @@ const AttendancePage: React.FC = () => {
         {selectedTeam && (
           <VerticalStepper
             workshops={workshops}
-            current={currentWorkshop}
+            currentWorkshop={currentWorkshop}
             childs={selectedTeam.children}
             onAttendanceChange={handleAttendanceChange}
             onSaveAttendance={handleSaveAttendance}
             teamDetails={selectedTeam}
             workshopDetails={workshopDetails}
+            isSavingAttendance={isSavingAttendance}
           />
         )}
       </>

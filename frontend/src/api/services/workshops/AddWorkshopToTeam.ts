@@ -11,7 +11,7 @@ interface AttendanceRecord {
     attendance: AttendanceRecord[];
   }
 
-  const AddWorkshopToTeam = async (teamId: number, data: ApiBody): Promise<Workshop[]> => {
+  const addWorkshopToTeam = async (teamId: number, data: ApiBody): Promise<Workshop[]> => {
     try {
       const response = await fetch(
         `https://backend-staging-ffae.up.railway.app/api/v1/teams/${teamId}/workshops`,
@@ -36,4 +36,4 @@ interface AttendanceRecord {
     }
   };
 
-export default AddWorkshopToTeam;
+export default addWorkshopToTeam;
