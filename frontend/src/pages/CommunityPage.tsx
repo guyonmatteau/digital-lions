@@ -53,7 +53,8 @@ const CommunityPage: React.FC = () => {
       try {
         const newCommunity = await createCommunity(communityName);
         setCommunities([...communities, newCommunity]);
-        setCommunityName(""); // Clear communityName input
+        setCommunityName("");
+        fetchCommunities()
       } catch (error) {
         console.error("Error adding community:", error);
       } finally {

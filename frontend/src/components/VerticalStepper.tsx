@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import CustomButton from '@/components/CustomButton';
+import React, { useEffect, useRef, useState } from "react";
+import CustomButton from "@/components/CustomButton";
 // import Badge from '@/components/Badge';
-import { TeamWithChildren } from '@/types/teamWithChildren.interface';
-import { WorkshopInfo } from '@/types/workshopInfo.interface';
-import { AttendanceRecord } from '@/types/workshopAttendance.interface';
-import { AttendanceStatus } from '@/types/attendanceStatus.enum';
+import { TeamWithChildren } from "@/types/teamWithChildren.interface";
+import { WorkshopInfo } from "@/types/workshopInfo.interface";
+import { AttendanceRecord } from "@/types/workshopAttendance.interface";
+import { AttendanceStatus } from "@/types/attendanceStatus.enum";
 
 interface VerticalStepperProps {
   workshops: string[];
@@ -16,7 +16,6 @@ interface VerticalStepperProps {
   childs: any;
   animationDuration?: number;
   isSavingAttendance: boolean;
-
 }
 
 const VerticalStepper: React.FC<VerticalStepperProps> = ({
@@ -27,12 +26,15 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
   workshopDetails,
   childs,
   animationDuration = 1,
-  isSavingAttendance
+  isSavingAttendance,
+  teamDetails
 }) => {
   const [checked, setChecked] = useState(0);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [attendanceData, setAttendanceData] = useState<AttendanceRecord[]>([]);
-  
+
+  const stepRefs = useRef<Array<React.RefObject<HTMLDivElement>>>([]);
+
   const handleAttendanceChange = (
     childId: number,
     newAttendance: AttendanceStatus
@@ -57,6 +59,7 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
   const handleAccordionToggle = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
   };
+
   const itemAnimationDuration = animationDuration / workshops.length;
 
   useEffect(() => {
@@ -64,7 +67,7 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
       setChecked(0);
       for (let i = 0; i < currentWorkshop; i++) {
         setTimeout(() => {
-          setChecked((prev) => Math.min(prev + 1, currentWorkshop)); 
+          setChecked((prev) => Math.min(prev + 1, currentWorkshop));
         }, itemAnimationDuration * (i + 1) * 1200);
       }
     };
@@ -72,12 +75,31 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
     createAnimation();
   }, [currentWorkshop, itemAnimationDuration]);
 
-
   useEffect(() => {
     if (checked === currentWorkshop) {
       setOpenIndex(currentWorkshop);
+      // Scroll to the current step
+      stepRefs.current[currentWorkshop]?.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
     }
   }, [checked, currentWorkshop]);
+
+  // Initialize stepRefs array
+  useEffect(() => {
+    stepRefs.current = workshops.map(() => React.createRef<HTMLDivElement>());
+  }, [workshops]);
+
+  useEffect(() => {
+    if (workshopDetails.length > 0) {
+      const newAttendanceData: AttendanceRecord[] = childs.map((child: any) => ({
+        child_id: child.id,
+        attendance: "" 
+      }));
+      setAttendanceData(newAttendanceData);
+    }
+  }, [workshopDetails, currentWorkshop, childs]);
 
   return (
     <div className="w-full mx-auto">
@@ -87,8 +109,7 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
         const isNext = index > currentWorkshop;
         const isOpen = index === openIndex && isCurrent;
 
-        let stepClass =
-          "relative pl-4 pb-2";
+        let stepClass = "relative pl-4 pb-2 ";
         if (isCurrent) {
           stepClass += " border-blue-500 cursor-pointer";
         } else if (isPrevious) {
@@ -98,7 +119,7 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
         }
 
         return (
-          <div key={index} className={stepClass} >
+          <div key={index} className={stepClass}>
             <div
               onClick={
                 isCurrent ? () => handleAccordionToggle(index) : undefined
@@ -106,7 +127,8 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
               className={`bg-card flex items-center justify-between w-full p-5 font-medium text-white dark:bg-gray-900 transition-colors ${
                 isCurrent ? "rounded-t-lg rounded-b-none" : "rounded-lg"
               } ${
-                isCurrent && "cursor-pointer hover:bg-card-dark dark:hover:bg-gray-800"
+                isCurrent &&
+                "cursor-pointer hover:bg-card-dark dark:hover:bg-gray-800"
               }`}
             >
               <span
@@ -122,14 +144,14 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
               </span>
               {index < workshops.length - 1 && (
                 <span
-                className={`absolute left-[-1px] top-[2.6rem] bottom-[-25px] w-[2px] ${
-                  index < checked
-                    ? "bg-green-500"
-                    : index === checked
-                    ? "bg-blue-500"
-                    : "bg-gray-300"
-                } `}
-                // style={{ height: lineHeight }}
+                  className={`absolute left-[-1px] top-[2.6rem] bottom-[-25px] w-[2px] ${
+                    index < checked
+                      ? "bg-green-500"
+                      : index === checked
+                      ? "bg-blue-500"
+                      : "bg-gray-300"
+                  } `}
+                  // style={{ height: lineHeight }}
                 />
               )}
 
@@ -157,7 +179,10 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
               </div> */}
             </div>
             <div
-              className={`card-content ${isOpen && isCurrent ? 'open' : 'closed'}`}
+              className={`card-content ${
+                isOpen && isCurrent ? "open" : "closed"
+              }`}
+              ref={stepRefs.current[index]}
             >
               {isOpen && isCurrent && (
                 <div className="p-4 rounded-b-lg bg-card transition-all duration-300 ease-in-out dark:bg-gray-900 dark:text-white">
@@ -175,38 +200,48 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
                         ? attendanceEntry.attendance
                         : null;
                       return (
-                        <div key={id} className="flex flex-col sm:flex-row my-2">
+                        <div
+                          key={id}
+                          className="flex flex-col sm:flex-row my-2"
+                        >
                           <span className="flex-1 min-w-0 mb-2 sm:mb-0 sm:mr-4">
                             {first_name} {last_name}
                           </span>
                           <div className="flex space-x-4">
-                            {["present", "absent", "cancelled"].map((status) => (
-                              <label
-                                key={status}
-                                className="flex items-center cursor-pointer"
-                              >
-                            
-                                <input
-                                  type="radio"
-                                  name={`attendance-${id}`}
-                                  value={status}
-                                  checked={currentAttendance === status && currentAttendance !== '' && currentAttendance !== null}
-                                  onChange={() =>
-                                    handleAttendanceChange(
-                                      id,
-                                      status as AttendanceStatus
-                                    )
-                                  }
-                                />
-                                <span className="ml-2 capitalize">{status}</span>
-                              </label>
-                            ))}
+                            {["present", "absent", "cancelled"].map(
+                              (status) => (
+                                <label
+                                  key={status}
+                                  className="flex items-center cursor-pointer"
+                                >
+                                  <input
+                                    type="radio"
+                                    name={`attendance-${id}`}
+                                    value={status}
+                                    checked={
+                                      currentAttendance === status &&
+                                      currentAttendance !== "" &&
+                                      currentAttendance !== null
+                                    }
+                                    onChange={() =>
+                                      handleAttendanceChange(
+                                        id,
+                                        status as AttendanceStatus
+                                      )
+                                    }
+                                  />
+                                  <span className="ml-2 capitalize">
+                                    {status}
+                                  </span>
+                                </label>
+                              )
+                            )}
                           </div>
                         </div>
                       );
                     })
                   )}
-                  {(
+                  {
                     <div className="flex items-center justify-end border-t mt-4 border-gray-200 rounded-b dark:border-gray-600">
                       <CustomButton
                         className="mt-4"
@@ -214,9 +249,11 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
                         variant="secondary"
                         onClick={onSaveAttendance}
                         isBusy={isSavingAttendance}
+                        // disabled when there are no childs or if attendnance is not checked fo all childs
+                        disabled={childs.length === 0 || !attendanceData.every((entry) => entry.attendance !== "" && entry.attendance !== null)}
                       />
                     </div>
-                  )}
+                  }
                 </div>
               )}
             </div>

@@ -80,8 +80,11 @@ const AttendancePage: React.FC = () => {
     if (selectedTeam) {
       console.log(workshopDetails);
       const apiBody: Attendance = {
-     // if there is no workshpoDetails take the current Date
-     date: workshopDetails.length === 0 ? new Date().toISOString().split("T")[0] : workshopDetails[0].workshop.date.split("T")[0],
+        // if there is no workshpoDetails take the current Date
+        date:
+          workshopDetails.length === 0
+            ? new Date().toISOString().split("T")[0]
+            : workshopDetails[0].workshop.date.split("T")[0],
         workshop_number: selectedTeam.program.progress.current + 1,
         attendance: Object.entries(attendance).map(([childId, status]) => ({
           attendance: status,
@@ -90,7 +93,6 @@ const AttendancePage: React.FC = () => {
       };
       setIsSavingAttendance(true);
 
-    
       try {
         await addWorkshopToTeam(selectedTeam.id, apiBody);
         const teamDetails = await getTeamById(selectedTeam.id);
@@ -110,16 +112,16 @@ const AttendancePage: React.FC = () => {
     }
   };
 
-  // useEffect(() => {
-  //   if (selectedTeam) {
-  //     // Initialize attendance for the new team
-  //     const initialAttendance: Record<number, string> = {};
-  //     selectedTeam.children.forEach((child) => {
-  //       initialAttendance[child.id] = null;
-  //     });
-  //     setAttendance(initialAttendance);
-  //   }
-  // }, [selectedTeam]);
+  useEffect(() => {
+    if (selectedTeam) {
+      // Initialize attendance for the new team
+      const initialAttendance: Record<number, string> = {};
+      selectedTeam.children.forEach((child) => {
+        initialAttendance[child.id] = "";
+      });
+      setAttendance(initialAttendance);
+    }
+  }, [selectedTeam]);
 
   const workshops = [
     "Workshop 1",
