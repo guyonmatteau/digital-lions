@@ -33,6 +33,7 @@ const AttendancePage: React.FC = () => {
   const [isLoadingTeam, setIsLoadingTeam] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSavingAttendance, setIsSavingAttendance] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
     const fetchTeams = async () => {
@@ -78,7 +79,6 @@ const AttendancePage: React.FC = () => {
 
   const handleSaveAttendance = async () => {
     if (selectedTeam) {
-      console.log(workshopDetails);
       const apiBody: Attendance = {
         // if there is no workshpoDetails take the current Date
         date:
@@ -92,13 +92,14 @@ const AttendancePage: React.FC = () => {
         })),
       };
       setIsSavingAttendance(true);
-
+      setIsSaved(false);
       try {
         await addWorkshopToTeam(selectedTeam.id, apiBody);
         const teamDetails = await getTeamById(selectedTeam.id);
         const workshops = await getWorkshopsByTeam(selectedTeam.id);
         setSelectedTeam(teamDetails);
         setWorkshopDetails(workshops);
+        setIsSaved(true);
 
         // const initialAttendance: Record<number, string> = {};
         // teamDetails.children.forEach((child) => {
@@ -167,6 +168,7 @@ const AttendancePage: React.FC = () => {
             teamDetails={selectedTeam}
             workshopDetails={workshopDetails}
             isSavingAttendance={isSavingAttendance}
+            isSaved={isSaved}
           />
         )}
       </>

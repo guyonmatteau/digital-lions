@@ -16,6 +16,7 @@ interface VerticalStepperProps {
   childs: any;
   animationDuration?: number;
   isSavingAttendance: boolean;
+  isSaved: boolean;
 }
 
 const VerticalStepper: React.FC<VerticalStepperProps> = ({
@@ -27,12 +28,13 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
   childs,
   animationDuration = 1,
   isSavingAttendance,
-  teamDetails
+  teamDetails,
+  isSaved
 }) => {
   const [checked, setChecked] = useState(0);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [attendanceData, setAttendanceData] = useState<AttendanceRecord[]>([]);
-
+  const [animatedSteps, setAnimatedSteps] = useState<number[]>([]);
   const stepRefs = useRef<Array<React.RefObject<HTMLDivElement>>>([]);
 
   const handleAttendanceChange = (
@@ -65,8 +67,10 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
   useEffect(() => {
     const createAnimation = () => {
       setChecked(0);
+      setAnimatedSteps([]);
       for (let i = 0; i < currentWorkshop; i++) {
         setTimeout(() => {
+          setAnimatedSteps((prev) => [...prev, i]);
           setChecked((prev) => Math.min(prev + 1, currentWorkshop));
         }, itemAnimationDuration * (i + 1) * 1200);
       }
@@ -93,33 +97,45 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
 
   useEffect(() => {
     if (workshopDetails.length > 0) {
-      const newAttendanceData: AttendanceRecord[] = childs.map((child: any) => ({
-        child_id: child.id,
-        attendance: "" 
-      }));
+      const newAttendanceData: AttendanceRecord[] = childs.map(
+        (child: any) => ({
+          child_id: child.id,
+          attendance: "",
+        })
+      );
       setAttendanceData(newAttendanceData);
     }
   }, [workshopDetails, currentWorkshop, childs]);
 
+  // useEffect(() => {
+  //   if (isSaved) {
+  //     console.log('checked', checked);
+  //     if (checked < workshops.length - 1) {
+  //       setChecked((prev) => prev + 1);
+  //       setAnimatedSteps((prev) => [...prev, checked + 1]);
+  
+  //       // Automatically open the next accordion step
+  //       setOpenIndex(checked + 1);
+  //       stepRefs.current[checked + 1]?.current?.scrollIntoView({
+  //         behavior: "smooth",
+  //         block: "center",
+  //       });
+  //     }
+  //   }
+  // }, [isSaved, checked, workshops.length]);
+  
+
+
   return (
     <div className="w-full mx-auto">
       {workshops.map((workshop, index) => {
-        const isCurrent = index === currentWorkshop;
-        const isPrevious = index < currentWorkshop;
-        const isNext = index > currentWorkshop;
-        const isOpen = index === openIndex && isCurrent;
-
-        let stepClass = "relative pl-4 pb-2 ";
-        if (isCurrent) {
-          stepClass += " border-blue-500 cursor-pointer";
-        } else if (isPrevious) {
-          stepClass += " border-green-500";
-        } else {
-          stepClass += " border-gray-300";
-        }
+     const isCurrent = index === currentWorkshop && checked === currentWorkshop;
+     const isPrevious = index < currentWorkshop;
+     const isNext = index > currentWorkshop;
+     const isOpen = index === openIndex && isCurrent;
 
         return (
-          <div key={index} className={stepClass}>
+          <div key={index} className="relative pl-4 pb-2">
             <div
               onClick={
                 isCurrent ? () => handleAccordionToggle(index) : undefined
@@ -131,17 +147,41 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
                 "cursor-pointer hover:bg-card-dark dark:hover:bg-gray-800"
               }`}
             >
+              {/* Draw circle for each step */}
               <span
-                className={`absolute -left-2.5 w-5 h-5 rounded-full flex items-center justify-center bg-white border-2 transition-colors duration-300 ease-in-out ${
+                className={`absolute -left-2.5 w-5 h-5 rounded-full flex items-center justify-center border-2 transition-all duration-500 ease-in-out ${
                   isCurrent
                     ? "bg-blue-500 border-blue-500"
-                    : isPrevious
+                    : isPrevious && animatedSteps.includes(index)
                     ? "bg-green-500 border-green-500"
                     : "bg-gray-300 border-gray-300"
                 }`}
               >
-                <span className="w-3 h-3 bg-white rounded-full"></span>
+                {isPrevious && animatedSteps.includes(index) ? (
+                  <svg
+                    className="h-4 w-4 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                ) : (
+                  <span
+                    className={`w-3 h-3 bg-white rounded-full transition-opacity duration-500 ease-in-out ${
+                      animatedSteps.includes(index)
+                        ? "opacity-0"
+                        : "opacity-100"
+                    }`}
+                  ></span>
+                )}
               </span>
+              {/* Draw line between steps */}
               {index < workshops.length - 1 && (
                 <span
                   className={`absolute left-[-1px] top-[2.6rem] bottom-[-25px] w-[2px] ${
@@ -151,13 +191,13 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
                       ? "bg-blue-500"
                       : "bg-gray-300"
                   } `}
-                  // style={{ height: lineHeight }}
                 />
               )}
 
               <div className={`${isCurrent ? "font-bold" : ""}`}>
                 {workshop}
               </div>
+
               {/* <div
                 className={`flex items-center space-x-2 ${
                   isCurrent ? "font-bold" : ""
@@ -250,7 +290,14 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
                         onClick={onSaveAttendance}
                         isBusy={isSavingAttendance}
                         // disabled when there are no childs or if attendnance is not checked fo all childs
-                        disabled={childs.length === 0 || !attendanceData.every((entry) => entry.attendance !== "" && entry.attendance !== null)}
+                        disabled={
+                          childs.length === 0 ||
+                          !attendanceData.every(
+                            (entry) =>
+                              entry.attendance !== "" &&
+                              entry.attendance !== null
+                          )
+                        }
                       />
                     </div>
                   }
