@@ -16,7 +16,7 @@ jobs:
       - name: Set Poetry version
         working-directory: backend
         run: |
-          POETRY_VERSION=$(cat backend/.poetry-version)
+          POETRY_VERSION=$(cat .poetry-version)
           echo "POETRY_VERSION=$POETRY_VERSION" >> $GITHUB_ENV
       - name: Set up Python
         uses: actions/setup-python@v5
