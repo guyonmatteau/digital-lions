@@ -1,29 +1,36 @@
-# name: CI
-#
-# on:
-#   push:
-#
-# jobs:
-#   lint:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v3
-#
-#       - uses: actions/setup-python@v4
-#         with:
-#           python-version: '3.10'
-#
-#       - name: Pre-commit Validation
-#         id: PreCommitValidationChangedFiles
-#         run: pre-commit run --all-files
-#   unittest:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v3
-#
-#       - uses: actions/setup-python@v4
-#         with:
-#           python-version: '3.10'
-#
-#
+name: Backend CI
+
+on:
+  push:
+
+jobs:
+  unittest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set Python version
+        working-directory: backend
+        run: |
+          PYTHON_VERSION=$(cat .python-version)
+          echo "PYTHON_VERSION=$PYTHON_VERSION" >> $GITHUB_ENV
+      - name: Set Poetry version
+        working-directory: backend
+        run: |
+          POETRY_VERSION=$(cat backend/.poetry-version)
+          echo "POETRY_VERSION=$POETRY_VERSION" >> $GITHUB_ENV
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install Poetry
+        run: |
+          pip install poetry==${{ env.POETRY_VERSION }}
+      - name: Install dependencies
+        working-directory: backend
+        run: |
+          poetry install --no-interaction --no-root
+      - name: Pytest
+        working-directory: backend
+        run: |
+          poetry run python -m pytest tests -vvv --cov=app 
 
