@@ -39,6 +39,9 @@ build-backend = "poetry.core.masonry.api"
 [tool.pytest.ini_options]
 pythonpath = ["app"]
 
+[tool.pytest_env]
+ALLOWED_ORIGINS="http://localhost:8000,http://staging.digital-lion.com,https://digital-lion.com"
+
 [tool.ruff]
 extend-exclude = ["app/alembic/*"]
 fix = true

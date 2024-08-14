@@ -1,4 +1,6 @@
-# :earth_africa: Digital Lions
+# :earth_africa: Digital Lions 
+
+![Backend CI](https://github.com/guyonmatteau/digital-lions/actions/workflows/ci.yml/badge.svg)
 
 ## Table of Contents
 - [About](#-about)
