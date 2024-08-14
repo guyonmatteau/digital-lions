@@ -1,11 +1,39 @@
-# Digital Lions
+# :earth_africa: Digital Lions 
 
-POC for a CRUD application for coaches and volunteers of [Little Lions Child Coaching](https://littlelionschildcoaching.com/) to track workshops and classes. Components: frontend (Vue + Bootstrap), backend (Python FastAPI), and PostgresDB. All dockerized and available in development locally with docker compose. Hosted with [Railway Apps](https://railway.app/).
+![Backend CI](https://github.com/guyonmatteau/digital-lions/actions/workflows/ci.yml/badge.svg)
+
+## Table of Contents
+- [About](#-about)
+- [System design](#-system-design)
+- [Development](#-development)
+- [Licence](#-licence)
+
+
+## About
+
+Digital Lions is the private web application that is part of [Little Lions Child Coaching](https://littlelionschildcoaching.com/). Little Lion's Child Coaching is a Cape Town based NGO that provides workshops in social and emotional skills for children in the townships of Africa. The workshops are given in a 12-week program. This application is designed to help the coaches, volunteers, and administrators to keep track of the children, teams, and workshops. 
+
+  > Maintainers: X & Y
+
+
+## System design
+
+Design decisions, architecture diagrams, and other relevant design information can be found in the [architecture](architecture) folder. A status overview of the backend endpoints can be found in the [development status](architecture/README.md) table.
+The application is a classic web application consisting of three main components:
+- [Frontend in React](frontend)
+- [Backend in Python FastAPI](backend)
+- [PostgresDB](architecture/decisions/00-inital-concept.md)
 
 
 ## Development
 
-Everything should just fly. This repo uses [direnv](https://direnv.net/). First copy `.env.template` to `.env`. After that spin up the postgresDB (and optionally pgadmin if you want to inspect the database from the browser):
+All components are dockerized and available in development locally with docker compose. 
+
+### Environment
+
+This project uses [direnv](https://direnv.net/) to setup environment variables. First copy `.env.template` to `.env`. After that spin up the postgresDB (and optionally pgadmin if you want to inspect the database from the browser).
+
+### Build
 ```bash
 docker compose up -d db pgadmin
 ```
@@ -19,8 +47,7 @@ docker compose up frontend
 ```
 The frontend should now be available at `http://localhost:5173`.
 
-## Design
 
-The application is a frontend that talks to a backend API, which in turn talks to a Postgres database. The Postgres Database is designed with the following concepts in mind. Each block in the schematic overview (community, team, children, workshop, attendances, users, program) translates to a table in the databse.
+## Licence
 
-![Database Schema](./docs/concept.png)
+To be added.

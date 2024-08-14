@@ -66,6 +66,7 @@ class BaseService:
         self._children = repositories.ChildRepository(session=self._session)
         self._teams = repositories.TeamRepository(session=self._session)
         self._workshops = repositories.WorkshopRepository(session=self._session)
+        self.users = repositories.UserRepository(session=self._session)
 
         self._cols = repositories.Columns
 

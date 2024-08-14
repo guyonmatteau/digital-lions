@@ -29,9 +29,10 @@ class ChildService(BaseService):
                 ("last_name", child.last_name),
             ]
         ):
+            team = self._teams.read(child.team_id)
             error_msg = (
                 f"Child {child.first_name} {child.last_name} already "
-                f"exists in team {child.team_id}"
+                f"exists in team {team.name}"
             )
             logger.error(error_msg)
             raise exceptions.ChildAlreadyExistsException(error_msg)
@@ -43,7 +44,7 @@ class ChildService(BaseService):
         if self._attendances.where([("child_id", object_id)]):
             # if cascade is False, raise an exception
             if not cascade:
-                error_msg = f"Child with ID {object_id} has attendance records."
+                error_msg = f"Child with ID {object_id} has attendance records and cascade is False"
                 logger.error(error_msg)
                 raise exceptions.ChildHasAttendanceException(error_msg)
 

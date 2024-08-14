@@ -4,7 +4,7 @@ from typing import Annotated
 
 from database.session import SessionDependency
 from fastapi import Depends
-from services import ChildService, CommunityService, TeamService
+from services import ChildService, CommunityService, TeamService, UserService
 
 
 def get_team_service(session: SessionDependency):
@@ -19,6 +19,11 @@ def get_child_service(session: SessionDependency):
     return ChildService(session=session)
 
 
-TeamServiceDependency = Annotated[TeamService, Depends(get_team_service)]
+def get_user_service(session: SessionDependency):
+    return UserService(session=session)
+
+
 ChildServiceDependency = Annotated[ChildService, Depends(get_child_service)]
 CommunityServiceDependency = Annotated[CommunityService, Depends(get_community_service)]
+TeamServiceDependency = Annotated[TeamService, Depends(get_team_service)]
+UserServiceDependency = Annotated[UserService, Depends(get_user_service)]
