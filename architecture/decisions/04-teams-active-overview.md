@@ -1,5 +1,7 @@
 # Show active and non active teams
 
+> Date created: Aug 15, 2024
+
 By default, the API should return only active teams, because at some point we will have hundreds of teams, which are not relevant for the user on landing (it's about the active teams only).
 
 The `GET /teams` returns, amon
