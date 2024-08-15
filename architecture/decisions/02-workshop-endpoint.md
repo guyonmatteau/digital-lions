@@ -28,7 +28,7 @@ This is too much because we don't need the attenadance of all children to all wo
 
 ## Future state
 
-### On landing
+### On landingH
 
 General call for team info + children (for submiting a new workshop).
 `GET /teams/{id}`
