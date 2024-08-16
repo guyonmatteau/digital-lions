@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from dependencies import CommunityServiceDependency
 from fastapi import APIRouter, status
@@ -20,7 +20,7 @@ async def get_health(community_service: CommunityServiceDependency):
         community_service.get_all()
         return JSONResponse(
             status_code=status.HTTP_200_OK,
-            content={"status": "ok", "datetime": str(datetime.now(timezone.utc))},
+            content={"status": "ok", "datetime": str(datetime.now(UTC))},
         )
     except Exception as exc:
         if "psycopg2.OperationalError" in str(exc):

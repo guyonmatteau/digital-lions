@@ -60,7 +60,7 @@ def test_get_team_by_id(client):
     team_x = "Team X"
     children = [
         {"first_name": "Child 1", "last_name": "Last name", "age": 10},
-        {"first_name": "Child 2", "last_name": "Last name", "dob": "2001-01-01"},
+        {"first_name": "Child 2", "last_name": "Last name", "age": 12},
     ]
     data = {"community_id": 1, "name": team_x, "children": children}
     response = client.post(ENDPOINT, json=data)
@@ -75,7 +75,7 @@ def test_delete_team_with_children(client):
     team_x = "Team Y"
     children = [
         {"first_name": "Child 1", "last_name": "Last name", "age": 10},
-        {"first_name": "Child 2", "last_name": "Last name", "dob": "2001-01-01"},
+        {"first_name": "Child 2", "last_name": "Last name", "age": 12},
     ]
     data = {"community_id": 1, "name": team_x, "children": children}
     response = client.post(ENDPOINT, json=data)
@@ -92,7 +92,7 @@ def test_delete_team_with_children_cascade(client):
     team_x = "Team Y"
     children = [
         {"first_name": "Child 1", "last_name": "Last name", "age": 10},
-        {"first_name": "Child 2", "last_name": "Last name", "dob": "2001-01-01"},
+        {"first_name": "Child 2", "last_name": "Last name", "age": 12},
     ]
     data = {"community_id": 1, "name": team_x, "children": children}
     response = client.post(ENDPOINT, json=data)
@@ -118,7 +118,7 @@ def client_with_community_and_team(client):
     # arrange two communities
     children = [
         {"first_name": "Child 1", "last_name": "Last name", "age": 10},
-        {"first_name": "Child 2", "last_name": "Last name", "dob": "2001-01-01"},
+        {"first_name": "Child 2", "last_name": "Last name", "age": 12},
     ]
 
     client.post(
@@ -276,4 +276,31 @@ def test_workshop_number_not_subsequent(client_with_team):
 
 def test_team_non_active_after_completed_program(client_with_team):
     # given a team has completed all workshops, assert that the team is non-active
-    pass
+    team_id = 1
+    attendance = [
+        {"attendance": "present", "child_id": 1},
+        {"attendance": "absent", "child_id": 2},
+    ]
+    team = client_with_team.get(f"{ENDPOINT}/{team_id}")
+    current = team.json().get("program").get("progress").get("current")
+
+    # assert that team is active at first
+    assert team.json().get("is_active")
+
+    # TODO the POST workshop endpoint does not do date validation
+    # (chronologic order of date)
+    # create all remaining workshops in program
+    for i in range(current + 1, 13):
+        response = client_with_team.post(
+            f"{ENDPOINT}/{team_id}/workshops",
+            json={
+                "date": "2021-01-01",
+                "workshop_number": i,
+                "attendance": attendance,
+            },
+        )
+        assert response.status_code == status.HTTP_201_CREATED, response.text
+
+    # assert that team is non-active
+    team = client_with_team.get(f"{ENDPOINT}/{team_id}")
+    assert team.json().get("is_active") is False

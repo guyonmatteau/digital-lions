@@ -15,7 +15,13 @@ config = context.config
 section = config.config_ini_section
 
 settings = get_settings()
-config.set_main_option("sqlalchemy.url", os.environ.get("POSTGRES_DATABASE_URL_PROD"))
+POSTGRES_URL = os.environ.get("POSTGRES_DATABASE_URL_PROD") or os.environ.get(
+    "POSTGRES_DATABASE_URL"
+)
+config.set_main_option(
+    "sqlalchemy.url",
+    POSTGRES_URL,
+)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.

@@ -1,6 +1,6 @@
 import datetime
 
-from models.generic import CreateProperties, MetadataColumns
+from models.generic import CreateProperties, MetadataColumns, UpdateProperties
 from pydantic import BaseModel, Field, field_validator
 
 
@@ -16,23 +16,23 @@ class TeamPostIn(BaseModel, CreateProperties):
             default=None,
             description="Age in years at the time of registration",
         )
-        dob: datetime.date | None = Field(
-            default=None, description="Date of birth in the format YYYY-MM-DD"
-        )
         gender: str | None = Field(default=None, description="Gender of child")
-
-        @field_validator("dob")
-        def convert_dob_to_str(cls, v) -> str:
-            """Convert dob to date format YYYY-MM-DD if it is provided."""
-            if v is not None:
-                v = v.strftime("%Y-%m-%d")
-            return v
 
     name: str = Field(description="Name of the team")
     children: list[TeamCreateChild] | None = Field(
         description="Optional list of children to add directly to the team.", default=[]
     )
     community_id: int = Field(description="ID of community the team belongs to")
+
+
+class TeamPatchIn(BaseModel, UpdateProperties):
+    """API payload model for PATCH /teams."""
+
+    # Note this model is mainly used to update the Team's active status
+    name: str = Field(description="Name of the team", default=None)
+    community_id: int = Field(
+        description="ID of community the team belongs to", default=None
+    )
 
 
 class TeamGetOut(BaseModel):
@@ -44,10 +44,29 @@ class TeamGetOut(BaseModel):
         id: int
         name: str
 
+    class Program(BaseModel):
+        """API response model for status of team."""
+
+        class Progress(BaseModel):
+            """API response model for progress of team."""
+
+            current: int = Field(
+                description="Last completed workshop in the program",
+            )
+            total: int = Field(
+                description="Total number of workshops in the program",
+                default=12,
+            )
+
+        id: int = Field(description="ID of the program", default=1)
+        name: str = Field(description="Name of the program", default="Default Program")
+        progress: Progress
+
     community: CommunityOut
     is_active: bool
     id: int
     name: str
+    program: Program
 
 
 class TeamGetByIdOut(BaseModel, MetadataColumns):
@@ -199,7 +218,7 @@ class TeamPostWorkshopIn(BaseModel):
         return v
 
     @field_validator("date")
-    def convert_dob_to_str(cls, v) -> str:
+    def convert_date_to_str(cls, v) -> str:
         """Convert date to date format YYYY-MM-DD if it is provided."""
         if v is not None:
             v = v.strftime("%Y-%m-%d")

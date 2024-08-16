@@ -68,7 +68,7 @@ def client_with_community_and_team(client):
     # arrange two communities
     children = [
         {"first_name": "Child 1", "last_name": "Last name", "age": 10},
-        {"first_name": "Child 2", "last_name": "Last name", "dob": "2001-01-01"},
+        {"first_name": "Child 2", "last_name": "Last name", "age": 12},
     ]
 
     client.post(

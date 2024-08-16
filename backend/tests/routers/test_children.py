@@ -55,7 +55,6 @@ def test_update_child_success(client):
         "last_name": "Lastname",
         "team_id": 1,
         "age": 10,
-        "dob": None,
     }
     response = client.post(ENDPOINT, json=data)
     assert response.status_code == status.HTTP_201_CREATED

@@ -113,7 +113,9 @@ class BaseRepository(Generic[Model]):
             list[ModelOut]: A list of objects that meet the filter.
         """
         return (
-            self._session.query(self._model).filter(getattr(self._model, attr).in_(values)).all()
+            self._session.query(self._model)
+            .filter(getattr(self._model, attr).in_(values))
+            .all()
         )
 
     def query(self, query: str) -> list[ModelOut]:
@@ -178,6 +180,8 @@ class WorkshopRepository(BaseRepository[schema.Workshop]):
 
     _model = schema.Workshop
 
+    # TODO ideally below method should pass 0 if a team has no workshop yet
+    # also saves us ugly list comprehesions later
     def get_last_workshop_per_team(self, team_ids: list[int]) -> dict:
         """For a list of team ID's, get the highest workshop number
         for each team.
@@ -189,7 +193,9 @@ class WorkshopRepository(BaseRepository[schema.Workshop]):
             dict: Dictionary with team ID as key and highest workshop number as value.
         """
         results = (
-            self._session.query(self._model.team_id, func.max(self._model.workshop_number))
+            self._session.query(
+                self._model.team_id, func.max(self._model.workshop_number)
+            )
             .filter(self._model.team_id.in_(team_ids))
             .group_by(self._model.team_id)
             .all()

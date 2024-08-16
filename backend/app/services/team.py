@@ -5,8 +5,10 @@ import exceptions
 from models.api.generic import Message
 from models.api.team import (
     TeamGetByIdOut,
+    TeamGetOut,
     TeamGetWorkshopByNumberOut,
     TeamGetWorkshopOut,
+    TeamPatchIn,
     TeamPostIn,
     TeamPostWorkshopIn,
 )
@@ -40,8 +42,12 @@ class TeamService(AbstractService, BaseService):
         logger.info(f"Team with ID {new_team.id} created.")
 
         for child in children:
-            child_created = self._children.create({"team_id": new_team.id, **child.dict()})
-            logger.info(f"Child with ID {child_created.id} added to team {new_team.id}.")
+            child_created = self._children.create(
+                {"team_id": new_team.id, **child.dict()}
+            )
+            logger.info(
+                f"Child with ID {child_created.id} added to team {new_team.id}."
+            )
 
         self.commit()
         return new_team
@@ -88,7 +94,9 @@ class TeamService(AbstractService, BaseService):
             [child.id for child in self._children.where([(self.cols.team_id, team_id)])]
         )
 
-        payload_child_ids_not_in_team = [i for i in payload_child_ids if i not in team_child_ids]
+        payload_child_ids_not_in_team = [
+            i for i in payload_child_ids if i not in team_child_ids
+        ]
         if payload_child_ids_not_in_team:
             error_msg = (
                 "Payload attendance field contains children ID's that "
@@ -98,7 +106,9 @@ class TeamService(AbstractService, BaseService):
             raise exceptions.ChildNotInTeam(error_msg)
 
         # validate that all children from the team are in the payload
-        team_child_ids_not_in_payload = [i for i in team_child_ids if i not in payload_child_ids]
+        team_child_ids_not_in_payload = [
+            i for i in team_child_ids if i not in payload_child_ids
+        ]
         if team_child_ids_not_in_payload:
             error_msg = (
                 "Attendance payload incomplete. Missing child ID's from "
@@ -126,17 +136,66 @@ class TeamService(AbstractService, BaseService):
                 }
             )
 
+        # if this is the last workshop, set team as inactive
+        # TO DO get this from Program info
+        final_workshop = 12
+        if workshop.workshop_number == final_workshop:
+            logger.info(
+                f"Team with ID {team_id} has completed workshop {final_workshop} and is now inactive."
+            )
+            self._teams.update(object_id=team_id, obj=TeamPatchIn(is_active=False))
+
         self.commit()
         return workshop_record
 
-    def get_all(self, filters=list[tuple]):
-        """Get all objects from the table."""
+    def get_all(self, community_id: str = None, status: str = "active") -> list | None:
+        """Get all teams from the table.
+
+        Args:
+            community_id (str, optional): Filter by community ID. Defaults to None.
+            status (str, optional): Filter by status. Defaults to "active". Ohter options
+                are "non_active" and "all".
+
+        Returns:
+            list: List of teams.
+        """
+
+        filters = []
+        if community_id:
+            filters.append(("community_id", community_id))
+        # filter by status, if status == "all", do not filter
+        if status == "active":
+            filters.append(("is_active", True))
+        if status == "non_active":
+            filters.append(("is_active", False))
+
         if filters:
             teams = self._teams.where(filters=filters)
         else:
             teams = self._teams.read_all()
 
-        return teams
+        team_ids = [team.id for team in teams]
+
+        # TODO ideally below method should pass 0 if a team has no workshop yet
+        # also saves us ugly list comprehesions later
+        teams_progresses = self._workshops.get_last_workshop_per_team(team_ids=team_ids)
+
+        return [
+            TeamGetOut(
+                **team.model_dump(),
+                community=team.community.model_dump(),
+                program={
+                    "progress": {
+                        "current": (
+                            teams_progresses[team.id]
+                            if team.id in teams_progresses
+                            else 0
+                        )
+                    }
+                },
+            )
+            for team in teams
+        ]
 
     def get(self, object_id: int) -> TeamGetByIdOut:
         """Get a team from the table by id.
@@ -145,7 +204,9 @@ class TeamService(AbstractService, BaseService):
             object_id (int): Team ID to get Team for.
         """
         team = self._validate_team_exists(object_id)
-        teams_progresses = self._workshops.get_last_workshop_per_team(team_ids=[team.id])
+        teams_progresses = self._workshops.get_last_workshop_per_team(
+            team_ids=[team.id]
+        )
         # if the team has no workshops yet, its ID will not be in the dict
         team_progress = teams_progresses[team.id] if team.id in teams_progresses else 0
 
@@ -266,8 +327,12 @@ class TeamService(AbstractService, BaseService):
         attendance = self._attendances.where([("workshop_id", workshop_id)])
 
         total = len(attendance)
-        present = len([x for x in attendance if x.attendance == Attendance.present.value])
-        cancelled = len([x for x in attendance if x.attendance == Attendance.cancelled.value])
+        present = len(
+            [x for x in attendance if x.attendance == Attendance.present.value]
+        )
+        cancelled = len(
+            [x for x in attendance if x.attendance == Attendance.cancelled.value]
+        )
         absent = len([x for x in attendance if x.attendance == Attendance.absent.value])
 
         return {

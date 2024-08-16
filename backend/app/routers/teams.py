@@ -40,14 +40,26 @@ async def post_team(team_service: TeamServiceDependency, team: TeamPostIn):
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc))
 
 
+class Status(str):
+    """Possible values for the status query of GET /teams."""
+
+    active = "active"
+    inactive = "inactive"
+    all = "all"
+
+
 @router.get(
     "",
     response_model=list[TeamGetOut],
     status_code=status.HTTP_200_OK,
     summary="Get teams",
 )
-async def get_teams(team_service: TeamServiceDependency, community_id: int = None):
-    return team_service.get_all([("community_id", community_id)])
+async def get_teams(
+    team_service: TeamServiceDependency,
+    community_id: int = None,
+    status: str = "active",
+):
+    return team_service.get_all(community_id=community_id, status=status)
 
 
 @router.get(
@@ -79,7 +91,9 @@ async def get_team(team_service: TeamServiceDependency, team_id: int):
         },
     },
 )
-async def delete_team(team_service: TeamServiceDependency, team_id: int, cascade: bool = False):
+async def delete_team(
+    team_service: TeamServiceDependency, team_id: int, cascade: bool = False
+):
     """Delete a team. This will delete all children if cascade is set to True.
     If you want to deactivate a team use PATCH /teams/{team_id} instead."""
     try:
