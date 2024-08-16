@@ -15,6 +15,7 @@ import Modal from "@/components/Modal";
 import TextInput from "@/components/TextInput";
 import Loader from "@/components/Loader";
 import ConfirmModal from "@/components/ConfirmModal";
+import SkeletonLoader from "@/components/SkeletonLoader";
 
 import { TeamWithChildren } from "@/types/teamWithChildren.interface";
 
@@ -38,7 +39,6 @@ const TeamsDetailPage: React.FC = () => {
   const [editFirstName, setEditFirstName] = useState("");
   const [editLastName, setEditLastName] = useState("");
   const [editAge, setEditAge] = useState<number | null>(null);
-  const [editDateOfBirth, setEditDateOfBirth] = useState<string | null>(null);
   const [editGender, setEditGender] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingTeam, setIsLoadingTeam] = useState(false);
@@ -47,7 +47,7 @@ const TeamsDetailPage: React.FC = () => {
   const [isEditingChild, setIsEditingChild] = useState(false);
   const [isAddingChild, setIsAddingChild] = useState(false);
 
-const [errorMessage, setErrorMessage] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const [deleteChildModalVisible, setDeleteChildModalVisible] = useState(false);
 
@@ -151,7 +151,6 @@ const [errorMessage, setErrorMessage] = useState<string>("");
     setEditFirstName("");
     setEditLastName("");
     setEditAge(null);
-    setEditDateOfBirth(null);
     setEditGender(null);
     setIsAddingChild(false);
     setIsEditingChild(false);
@@ -169,10 +168,6 @@ const [errorMessage, setErrorMessage] = useState<string>("");
     setEditAge(parseInt(value, 10));
   };
 
-  const handleDateOfBirthChange = (value: string) => {
-    setEditDateOfBirth(value);
-  };
-
   const handleGenderChange = (value: string) => {
     setEditGender(value);
   };
@@ -185,7 +180,6 @@ const [errorMessage, setErrorMessage] = useState<string>("");
       setEditFirstName(child.first_name);
       setEditLastName(child.last_name);
       setEditAge(child.age);
-      setEditDateOfBirth(child.date_of_birth);
       setEditGender(child.gender);
       setModalVisible(true);
     }
@@ -198,8 +192,7 @@ const [errorMessage, setErrorMessage] = useState<string>("");
           childId: editChildId,
           isActive: true,
           age: editAge || null,
-          dateOfBirth: editDateOfBirth || null,
-          gender: editGender || 'null',
+          gender: editGender || "null",
           firstName: editFirstName,
           lastName: editLastName,
         };
@@ -222,7 +215,6 @@ const [errorMessage, setErrorMessage] = useState<string>("");
         const newChild = {
           teamId: selectedTeam.id,
           age: editAge,
-          dateOfBirth: editDateOfBirth,
           gender: editGender,
           firstName: editFirstName,
           lastName: editLastName,
@@ -272,10 +264,17 @@ const [errorMessage, setErrorMessage] = useState<string>("");
 
   return (
     <Layout breadcrumbs={breadcrumbs}>
-      {isLoading && <Loader loadingText={"Loading teams"} />}
-      {isLoadingTeam && <Loader loadingText={"Loading team details"} />}
-      {!isLoading && (
+      {isLoading ? (
         <>
+          <SkeletonLoader type="input" />
+          <SkeletonLoader width="142px" type="button" />
+          {Array.from({ length: 4 }, (_, i) => (
+            <SkeletonLoader key={i} type="card" />
+          ))}
+        </>
+      ) : (
+        <>
+          {isLoadingTeam && <Loader loadingText={"Loading team details"} />}
           <SelectInput
             className="mb-5"
             label={"Select team"}
@@ -293,7 +292,7 @@ const [errorMessage, setErrorMessage] = useState<string>("");
             label="Add child"
             onClick={handleAddChild}
             variant={"primary"}
-            className="hover:bg-card-dark hover:text-white"
+            className="hover:bg-card-dark hover:text-white mb-4"
           />
 
           {selectedTeam && (
@@ -314,7 +313,7 @@ const [errorMessage, setErrorMessage] = useState<string>("");
                       <CustomButton
                         className="mt-4"
                         label="Delete"
-                        variant="danger"
+                        variant="error"
                         onClick={() => openDeleteChildModal(child.id)}
                       />
 
@@ -373,7 +372,7 @@ const [errorMessage, setErrorMessage] = useState<string>("");
                 value={editLastName}
                 onChange={handleLastNameChange}
                 required={true}
-                 errorMessage="Please enter your last name"
+                errorMessage="Please enter your last name"
               />
               <TextInput
                 className="mb-2"
@@ -381,23 +380,19 @@ const [errorMessage, setErrorMessage] = useState<string>("");
                 value={editAge?.toString() || ""}
                 onChange={handleAgeChange}
               />
-              <TextInput
-                className="mb-2"
-                label="Date of Birth"
-                value={editDateOfBirth ?? ""}
-                onChange={handleDateOfBirthChange}
-              />
               <SelectInput
                 className="mb-2"
                 label="Gender"
                 value={editGender ?? ""}
-                onChange={(value: string | number) => handleGenderChange(String(value))} 
+                onChange={(value: string | number) =>
+                  handleGenderChange(String(value))
+                }
               >
                 <option value="">Select gender</option>
                 <option value="male">Male</option>
                 <option value="female">Female</option>
               </SelectInput>
-              {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+              {errorMessage && <p className="text-error">{errorMessage}</p>}
             </Modal>
           )}
         </>

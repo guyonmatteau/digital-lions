@@ -5,15 +5,15 @@ interface CustomButtonProps {
   onClick?: () => void;
   className?: string;
   isBusy?: boolean;
-  disabled?: boolean;
+  isDisabled?: boolean;
   variant?:
     | "primary"
     | "secondary"
     | "success"
-    | "danger"
+    | "error"
     | "warning"
     | "outline"
-    | "none"; 
+    | "none";
 }
 
 const CustomButton: React.FC<CustomButtonProps> = ({
@@ -21,13 +21,13 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   onClick,
   className,
   isBusy,
-  disabled,
+  isDisabled,
   variant = "primary",
 }) => {
   const [loading, setLoading] = useState(false);
 
   const handleClick = () => {
-    if (onClick && !loading && !disabled) {
+    if (onClick && !loading && !isDisabled) {
       setLoading(true);
       onClick();
       setTimeout(() => {
@@ -36,8 +36,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
     }
   };
 
-  let buttonClass =
-    "relative py-2 px-4 rounded-lg text-sm";
+  let buttonClass = "relative py-2 px-4 rounded-lg text-sm";
   let buttonColorClass = "";
   let textColorClass = "bg-text";
   let borderColorClass = "border-transparent";
@@ -55,8 +54,8 @@ const CustomButton: React.FC<CustomButtonProps> = ({
       buttonColorClass = "bg-success hover:bg-success-dark";
       textColorClass = "bg-text-light";
       break;
-    case "danger":
-      buttonColorClass = "bg-danger hover:bg-danger-dark";
+    case "error":
+      buttonColorClass = "bg-error hover:bg-error-dark";
       textColorClass = "bg-text-light";
       break;
     case "warning":
@@ -79,10 +78,11 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   return (
     <button
       type="button"
-      className={`${className} ${buttonClass} ${buttonColorClass} ${textColorClass} ${borderColorClass} ${disabled ? "opacity-50 cursor-not-allowed" : ""}`} 
+      className={`${className} ${buttonClass} ${buttonColorClass} ${textColorClass} ${borderColorClass} ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
       onClick={handleClick}
-      disabled={isBusy || disabled}
+      disabled={isBusy || isDisabled}
       style={{ minWidth: "8rem", minHeight: "2.5rem" }}
+      aria-busy={isBusy}
     >
       {isBusy ? (
         <div className="absolute inset-0 flex items-center justify-center">

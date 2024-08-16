@@ -1,7 +1,6 @@
 interface ApiBody {
   is_active: boolean;
   age: number | null;
-  dob: string | null;
   gender: string | null;
   first_name: string;
   last_name: string;
@@ -11,7 +10,6 @@ const updateChildById = async ({
   childId,
   isActive,
   age,
-  dateOfBirth,
   gender,
   firstName,
   lastName,
@@ -19,7 +17,6 @@ const updateChildById = async ({
   childId: number;
   isActive: boolean;
   age: number  | null;
-  dateOfBirth: string | null;
   gender: string | null;
   firstName: string;
   lastName: string;
@@ -28,7 +25,6 @@ const updateChildById = async ({
     const body: ApiBody = {
       is_active: isActive,
       age: age,
-      dob: dateOfBirth,
       gender: gender,
       first_name: firstName,
       last_name: lastName,

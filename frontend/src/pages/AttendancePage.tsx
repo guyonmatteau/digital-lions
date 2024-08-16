@@ -11,6 +11,8 @@ import { Team } from "@/types/team.interface";
 import { TeamWithChildren } from "@/types/teamWithChildren.interface";
 import { WorkshopInfo } from "@/types/workshopInfo.interface";
 import { WorkshopAttendance } from "@/types/workshopAttendance.interface";
+import Loader from "@/components/Loader";
+import SkeletonLoader from "@/components/SkeletonLoader";
 
 interface AttendanceRecord {
   attendance: string;
@@ -143,10 +145,11 @@ const AttendancePage: React.FC = () => {
 
   return (
     <Layout>
+      {isLoading && <Loader loadingText="Loading teams" />}
       <>
         <SelectInput
           className="mb-5"
-          label={"Select team"}
+          label="Select team"
           value={selectedTeam?.id || ""}
           onChange={handleTeamChange}
         >
@@ -157,19 +160,31 @@ const AttendancePage: React.FC = () => {
             </option>
           ))}
         </SelectInput>
-
-        {selectedTeam && (
-          <VerticalStepper
-            workshops={workshops}
-            currentWorkshop={currentWorkshop}
-            childs={selectedTeam.children}
-            onAttendanceChange={handleAttendanceChange}
-            onSaveAttendance={handleSaveAttendance}
-            teamDetails={selectedTeam}
-            workshopDetails={workshopDetails}
-            isSavingAttendance={isSavingAttendance}
-            isSaved={isSaved}
-          />
+        {isLoadingTeam ? (
+          <div className=" w-full mx-auto ">
+               {Array.from({ length: 12 }, (_, i) => (
+        <SkeletonLoader
+          key={i}
+          type="stepper"
+          index={i}
+          totalItems={12} 
+        />
+      ))}
+          </div>
+        ) : (
+          selectedTeam && (
+            <VerticalStepper
+              workshops={workshops}
+              currentWorkshop={currentWorkshop}
+              childs={selectedTeam.children}
+              onAttendanceChange={handleAttendanceChange}
+              onSaveAttendance={handleSaveAttendance}
+              teamDetails={selectedTeam}
+              workshopDetails={workshopDetails}
+              isSavingAttendance={isSavingAttendance}
+              isSaved={isSaved}
+            />
+          )
         )}
       </>
     </Layout>

@@ -8,7 +8,9 @@ interface TextInputProps {
   onBlur?: (value: string) => void;
   required?: boolean;
   errorMessage?: string;
-  placeholder?: string; 
+  placeholder?: string;
+  id?: string;
+  autoFocus?: boolean; 
 }
 
 const TextInput: React.FC<TextInputProps> = ({
@@ -18,13 +20,14 @@ const TextInput: React.FC<TextInputProps> = ({
   onChange,
   onBlur,
   required = false,
-  errorMessage = "", 
-  placeholder = "", 
+  errorMessage = "",
+  placeholder = "",
+  id = "text-input",
+  autoFocus = false
 }) => {
   const [inputValue, setInputValue] = useState(value);
-  const [isTouched, setIsTouched] = useState(false); 
+  const [isTouched, setIsTouched] = useState(false);
 
-  // Update local state when value prop changes
   useEffect(() => {
     setInputValue(value);
   }, [value]);
@@ -37,7 +40,7 @@ const TextInput: React.FC<TextInputProps> = ({
   };
 
   const handleBlur = () => {
-    setIsTouched(true); 
+    setIsTouched(true);
     if (onBlur) {
       onBlur(inputValue);
     }
@@ -49,7 +52,7 @@ const TextInput: React.FC<TextInputProps> = ({
     <div className={className}>
       {label && (
         <label
-          htmlFor="default-input"
+          htmlFor={id}
           className="mb-2 text-sm font-medium text-gray-900 dark:text-white"
         >
           {label}
@@ -57,7 +60,7 @@ const TextInput: React.FC<TextInputProps> = ({
       )}
       <input
         type="text"
-        id="default-input"
+        id={id}
         value={inputValue}
         onChange={handleInputChange}
         onBlur={handleBlur}
@@ -66,9 +69,12 @@ const TextInput: React.FC<TextInputProps> = ({
           showError ? "border-red-500" : ""
         }`}
         required={required}
+        aria-invalid={showError}
+        aria-describedby={showError ? `${id}-error` : undefined}
+        autoFocus={autoFocus}
       />
       {showError && (
-        <p className="text-red-500 text-sm mt-1">
+        <p id={`${id}-error`} className="text-red-500 text-sm mt-1">
           {errorMessage || "This field is required"}
         </p>
       )}

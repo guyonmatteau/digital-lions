@@ -3,6 +3,5 @@ export interface Child {
   last_name: string;
   id: number;
   age: number,
-  date_of_birth: string;
   gender: string
 }

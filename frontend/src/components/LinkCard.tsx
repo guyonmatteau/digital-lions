@@ -4,23 +4,18 @@ import { useNavigate } from "react-router-dom";
 interface LinkCardProps {
   title: string;
   className?: string;
-  to: string; 
-  state?: any; 
+  to: string;
+  state?: any;
 }
 
-const LinkCard: React.FC<LinkCardProps> = ({
-  title,
-  className,
-  to,
-  state, 
-}) => {
+const LinkCard: React.FC<LinkCardProps> = ({ title, className, to, state }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
     if (state) {
-      localStorage.setItem('linkCardState', JSON.stringify(state));
+      localStorage.setItem("linkCardState", JSON.stringify(state));
     }
-    navigate(to, { state }); 
+    navigate(to, { state });
   };
 
   return (

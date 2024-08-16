@@ -29,7 +29,7 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
   animationDuration = 1,
   isSavingAttendance,
   teamDetails,
-  isSaved
+  isSaved,
 }) => {
   const [checked, setChecked] = useState(0);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -107,32 +107,31 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
     }
   }, [workshopDetails, currentWorkshop, childs]);
 
-  // useEffect(() => {
-  //   if (isSaved) {
-  //     console.log('checked', checked);
-  //     if (checked < workshops.length - 1) {
-  //       setChecked((prev) => prev + 1);
-  //       setAnimatedSteps((prev) => [...prev, checked + 1]);
-  
-  //       // Automatically open the next accordion step
-  //       setOpenIndex(checked + 1);
-  //       stepRefs.current[checked + 1]?.current?.scrollIntoView({
-  //         behavior: "smooth",
-  //         block: "center",
-  //       });
-  //     }
-  //   }
-  // }, [isSaved, checked, workshops.length]);
-  
+  useEffect(() => {
+    if (isSaved) {
+      console.log("checked", checked);
+      if (checked < workshops.length - 1) {
+        setAnimatedSteps((prev) => [...prev, checked + 1]);
+        setChecked((prev) => prev + 1);
 
+        // Automatically open the next accordion step
+        setOpenIndex(checked + 1);
+        stepRefs.current[checked + 1]?.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }
+    }
+  }, [isSaved, checked, workshops.length]);
 
   return (
     <div className="w-full mx-auto">
       {workshops.map((workshop, index) => {
-     const isCurrent = index === currentWorkshop && checked === currentWorkshop;
-     const isPrevious = index < currentWorkshop;
-     const isNext = index > currentWorkshop;
-     const isOpen = index === openIndex && isCurrent;
+        const isCurrent =
+          index === currentWorkshop && checked === currentWorkshop;
+        const isPrevious = index < currentWorkshop;
+        const isNext = index > currentWorkshop;
+        const isOpen = index === openIndex && isCurrent;
 
         return (
           <div key={index} className="relative pl-4 pb-2">
@@ -211,7 +210,7 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
                     <Badge variant="warning">
                       Absent: {workshopDetails[index].attendance.absent || 0}
                     </Badge>
-                    <Badge variant="danger">
+                    <Badge variant="error">
                       Cancelled: {workshopDetails[index].attendance.cancelled || 0}
                     </Badge>
                   </div>
@@ -290,7 +289,7 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
                         onClick={onSaveAttendance}
                         isBusy={isSavingAttendance}
                         // disabled when there are no childs or if attendnance is not checked fo all childs
-                        disabled={
+                        isDisabled={
                           childs.length === 0 ||
                           !attendanceData.every(
                             (entry) =>

@@ -1,7 +1,6 @@
 interface ApiResponse {
   team_id: number;
   age: number | null;
-  dob: string | null;
   gender: string | null;
   first_name: string;
   last_name: string;
@@ -10,14 +9,12 @@ interface ApiResponse {
 const createChild = async ({
   teamId,
   age ,
-  dateOfBirth,
   gender,
   firstName,
   lastName,
 }: {
   teamId: number;
   age: number  | null;
-  dateOfBirth: string | null;
   gender: string | null;
   firstName: string;
   lastName: string;
@@ -33,7 +30,6 @@ const createChild = async ({
         body: JSON.stringify({
           team_id: teamId,
           age: age,
-          dob: dateOfBirth,
           gender: gender,
           first_name: firstName,
           last_name: lastName,

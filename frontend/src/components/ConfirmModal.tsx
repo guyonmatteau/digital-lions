@@ -36,7 +36,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
           />
           <CustomButton
             label={acceptText}
-            variant="danger"
+            variant="error"
             onClick={onAccept}
             isBusy={isBusy}
             className="ml-4 hover:text-white"

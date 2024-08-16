@@ -33,15 +33,15 @@
   --color-primary-blue: #007BFF;        /* Standard Blue */
   --color-primary-blue-dark: #0056b3;   /* Dark Blue */
   
-  /* Primary, secondary, success, danger, warning mappings */
+  /* Primary, secondary, success, error, warning mappings */
   --color-primary: #FFFFFF;              /* White */
   --color-primary-dark: #B5AFA5;         /* Light Gray */
   --color-secondary: #F7CD47;            /* Yellow */
   --color-secondary-dark: #CC9900;       /* Darker Yellow */
   --color-success: #4CAF50;              /* Green */
   --color-success-dark: #388E3C;         /* Darker Green */
-  --color-danger: #FF6347;               /* Red */
-  --color-danger-dark: #CC3333;          /* Darker Red */
+  --color-error: #FF6347;               /* Red */
+  --color-error-dark: #CC3333;          /* Darker Red */
   --color-warning: #FFA500;              /* Orange */
   --color-warning-dark: #CC9900;         /* Darker Orange */
   --color-neutral-light: #F2F2F2;        /* Light Gray for outline */
@@ -107,11 +107,11 @@
 .bg-success-dark {
   background-color: var(--color-success-dark);
 }
-.bg-danger {
-  background-color: var(--color-danger);
+.bg-error {
+  background-color: var(--color-error);
 }
-.bg-danger-dark {
-  background-color: var(--color-danger-dark);
+.bg-error-dark {
+  background-color: var(--color-error-dark);
 }
 .bg-warning {
   background-color: var(--color-warning);
@@ -155,12 +155,12 @@
   color: var(--color-success-dark);
 }
 
-.text-danger {
-  color: var(--color-danger)
+.text-error {
+  color: var(--color-error)
 }
 
-.text-danger-dark {
-  color: var(--color-danger-dark)
+.text-error-dark {
+  color: var(--color-error-dark)
 }
 
 .text-warning {
