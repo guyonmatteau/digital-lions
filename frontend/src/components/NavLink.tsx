@@ -1,20 +1,23 @@
+// components/NavLink.tsx
 import React from 'react';
-import { Link, LinkProps } from 'react-router-dom';
+import Link from 'next/link';
 
-interface NavLinkProps extends LinkProps {
+interface NavLinkProps {
+  href: string;
   children: React.ReactNode;
   className?: string;
-  includeSourceMenu?: boolean; // New prop to include source=menu in the query parameters
+  includeSourceMenu?: boolean;
+  onClick?: () => void;
 }
 
-const NavLink: React.FC<NavLinkProps> = ({ to, children, className, includeSourceMenu = false, ...rest }) => {
-  const urlWithQuery = includeSourceMenu ? `${to}?source=menu` : to;
+const NavLink: React.FC<NavLinkProps> = ({ href, children, className, includeSourceMenu = false, onClick }) => {
+  const urlWithQuery = includeSourceMenu ? `${href}?source=menu` : href;
 
   return (
     <Link
-      to={urlWithQuery}
+      href={urlWithQuery}
       className={`text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium ${className}`}
-      {...rest}
+      onClick={onClick}
     >
       {children}
     </Link>

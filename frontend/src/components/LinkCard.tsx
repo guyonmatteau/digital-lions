@@ -1,21 +1,21 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/router";
 
 interface LinkCardProps {
   title: string;
   className?: string;
-  to: string;
+  href: string;
   state?: any;
 }
 
-const LinkCard: React.FC<LinkCardProps> = ({ title, className, to, state }) => {
-  const navigate = useNavigate();
+const LinkCard: React.FC<LinkCardProps> = ({ title, className, href, state }) => {
+  const router = useRouter();
 
   const handleClick = () => {
     if (state) {
       localStorage.setItem("linkCardState", JSON.stringify(state));
     }
-    navigate(to, { state });
+    router.push(href); // Navigate to the href
   };
 
   return (

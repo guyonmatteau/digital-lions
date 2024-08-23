@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useParams } from "react-router-dom";
 
 import Loader from "@/components/Loader";
 import Layout from "@/components/Layout";
@@ -13,8 +12,12 @@ import SkeletonLoader from "@/components/SkeletonLoader";
 import createTeam from "@/api/services/teams/createTeam";
 import getTeamsOfCommunity from "@/api/services/teams/getTeamsOfCommunity";
 
+import { useRouter } from "next/router";
+
 const TeamsPage: React.FC = () => {
-  const { communityId } = useParams<{ communityId: string }>();
+  const router = useRouter();
+  const { communityId } = router.query;
+  // const { communityId } = useParams<{ communityId: string }>();
   const [teams, setTeams] = useState<{ name: string; id: number }[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [teamName, setTeamName] = useState("");
@@ -39,6 +42,9 @@ const TeamsPage: React.FC = () => {
   const fetchTeams = useCallback(async () => {
     setIsLoading(true);
     try {
+      // Simulate a delay in fetching data
+      await new Promise((resolve) => setTimeout(resolve, 300));
+
       const teamsData = await getTeamsOfCommunity(Number(communityId));
       setTeams(teamsData);
     } catch (error) {
@@ -129,9 +135,7 @@ const TeamsPage: React.FC = () => {
             <LinkCard
               key={team.id}
               title={team.name}
-              to={`/communities/${encodeURIComponent(
-                String(communityId)
-              )}/teams/${encodeURIComponent(team.id)}`}
+              href={`/communities/${communityId}/teams/${team.id}`}
               state={{ communityName: communityName, teamName: team.name }}
               className="mb-2"
             />

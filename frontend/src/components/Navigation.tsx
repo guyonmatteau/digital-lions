@@ -1,6 +1,6 @@
+// components/Navigation.tsx
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import NavLink from './NavLink'; // Adjust path as per your project structure
+import NavLink from './NavLink';
 
 const Navigation: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,16 +15,16 @@ const Navigation: React.FC = () => {
         <div className="flex items-center justify-between">
           {/* Logo and Title */}
           <div className="flex-shrink-0">
-            <Link to="/" className="text-white font-bold text-xl">
+            <NavLink href="/" className="text-white font-bold text-xl">
               Digital Lions
-            </Link>
+            </NavLink>
           </div>
 
           {/* Desktop Navigation Links */}
           <div className="hidden md:flex space-x-4">
-            <NavLink to="/communities">Community</NavLink>
-            <NavLink to="/teams" includeSourceMenu={true}>Teams info</NavLink>
-            <NavLink to="/attendance">Attendance</NavLink>
+            <NavLink href="/communities">Community</NavLink>
+            {/* <NavLink href="/teams" includeSourceMenu={true}>Teams info</NavLink> */}
+            <NavLink href="/attendance">Attendance</NavLink>
           </div>
 
           {/* Mobile Hamburger Menu Button */}
@@ -62,13 +62,13 @@ const Navigation: React.FC = () => {
         {/* Mobile Menu Links */}
         {isOpen && (
           <div className="md:hidden mt-4 space-y-2">
-            <NavLink to="/communities" onClick={toggleMenu}>
+            <NavLink href="/communities" onClick={toggleMenu}>
               Community
             </NavLink>
-            <NavLink to="/teams" includeSourceMenu={true} onClick={toggleMenu}>
+            {/* <NavLink href="/teams" includeSourceMenu={true} onClick={toggleMenu}>
               Teams info
-            </NavLink>
-            <NavLink to="/attendance" onClick={toggleMenu}>Attendance</NavLink>
+            </NavLink> */}
+            <NavLink href="/attendance" onClick={toggleMenu}>Attendance</NavLink>
           </div>
         )}
       </div>

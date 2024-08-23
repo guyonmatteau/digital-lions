@@ -1,3 +1,4 @@
+// components/Layout.tsx
 import React, { ReactNode } from 'react';
 import Navigation from './Navigation';
 import Footer from './Footer';
@@ -5,7 +6,7 @@ import Breadcrumbs from './Breadcrumbs';
 
 interface LayoutProps {
   children: ReactNode;
-  breadcrumbs?: { label: string; path?: string }[] | null; 
+  breadcrumbs?: { label: string; path?: string }[] | null;
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, breadcrumbs }) => {

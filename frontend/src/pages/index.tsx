@@ -1,22 +1,12 @@
-import React, { useEffect } from 'react';
-import { createRoot } from 'react-dom/client';
-import App from '@/App';
+// pages/index.tsx
+import React from 'react';
 
 const HomePage: React.FC = () => {
-  useEffect(() => {
-    const root = createRoot(document.getElementById('root') as HTMLElement);
-    root.render(
-      <React.StrictMode>
-        <App />
-      </React.StrictMode>
-    );
-
-    return () => {
-      root.unmount();
-    };
-  }, []);
-
-  return <div id="root"></div>; // Placeholder div for the client-side render
+  return (
+    <div>
+      <p>Redirecting to the communities page...</p>
+    </div>
+  );
 };
 
 export default HomePage;

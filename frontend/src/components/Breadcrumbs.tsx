@@ -1,6 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-
+import Link from 'next/link';
 interface Breadcrumb {
   label: string;
   path?: string;
@@ -21,7 +20,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ breadcrumbs }) => {
           <li key={index} className="inline-flex items-center">
             {breadcrumb.path ? (
               <Link
-                to={breadcrumb.path}
+                href={breadcrumb.path}
                 className="inline-flex items-center text-sm font-medium text-gray-700 dark:text-white hover:text-blue-600 dark:hover:text-white"
               >
                 {breadcrumb.label}

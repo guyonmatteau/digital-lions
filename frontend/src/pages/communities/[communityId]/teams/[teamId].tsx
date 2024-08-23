@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
 import Accordion from "@/components/Accordion";
 import getTeams from "@/api/services/teams/getTeams";
 import getTeamById from "@/api/services/teams/getTeamById";
@@ -19,16 +18,17 @@ import SkeletonLoader from "@/components/SkeletonLoader";
 
 import { TeamWithChildren } from "@/types/teamWithChildren.interface";
 
+import { useRouter } from "next/router";
+
 interface Team {
   name: string;
   id: number;
 }
 
 const TeamsDetailPage: React.FC = () => {
-  const { communityId, teamId } = useParams<{
-    communityId: string;
-    teamId: string;
-  }>();
+  const router = useRouter();
+  const { communityId, teamId } = router.query;
+
   const [teams, setTeams] = useState<Team[]>([]);
   const [selectedTeam, setSelectedTeam] = useState<TeamWithChildren | null>(
     null
@@ -64,8 +64,7 @@ const TeamsDetailPage: React.FC = () => {
     }
   }, []);
 
-  const showBreadcrumbs =
-    new URLSearchParams(location.search).get("source") !== "menu";
+  const showBreadcrumbs = router.query.source !== "menu";
 
   const breadcrumbs = showBreadcrumbs
     ? [
@@ -81,13 +80,14 @@ const TeamsDetailPage: React.FC = () => {
       ]
     : null;
 
-  const navigate = useNavigate();
-
   // Fetch all teams on component mount
   useEffect(() => {
     const fetchTeams = async () => {
       setIsLoading(true);
       try {
+        // Simulate a delay in fetching data
+        await new Promise((resolve) => setTimeout(resolve, 300));
+
         const fetchedTeams = await getTeams();
         setTeams(fetchedTeams);
       } catch (error) {
@@ -106,7 +106,11 @@ const TeamsDetailPage: React.FC = () => {
       const fetchTeamById = async () => {
         setIsLoadingTeam(true);
         try {
-          const teamDetails = await getTeamById(parseInt(teamId, 10));
+          const numericTeamId = Number(teamId);
+          if (isNaN(numericTeamId)) {
+            throw new Error("Invalid team ID");
+          }
+          const teamDetails = await getTeamById(numericTeamId);
           setSelectedTeam(teamDetails);
         } catch (error) {
           console.error("Failed to fetch team details:", error);
@@ -125,7 +129,7 @@ const TeamsDetailPage: React.FC = () => {
 
     if (selected) {
       // Update the URL
-      navigate(`/communities/${communityId}/teams/${selected.id}`);
+      router.push(`/communities/${communityId}/teams/${selected.id}`);
 
       // Fetch the new team details
       setIsLoadingTeam(true);

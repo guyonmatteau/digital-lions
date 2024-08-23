@@ -23,9 +23,13 @@ const CommunityPage: React.FC = () => {
   const [openAddCommunityModal, setOpenAddCommunityModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
 
+
   const fetchCommunities = async () => {
     setIsLoading(true);
     try {
+        // Simulate a delay in fetching data
+      await new Promise(resolve => setTimeout(resolve, 300));
+
       const communitiesData = await getCommunities();
       setCommunities(communitiesData);
     } catch (error) {
@@ -95,7 +99,7 @@ const CommunityPage: React.FC = () => {
         <LinkCard
           key={community.id}
           title={community.name}
-          to={`/communities/${encodeURIComponent(community.id)}/teams`}
+          href={`/communities/${community.id}/teams`}
           state={{ communityName: community.name }}
           className="mb-2"
         />
