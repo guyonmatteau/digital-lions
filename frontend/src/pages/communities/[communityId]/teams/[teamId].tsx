@@ -16,6 +16,10 @@ import Loader from "@/components/Loader";
 import ConfirmModal from "@/components/ConfirmModal";
 import SkeletonLoader from "@/components/SkeletonLoader";
 
+import EmptyState from "@/components/EmptyState";
+
+import { UserIcon } from "@heroicons/react/24/solid";
+
 import { TeamWithChildren } from "@/types/teamWithChildren.interface";
 
 import { useRouter } from "next/router";
@@ -88,7 +92,7 @@ const TeamsDetailPage: React.FC = () => {
         // Simulate a delay in fetching data
         await new Promise((resolve) => setTimeout(resolve, 300));
 
-        const fetchedTeams = await getTeams();
+        const fetchedTeams = await getTeams('active');
         setTeams(fetchedTeams);
       } catch (error) {
         console.error("Failed to fetch teams:", error);
@@ -292,12 +296,29 @@ const TeamsDetailPage: React.FC = () => {
               </option>
             ))}
           </SelectInput>
-          <CustomButton
-            label="Add child"
-            onClick={handleAddChild}
-            variant={"primary"}
-            className="hover:bg-card-dark hover:text-white mb-4"
-          />
+
+          {selectedTeam?.children.length ? (
+            <CustomButton
+              label="Add child"
+              onClick={handleAddChild}
+              variant={"primary"}
+              className="hover:bg-card-dark hover:text-white mb-4"
+            />
+          ) : (
+            <EmptyState
+              title="This team has no childs"
+              text="Add a child to the team to get started"
+              pictogram={<UserIcon/>}
+              actionButton={
+                <CustomButton
+                  label="Add child"
+                  onClick={handleAddChild}
+                  variant={"primary"}
+                  className="hover:bg-card-dark hover:text-white mb-4"
+                />
+              }
+            />
+          )}
 
           {selectedTeam && (
             <>
@@ -310,9 +331,6 @@ const TeamsDetailPage: React.FC = () => {
                   <div>
                     <p>{`First Name: ${child.first_name}`}</p>
                     <p>{`Last Name: ${child.last_name}`}</p>
-                    {/* <p>{`Age: ${child.age}`}</p>
-                    <p>{`Date of Birth: ${child.date_of_birth}`}</p>
-                    <p>{`Gender: ${child.gender}`}</p> */}
                     <div className="flex items-center justify-end border-t mt-4 border-gray-200 rounded-b dark:border-gray-600">
                       <CustomButton
                         className="mt-4"
@@ -320,7 +338,6 @@ const TeamsDetailPage: React.FC = () => {
                         variant="error"
                         onClick={() => openDeleteChildModal(child.id)}
                       />
-
                       <CustomButton
                         className="mt-4 ml-2"
                         label="Edit"

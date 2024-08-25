@@ -1,8 +1,10 @@
 import { Team } from "@/types/team.interface";
 
-const getTeams = async (): Promise<Team[]> => {
+type teamsStatus = 'active' | 'non_active' | 'all';
+
+const getTeams = async (status: teamsStatus): Promise<Team[]> => {
 try {
-  const response = await fetch('https://backend-staging-ffae.up.railway.app/api/v1/teams', {
+  const response = await fetch(`https://backend-staging-ffae.up.railway.app/api/v1/teams?status=${status}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json'

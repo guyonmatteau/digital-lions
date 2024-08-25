@@ -41,7 +41,7 @@ const AttendancePage: React.FC = () => {
     const fetchTeams = async () => {
       setIsLoading(true);
       try {
-        const fetchedTeams = await getTeams();
+        const fetchedTeams = await getTeams('active');
         setTeams(fetchedTeams);
       } catch (error) {
         console.error("Failed to fetch teams:", error);

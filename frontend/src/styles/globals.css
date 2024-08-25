@@ -93,7 +93,7 @@
   background-color: var(--color-primary);
 }
 .bg-primary-dark {
-  background-color: var(--color-primary-dark);
+  background-color:  var(--color-success);
 }
 .bg-secondary {
   background-color: var(--color-secondary);
@@ -131,11 +131,11 @@
   background-color: var(--color-primary-blue-dark);
 }
 
-.bg-text {
+.text-primary {
   color: var(--color-text);
 }
 
-.bg-text-light {
+.text-primary-light {
   color: var(--color-text-light);
 }
 

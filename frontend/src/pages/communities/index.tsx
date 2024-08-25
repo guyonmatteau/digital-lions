@@ -23,12 +23,11 @@ const CommunityPage: React.FC = () => {
   const [openAddCommunityModal, setOpenAddCommunityModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
 
-
   const fetchCommunities = async () => {
     setIsLoading(true);
     try {
-        // Simulate a delay in fetching data
-      await new Promise(resolve => setTimeout(resolve, 300));
+      // Simulate a delay in fetching data
+      await new Promise((resolve) => setTimeout(resolve, 300));
 
       const communitiesData = await getCommunities();
       setCommunities(communitiesData);
@@ -60,81 +59,78 @@ const CommunityPage: React.FC = () => {
   };
 
   const handleAddCommunity = async () => {
-    if (communityName.trim() !== "") {
-      setIsAddingCommunity(true);
-      try {
-        const newCommunity = await createCommunity(communityName);
-        setCommunities([...communities, newCommunity]);
-        setCommunityName("");
-        fetchCommunities();
-      } catch (error) {
-        setErrorMessage(String(error));
-        console.error("Error adding community:", error);
-      } finally {
-        setIsAddingCommunity(false);
-        setOpenAddCommunityModal(false);
-      }
+    if (communityName.trim() === "") return;
+    setIsAddingCommunity(true);
+    try {
+      const newCommunity = await createCommunity(communityName);
+      setCommunities([...communities, newCommunity]);
+      setCommunityName("");
+      setIsAddingCommunity(false);
+      setOpenAddCommunityModal(false);
+      fetchCommunities();
+    } catch (error) {
+      setIsAddingCommunity(false);
+      setErrorMessage(String(error));
+      console.error("Error adding community:", error);
     }
   };
 
   return (
-<Layout breadcrumbs={breadcrumbs}>
-  {isLoading ? (
-    <>
-      <SkeletonLoader width="142px" type="button" />
-      {Array.from({ length: 8 }, (_, i) => (
-        <SkeletonLoader key={i} type="card" />
-      ))}
-    </>
-  ) : (
-    <>
-      {isAddingCommunity && <Loader loadingText={"Adding new community"} />}
-      <CustomButton
-        label="Add Community"
-        onClick={handleOpenCommunityModal}
-        variant={"primary"}
-        className="hover:bg-card-dark hover:text-white mb-4"
-      />
-      {communities.map((community) => (
-        <LinkCard
-          key={community.id}
-          title={community.name}
-          href={`/communities/${community.id}/teams`}
-          state={{ communityName: community.name }}
-          className="mb-2"
-        />
-      ))}
-      {openAddCommunityModal && (
-        <Modal
-          onClose={handleCloseCommunityModal}
-          title="Add Community"
-          acceptText="Add"
-          onAccept={handleAddCommunity}
-          isBusy={isAddingCommunity}
-          isDisabledButton={!communityName}
-        >
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleAddCommunity();
-            }}
-          >
-            <TextInput
+    <Layout breadcrumbs={breadcrumbs}>
+      {isLoading ? (
+        <>
+          <SkeletonLoader width="142px" type="button" />
+          {Array.from({ length: 8 }, (_, i) => (
+            <SkeletonLoader key={i} type="card" />
+          ))}
+        </>
+      ) : (
+        <>
+          <CustomButton
+            label="Add Community"
+            onClick={handleOpenCommunityModal}
+            variant="primary"
+            className="hover:bg-card-dark hover:text-white mb-4"
+          />
+          {communities.map((community) => (
+            <LinkCard
+              key={community.id}
+              title={community.name}
+              href={`/communities/${community.id}/teams`}
+              state={{ communityName: community.name }}
               className="mb-2"
-              label="Community name"
-              value={communityName}
-              onChange={handleCommunityNameChange}
-              onBlur={handleCommunityNameBlur}
-              autoFocus
             />
-            {errorMessage && <p className="text-error">{errorMessage}</p>}
-          </form>
-        </Modal>
+          ))}
+          {openAddCommunityModal && (
+            <Modal
+              onClose={handleCloseCommunityModal}
+              title="Add Community"
+              acceptText="Add"
+              onAccept={handleAddCommunity}
+              isBusy={isAddingCommunity}
+              isDisabledButton={!communityName}
+            >
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleAddCommunity();
+                }}
+              >
+                <TextInput
+                  className="mb-2"
+                  label="Community name"
+                  value={communityName}
+                  onChange={handleCommunityNameChange}
+                  onBlur={handleCommunityNameBlur}
+                  autoFocus
+                />
+                {errorMessage && <p className="text-error">{errorMessage}</p>}
+              </form>
+            </Modal>
+          )}
+        </>
       )}
-    </>
-  )}
-</Layout>
-
+    </Layout>
   );
 };
 

@@ -109,7 +109,6 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
 
   useEffect(() => {
     if (isSaved) {
-      console.log("checked", checked);
       if (checked < workshops.length - 1) {
         setAnimatedSteps((prev) => [...prev, checked + 1]);
         setChecked((prev) => prev + 1);
