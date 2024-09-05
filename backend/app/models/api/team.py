@@ -7,21 +7,7 @@ from pydantic import BaseModel, Field, field_validator
 class TeamPostIn(BaseModel, CreateProperties):
     """API payload model for POST /teams."""
 
-    class TeamCreateChild(BaseModel, CreateProperties):
-        """API sub request model to create a child within a team."""
-
-        first_name: str
-        last_name: str
-        age: int | None = Field(
-            default=None,
-            description="Age in years at the time of registration",
-        )
-        gender: str | None = Field(default=None, description="Gender of child")
-
     name: str = Field(description="Name of the team")
-    children: list[TeamCreateChild] | None = Field(
-        description="Optional list of children to add directly to the team.", default=[]
-    )
     community_id: int = Field(description="ID of community the team belongs to")
 
 
@@ -30,9 +16,7 @@ class TeamPatchIn(BaseModel, UpdateProperties):
 
     # Note this model is mainly used to update the Team's active status
     name: str = Field(description="Name of the team", default=None)
-    community_id: int = Field(
-        description="ID of community the team belongs to", default=None
-    )
+    community_id: int = Field(description="ID of community the team belongs to", default=None)
 
 
 class TeamGetOut(BaseModel):
@@ -132,15 +116,9 @@ class TeamGetWorkshopOut(BaseModel):
     class Attendance(BaseModel):
         """Aggregated attendance score of a workshop."""
 
-        present: int = Field(
-            description="Number of children that were present at the workshop."
-        )
-        cancelled: int = Field(
-            description="Number of children that cancelled the workshop."
-        )
-        absent: int = Field(
-            description="Number of children that were absent at the workshop."
-        )
+        present: int = Field(description="Number of children that were present at the workshop.")
+        cancelled: int = Field(description="Number of children that cancelled the workshop.")
+        absent: int = Field(description="Number of children that were absent at the workshop.")
         total: int = Field(description="Total number of children in the team.")
 
     workshop: Workshop
@@ -155,9 +133,7 @@ class TeamGetWorkshopByNumberOut(BaseModel):
         """Workshop info."""
 
         name: str = Field(description="Name of the workshop", example="Workshop 1")
-        id: int = Field(
-            description="Unique identifier of workshop in database.", example=1000
-        )
+        id: int = Field(description="Unique identifier of workshop in database.", example=1000)
         number: int = Field(description="Number of workshop in the program", example=1)
         date: str = Field(
             description="Date the workshop took place in format YYYY-MM-DD",
@@ -195,14 +171,10 @@ class TeamPostWorkshopIn(BaseModel):
         @field_validator("attendance")
         def validate_attendance(cls, v):
             if v not in ["present", "absent", "cancelled"]:
-                raise ValueError(
-                    "Attendance must be either 'present' or 'absent' or 'cancelled'"
-                )
+                raise ValueError("Attendance must be either 'present' or 'absent' or 'cancelled'")
             return v
 
-    date: datetime.date = Field(
-        description="The date of the workshop in the format YYYY-MM-DD"
-    )
+    date: datetime.date = Field(description="The date of the workshop in the format YYYY-MM-DD")
     workshop_number: int = Field(
         description="The number of the workshop in the program, which must be between 1 and 12."
     )

@@ -91,9 +91,7 @@ async def get_team(team_service: TeamServiceDependency, team_id: int):
         },
     },
 )
-async def delete_team(
-    team_service: TeamServiceDependency, team_id: int, cascade: bool = False
-):
+async def delete_team(team_service: TeamServiceDependency, team_id: int, cascade: bool = False):
     """Delete a team. This will delete all children if cascade is set to True.
     If you want to deactivate a team use PATCH /teams/{team_id} instead."""
     try:

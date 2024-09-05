@@ -74,15 +74,14 @@ class UserService(BaseService, AbstractService):
                 f"User with email {user.email_address} not found."
             )
 
-        #
+        # todo get jwt
+        jwt = None
         return jwt
 
     def forgot(self, email_address: str) -> Message:
         """Send forgot password email to user."""
         if not self.users.where([("email_address", email_address)]):
-            raise exceptions.UserNotFoundException(
-                f"User with email {email_address} not found."
-            )
+            raise exceptions.UserNotFoundException(f"User with email {email_address} not found.")
         pass
 
     def _hash_password(self, password: str, salt: bytes = None) -> [bytes, bytes]:
@@ -109,13 +108,9 @@ class UserService(BaseService, AbstractService):
         """Create a JWT token for the user."""
         pass
 
-    def _get_user_by_email(
-        self, email_address: str
-    ) -> User | exceptions.UserNotFoundException:
+    def _get_user_by_email(self, email_address: str) -> User | exceptions.UserNotFoundException:
         """Get a user by email address."""
         try:
             return self.users.where([("email_address", email_address)]).first()
         except exceptions.ItemNotFoundException:
-            raise exceptions.UserNotFoundException(
-                f"User with email {email_address} not found."
-            )
+            raise exceptions.UserNotFoundException(f"User with email {email_address} not found.")

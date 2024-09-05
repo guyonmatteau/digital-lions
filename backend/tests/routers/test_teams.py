@@ -27,7 +27,7 @@ def client_with_communities(client):
 def test_post_team_success(client):
     # test successfull creation of a team
     team_1 = "Team 1"
-    data = {"community_id": 1, "name": team_1, "children": []}
+    data = {"community_id": 1, "name": team_1}
     response = client.post(ENDPOINT, json=data)
     assert response.status_code == status.HTTP_201_CREATED
     id_ = response.json().get("id")
@@ -42,11 +42,11 @@ def test_post_team_success(client):
 def test_get_team_filter_community(client):
     # test that we can filter teams by community_id
     team_1 = "Team 1"
-    data = {"community_id": 1, "name": team_1, "children": []}
+    data = {"community_id": 1, "name": team_1}
     response = client.post(ENDPOINT, json=data)
     assert response.status_code == status.HTTP_201_CREATED
     team_2 = "Team 2"
-    data = {"community_id": 2, "name": team_2, "children": []}
+    data = {"community_id": 2, "name": team_2}
     response = client.post(ENDPOINT, json=data)
     assert response.status_code == status.HTTP_201_CREATED
     response_get = client.get(f"{ENDPOINT}?community_id=1")
@@ -58,11 +58,7 @@ def test_get_team_filter_community(client):
 def test_get_team_by_id(client):
     # test that we can get a team by id
     team_x = "Team X"
-    children = [
-        {"first_name": "Child 1", "last_name": "Last name", "age": 10},
-        {"first_name": "Child 2", "last_name": "Last name", "age": 12},
-    ]
-    data = {"community_id": 1, "name": team_x, "children": children}
+    data = {"community_id": 1, "name": team_x}
     response = client.post(ENDPOINT, json=data)
     assert response.status_code == status.HTTP_201_CREATED
     id_ = response.json().get("id")
@@ -73,14 +69,14 @@ def test_get_team_by_id(client):
 def test_delete_team_with_children(client):
     # test that we can't delete a team with children if cascade is not set
     team_x = "Team Y"
-    children = [
-        {"first_name": "Child 1", "last_name": "Last name", "age": 10},
-        {"first_name": "Child 2", "last_name": "Last name", "age": 12},
-    ]
-    data = {"community_id": 1, "name": team_x, "children": children}
+    data = {"community_id": 1, "name": team_x}
     response = client.post(ENDPOINT, json=data)
     assert response.status_code == status.HTTP_201_CREATED
     id_ = response.json().get("id")
+
+    # add child to team
+    child = {"first_name": "Child 1", "last_name": "Last name", "age": 10}
+    client.post("/children", json={**child, "team_id": id_})
 
     # assert team cannot be deleted
     response_delete = client.delete(f"{ENDPOINT}/{id_}")
@@ -90,14 +86,14 @@ def test_delete_team_with_children(client):
 def test_delete_team_with_children_cascade(client):
     # test that we can't delete a team with children if cascade is not set
     team_x = "Team Y"
-    children = [
-        {"first_name": "Child 1", "last_name": "Last name", "age": 10},
-        {"first_name": "Child 2", "last_name": "Last name", "age": 12},
-    ]
-    data = {"community_id": 1, "name": team_x, "children": children}
+    data = {"community_id": 1, "name": team_x}
     response = client.post(ENDPOINT, json=data)
     assert response.status_code == status.HTTP_201_CREATED
     id_ = response.json().get("id")
+
+    # add child to team
+    child = {"first_name": "Child 1", "last_name": "Last name", "age": 10}
+    client.post("/children", json={**child, "team_id": id_})
 
     team = client.get(f"{ENDPOINT}/{id_}")
     child_id_0 = team.json().get("children")[0].get("id")
@@ -116,6 +112,8 @@ def test_delete_team_with_children_cascade(client):
 @pytest.fixture(name="client_with_team")
 def client_with_community_and_team(client):
     # arrange two communities
+    teams = ["Team_1", "Team_2"
+    ]
     children = [
         {"first_name": "Child 1", "last_name": "Last name", "age": 10},
         {"first_name": "Child 2", "last_name": "Last name", "age": 12},
@@ -125,12 +123,14 @@ def client_with_community_and_team(client):
         "/communities",
         json={"name": "Community 1"},
     )
-    client.post(
-        "/teams", json={"community_id": 1, "name": "Team 1", "children": children}
-    )
-    client.post(
-        "/teams", json={"community_id": 1, "name": "Team 2", "children": children}
-    )
+    # add teams
+    for team in teams:
+        id_ = client.post(
+            "/teams", json={"community_id": 1, "name": team}
+        ).json().get("id")
+        # add children to team
+        for child in children:
+            client.post("/children", json={**child, "team_id": id_})
     return client
 
 

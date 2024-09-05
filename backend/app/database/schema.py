@@ -18,14 +18,10 @@ class Child(SQLModel, MetadataColumns, table=True):
         default=None,
         description="Age in years at the time of registration",
     )
-    gender: str | None = Field(
-        default=None, description="Gender of child. Either male or female."
-    )
+    gender: str | None = Field(default=None, description="Gender of child. Either male or female.")
 
     team: "Team" = Relationship(back_populates="children")
-    team_id: int = Field(
-        sa_column=Column(Integer, ForeignKey("teams.id", ondelete="CASCADE"))
-    )
+    team_id: int = Field(sa_column=Column(Integer, ForeignKey("teams.id", ondelete="CASCADE")))
     attendances: list["Attendance"] = Relationship(
         sa_relationship_kwargs={"cascade": "delete"}, back_populates="child"
     )
@@ -90,20 +86,14 @@ class Workshop(SQLModel, table=True):
 
     __tablename__ = "workshops"
     __table__args__ = (
-        UniqueConstraint(
-            "team_id", "workshop_number", name="unique_workshop_number_per_team"
-        ),
+        UniqueConstraint("team_id", "workshop_number", name="unique_workshop_number_per_team"),
     )
 
     date: str = Field(description="The date of the workshop in the format YYYY-MM-DD")
-    workshop_number: int = Field(
-        description="The number of the workshop in the program"
-    )
+    workshop_number: int = Field(description="The number of the workshop in the program")
 
     id: int = Field(default=None, primary_key=True)
-    team_id: int = Field(
-        sa_column=Column(Integer, ForeignKey("teams.id", ondelete="CASCADE"))
-    )
+    team_id: int = Field(sa_column=Column(Integer, ForeignKey("teams.id", ondelete="CASCADE")))
 
     team: "Team" = Relationship(
         sa_relationship_kwargs={"cascade": "delete"}, back_populates="workshops"
@@ -124,9 +114,7 @@ class User(SQLModel, MetadataColumns, table=True):
 
     id: int | None = Field(default=None, primary_key=True)
     hashed_password: bytes = Field(description="Hashed password in bytes")
-    salt: bytes = Field(
-        description="Random byte string with which the password is encrypted"
-    )
+    salt: bytes = Field(description="Random byte string with which the password is encrypted")
 
 
 class Program(SQLModel, table=False):
@@ -150,6 +138,5 @@ class Program(SQLModel, table=False):
 # for V1 there will not be a program table in the databse, instead
 # we just hardcode a default program of 12 workshops
 DefaultProgram = [
-    Program(id=n, program_id=1, workshop=n, workshop_name=f"Workshop {n}")
-    for n in range(1, 13)
+    Program(id=n, program_id=1, workshop=n, workshop_name=f"Workshop {n}") for n in range(1, 13)
 ]

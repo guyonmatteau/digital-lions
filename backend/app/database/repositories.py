@@ -11,9 +11,6 @@ from sqlalchemy import and_, delete, func
 from sqlmodel import SQLModel
 
 Model = TypeVar("Model", bound=SQLModel)
-ModelCreate = TypeVar("ModelCreate", bound=SQLModel)
-ModelUpdate = TypeVar("ModelUpdate", bound=SQLModel)
-ModelOut = TypeVar("ModelOut", bound=SQLModel)
 
 
 class Columns(str, Enum):
@@ -44,7 +41,7 @@ class BaseRepository(Generic[Model]):
     def __init__(self, session: SessionDependency):
         self._session: SessionDependency = session
 
-    def create(self, obj: ModelCreate) -> ModelOut:
+    def create(self, obj: Model) -> Model:
         """Create an object in the table."""
         new_obj = self._model.model_validate(obj)
         self._session.add(new_obj)
@@ -66,19 +63,19 @@ class BaseRepository(Generic[Model]):
         self._session.exec(statement)
         self._session.flush()
 
-    def read(self, object_id: int) -> ModelOut | None:
+    def read(self, object_id: int) -> Model | None:
         """Read an object from the table."""
         obj = self._session.get(self._model, object_id)
         if not obj:
             raise ItemNotFoundException()
         return obj
 
-    def read_all(self) -> list[ModelOut] | None:
+    def read_all(self) -> list[Model] | None:
         """Read all objects from the table."""
         objects = self._session.query(self._model).all()
         return objects
 
-    def update(self, object_id: int, obj: ModelUpdate) -> ModelOut:
+    def update(self, object_id: int, obj: Model) -> Model:
         """Update an object in the table."""
         db_object = self._session.get(self._model, object_id)
         if not db_object:
@@ -91,7 +88,7 @@ class BaseRepository(Generic[Model]):
         self._session.refresh(db_object)
         return db_object
 
-    def where(self, filters: list[tuple[str, str]]) -> list[ModelOut] | None:
+    def where(self, filters: list[tuple[str, str]]) -> list[Model] | None:
         """Filter table by one or more columns where all filters need to be met (AND).
 
         Args:
@@ -99,26 +96,24 @@ class BaseRepository(Generic[Model]):
             the column name and the value to filter by. E.g. [("name", "John"), ("age", 25)].
 
         Returns:
-            list[ModelOut]: A list of objects that meet all the filters.
+            list[Model]: A list of objects that meet all the filters.
         """
         expr = and_(*self._construct_filter(filters))
         return self._session.query(self._model).where(and_(expr)).all()
 
-    def where_in(self, attr: str, values: list[str]) -> list[ModelOut] | None:
+    def where_in(self, attr: str, values: list[str]) -> list[Model] | None:
         """Filter table by an attribute where the attribute value is in a list of values.
         Args:
             attr (str): The attribute to filter by.
             values (list[str]): A list of values to filter by.
         Returns:
-            list[ModelOut]: A list of objects that meet the filter.
+            list[Model]: A list of objects that meet the filter.
         """
         return (
-            self._session.query(self._model)
-            .filter(getattr(self._model, attr).in_(values))
-            .all()
+            self._session.query(self._model).filter(getattr(self._model, attr).in_(values)).all()
         )
 
-    def query(self, query: str) -> list[ModelOut]:
+    def query(self, query: str) -> list[Model]:
         """Execute a custom query."""
         objects = self._session.exec(query)
         return objects
@@ -193,9 +188,7 @@ class WorkshopRepository(BaseRepository[schema.Workshop]):
             dict: Dictionary with team ID as key and highest workshop number as value.
         """
         results = (
-            self._session.query(
-                self._model.team_id, func.max(self._model.workshop_number)
-            )
+            self._session.query(self._model.team_id, func.max(self._model.workshop_number))
             .filter(self._model.team_id.in_(team_ids))
             .group_by(self._model.team_id)
             .all()
