@@ -4,7 +4,6 @@ interface ApiResponse {
 
 export interface BodyInput {
   name: string;
-  children: [];
   community_id: number;
 }
 
@@ -59,7 +58,6 @@ function createInput({
 
   return {
     name: name,
-    children: [],
     community_id: communityId,
   };
 }
