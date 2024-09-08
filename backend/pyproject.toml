@@ -43,6 +43,7 @@ pythonpath = ["app"]
 [tool.pytest_env]
 ALLOWED_ORIGINS="http://localhost:8000,http://staging.digital-lion.com,https://digital-lion.com"
 FEATURE_API_KEY="false"
+POSTGRES_DATABASE_URL="postgresql://postgres:postgres@localhost:5432/digital_lion_test"
 
 [tool.ruff]
 extend-exclude = ["app/alembic/*"]
