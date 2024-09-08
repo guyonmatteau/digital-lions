@@ -1,6 +1,6 @@
 import logging
 
-import exceptions
+from core import exceptions
 from models.api import Message
 from models.api.community import CommunityPostIn
 from services.base import AbstractService, BaseService

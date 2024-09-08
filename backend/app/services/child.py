@@ -1,6 +1,6 @@
 import logging
 
-import exceptions
+from core import exceptions
 from models.api.child import ChildPatchIn, ChildPostIn
 from services.base import BaseService
 

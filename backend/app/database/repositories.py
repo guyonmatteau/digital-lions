@@ -4,9 +4,9 @@ Each table in the database translate to a repository class."""
 from enum import Enum
 from typing import Generic, TypeVar
 
+from core import exceptions
 from database import schema
 from database.session import SessionDependency
-from exceptions import ItemNotFoundException
 from sqlalchemy import and_, delete, func
 from sqlmodel import SQLModel
 
@@ -53,7 +53,7 @@ class BaseRepository(Generic[Model]):
         """Delete an object from the table."""
         obj = self._session.get(self._model, object_id)
         if not obj:
-            raise ItemNotFoundException()
+            raise exceptions.ItemNotFoundException()
         self._session.delete(obj)
         self._session.flush()
 
@@ -67,7 +67,7 @@ class BaseRepository(Generic[Model]):
         """Read an object from the table."""
         obj = self._session.get(self._model, object_id)
         if not obj:
-            raise ItemNotFoundException()
+            raise exceptions.ItemNotFoundException()
         return obj
 
     def read_all(self) -> list[Model] | None:
@@ -79,7 +79,7 @@ class BaseRepository(Generic[Model]):
         """Update an object in the table."""
         db_object = self._session.get(self._model, object_id)
         if not db_object:
-            raise ItemNotFoundException()
+            raise exceptions.ItemNotFoundException()
 
         obj_data = obj.model_dump(exclude_unset=True)
         db_object.sqlmodel_update(obj_data)

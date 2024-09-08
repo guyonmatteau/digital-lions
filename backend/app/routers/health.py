@@ -1,10 +1,11 @@
 from datetime import UTC, datetime
 
-from dependencies import CommunityServiceDependency
+from core.auth import APIKeyDependency
+from core.dependencies import CommunityServiceDependency
 from fastapi import APIRouter, status
 from fastapi.responses import JSONResponse
 
-router = APIRouter(prefix="/health")
+router = APIRouter(prefix="/health", dependencies=[APIKeyDependency])
 
 
 @router.get(

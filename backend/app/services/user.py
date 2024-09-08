@@ -1,7 +1,7 @@
 import logging
 
 import bcrypt
-import exceptions
+from core import exceptions
 from database.schema import User
 from models.api import Message, RecordCreated
 from models.api.user import UserGetByIdOut, UserPostIn, UserSessionOut, UserUpdate

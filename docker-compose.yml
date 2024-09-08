@@ -30,6 +30,9 @@ services:
       POSTGRES_PORT: ${POSTGRES_PORT:-5432}
       POSTGRES_HOST: postgres
       ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
+      FEATURE_API_KEY: ${FEATURE_API_KEY}
+      FEATURE_OAUTH: ${FEATURE_OAUTH}
+      API_KEY: ${API_KEY}
     ports:
       - 8000:8000
       
@@ -40,6 +43,7 @@ services:
       context: ./frontend
     environment:
       API_URL: ${API_URL:-"http://localhost:8000"}
+      API_KEY: ${API_KEY}
     ports:
       - 3000:3000
   pgadmin:

@@ -31,7 +31,7 @@ All components are dockerized and available in development locally with docker c
 
 ### Environment
 
-This project uses [direnv](https://direnv.net/) to setup environment variables. First copy `.env.template` to `.env`. After that spin up the postgresDB (and optionally pgadmin if you want to inspect the database from the browser).
+This project uses [direnv](https://direnv.net/) to setup environment variables. First copy `.env.dist` to `.env`. After that spin up the postgresDB (and optionally pgadmin if you want to inspect the database from the browser).
 
 ### Build
 ```bash

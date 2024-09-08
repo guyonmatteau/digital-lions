@@ -1,5 +1,5 @@
 import pytest
-from dependencies import (ChildService, CommunityService, TeamService,
+from core.dependencies import (ChildService, CommunityService, TeamService,
                           UserService, get_child_service,
                           get_community_service, get_team_service,
                           get_user_service)

@@ -1,7 +1,8 @@
 import logging
 
-import exceptions
-from dependencies import TeamServiceDependency
+from core import exceptions
+from core.auth import APIKeyDependency
+from core.dependencies import TeamServiceDependency
 from fastapi import APIRouter, HTTPException, status
 from models.api.generic import Message, RecordCreated
 from models.api.team import (
@@ -15,7 +16,7 @@ from models.api.team import (
 
 logger = logging.getLogger()
 
-router = APIRouter(prefix="/teams")
+router = APIRouter(prefix="/teams", dependencies=[APIKeyDependency])
 
 
 @router.post(

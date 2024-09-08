@@ -39,7 +39,7 @@ Table to track development status of the endpoints which are heavily under const
 |                    | `/users/{user_id}`            | `DELETE`   |         :x:        |                    |                    |                                                                |
 
 In addition, the following components are on the planning:
-- [ ] Authentication with API token
+- [x] Authentication with API key
 - [ ] Content filtering based on roles / scopes in user JWT
 - [ ] query parameter on all `GET` endpoints (`community_id`, `active_only`, etc.)
 - [ ] proper API documentation

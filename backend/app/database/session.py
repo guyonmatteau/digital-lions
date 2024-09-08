@@ -3,8 +3,8 @@ from typing import Annotated
 
 from alembic import command
 from alembic.config import Config
+from core.settings import get_settings
 from fastapi import Depends
-from settings import get_settings
 from sqlmodel import Session, SQLModel, create_engine
 
 
@@ -12,7 +12,7 @@ from sqlmodel import Session, SQLModel, create_engine
 def get_engine():
     """Get a cached database engine."""
     settings = get_settings()
-    return create_engine(settings.postgres_url)
+    return create_engine(settings.POSTGRES_DATABASE_URL)
 
 
 def init_db():

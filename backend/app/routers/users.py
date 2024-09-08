@@ -1,14 +1,15 @@
 import logging
 
-import exceptions
-from dependencies import UserServiceDependency
+from core import exceptions
+from core.auth import APIKeyDependency
+from core.dependencies import UserServiceDependency
 from fastapi import APIRouter, HTTPException, status
 from models.api.generic import RecordCreated
 from models.api.user import UserGetByIdOut, UserPatchIn, UserPostIn, UserPostLoginIn
 
 logger = logging.getLogger()
 
-router = APIRouter(prefix="/users")
+router = APIRouter(prefix="/users", dependencies=[APIKeyDependency])
 
 
 @router.post(

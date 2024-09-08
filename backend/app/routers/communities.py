@@ -1,7 +1,8 @@
 import logging
 
-import exceptions
-from dependencies import CommunityServiceDependency
+from core import exceptions
+from core.auth import APIKeyDependency
+from core.dependencies import CommunityServiceDependency
 from fastapi import APIRouter, HTTPException, status
 from models.api import Message, RecordCreated
 from models.api.community import (
@@ -13,7 +14,7 @@ from models.api.community import (
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/communities")
+router = APIRouter(prefix="/communities", dependencies=[APIKeyDependency])
 
 
 @router.get(

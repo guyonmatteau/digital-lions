@@ -1,7 +1,7 @@
 import logging
 from enum import Enum
 
-import exceptions
+from core import exceptions
 from models.api.generic import Message
 from models.api.team import (
     TeamGetByIdOut,
