@@ -14,11 +14,11 @@ class Settings(BaseSettings):
     POSTGRES_DATABASE_URL: str
 
     # feature flags
-    FEATURE_OAUTH: bool = False
-    FEATURE_API_KEY: bool = True
+    FEATURE_OAUTH: bool | None = False
+    FEATURE_API_KEY: bool | None = True
 
     # security
-    API_KEY: str = None
+    API_KEY: str | None = None
 
     # networking
     ALLOWED_ORIGINS: str
