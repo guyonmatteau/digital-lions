@@ -3,7 +3,7 @@ from typing import Annotated, Any
 
 from core.settings import Settings, get_settings
 from fastapi import Depends, HTTPException, Request, status
-from fastapi.security import APIKeyHeader
+from fastapi.security import APIKeyHeader, HTTPAuthorizationCredentials, HTTPBearer
 
 logger = logging.getLogger(__name__)
 
@@ -21,13 +21,13 @@ class APIKeyHandler(APIKeyHeader):
     ```
     """
 
-    _API_KEY = "API-Key"
+    API_KEY = "API-Key"
 
     def __init__(
         self,
         auto_error: bool = True,
     ):
-        super().__init__(auto_error=auto_error, name=self._API_KEY)
+        super().__init__(auto_error=auto_error, name=self.API_KEY)
 
     async def __call__(
         self, request: Request, settings: Annotated[Settings, Depends(get_settings)]
@@ -48,4 +48,70 @@ class APIKeyHandler(APIKeyHeader):
         return True
 
 
+class BearerTokenHandler(HTTPBearer):
+    """FastAPI dependency for JWT token. Requirement of this token
+    is enabled/disabled in the backend via environment variable `FEATURE_OAUTH`.
+    A JWT is obtained from the /users/session endpoint.
+
+    Headers to be sent in the request:
+    ```
+    headers = {
+        "Authorization": Bearer {JWT},
+    }
+    ```
+    """
+
+    CREDENTIAL_SCHEME = "Bearer"
+
+    def __init__(
+        self,
+        auto_error: bool = True,
+    ):
+        super().__init__(auto_error=auto_error)
+
+    async def __call__(
+        self, request: Request, settings: Annotated[Settings, Depends(get_settings)]
+    ) -> Any:
+        """Verify the bearer token and return the decoded token."""
+        if not settings.FEATURE_OAUTH:
+            return
+
+        credentials: HTTPAuthorizationCredentials = await super().__call__(request)
+        if credentials:
+            if not credentials.scheme == self.CREDENTIAL_SCHEME:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Invalid authentication scheme.",
+                )
+
+            token_headers = self._get_unverified_headers(credentials.credentials)
+            if token_headers is None:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Bearer token is no valid JWT.",
+                )
+
+            self.jwt_token_decoded = self._verify_jwt(token=credentials.credentials)
+            if not self.jwt_token_decoded:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Invalid or expired token.",
+                )
+            return self.jwt_token_decoded
+
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid authorization code."
+        )
+
+    def _verify_jwt(self, token: str) -> dict[str, Any] | None:
+        """Verify the JWT token."""
+        pass
+
+    def _get_unverified_headers(self, token: str) -> dict[str, str] | None:
+        """Get unverified token headers containing type,
+        algorithm and key identifier."""
+        pass
+
+
 APIKeyDependency = Depends(APIKeyHandler())
+BearerTokenDependency = Depends(BearerTokenHandler())
