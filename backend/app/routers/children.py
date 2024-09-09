@@ -1,11 +1,11 @@
 from core import exceptions
-from core.auth import APIKeyDependency
+from core.auth import APIKeyDependency, BearerTokenDependency
 from core.dependencies import ChildServiceDependency
 from fastapi import APIRouter, HTTPException, status
 from models.api.child import ChildGetByIdOut, ChildGetOut, ChildPatchIn, ChildPostIn
 from models.api.generic import RecordCreated
 
-router = APIRouter(prefix="/children", dependencies=[APIKeyDependency])
+router = APIRouter(prefix="/children", dependencies=[APIKeyDependency, BearerTokenDependency])
 
 
 @router.get("/{child_id}", summary="Get a child by id", response_model=ChildGetByIdOut)
