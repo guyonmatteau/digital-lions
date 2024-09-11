@@ -207,7 +207,7 @@ const TeamsDetailPage: React.FC = () => {
         setIsLoadingChild(true);
         try {
           await updateChild(updatedChild);
-          const updatedTeam = await getTeamById(selectedTeam?.id!);
+          const updatedTeam = await getTeamById(selectedTeam?.id as number);
           setSelectedTeam(updatedTeam);
           closeModal();
         } catch (error) {
@@ -260,7 +260,7 @@ const TeamsDetailPage: React.FC = () => {
     setIsDeletingChild(true);
     try {
       await deleteChild(childId as number, false);
-      const updatedTeam = await getTeamById(selectedTeam?.id!);
+      const updatedTeam = await getTeamById(selectedTeam?.id as number);
       setSelectedTeam(updatedTeam);
       setDeleteChildModalVisible(false);
     } catch (error) {

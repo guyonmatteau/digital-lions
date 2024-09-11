@@ -1,18 +1,14 @@
 import React, { useState, useEffect } from "react";
 import VerticalStepper from "@/components/VerticalStepper";
-import SelectInput from "@/components/SelectInput";
-import getTeams from "@/api/services/teams/getTeams";
 import getTeamById from "@/api/services/teams/getTeamById";
 import addWorkshopToTeam from "@/api/services/workshops/addWorkshopToTeam";
 import getWorkshopsByTeam from "@/api/services/workshops/getWorkshopsByTeam";
-import getWorkshopById from "@/api/services/workshops/getWorkshopById";
 import Layout from "@/components/Layout";
-import { Team } from "@/types/team.interface";
 import { TeamWithChildren } from "@/types/teamWithChildren.interface";
 import { WorkshopInfo } from "@/types/workshopInfo.interface";
-import { WorkshopAttendance } from "@/types/workshopAttendance.interface";
-import Loader from "@/components/Loader";
 import SkeletonLoader from "@/components/SkeletonLoader";
+
+import { useRouter } from "next/router";
 
 interface AttendanceRecord {
   attendance: string;
@@ -25,52 +21,65 @@ interface Attendance {
   attendance: AttendanceRecord[];
 }
 
-const AttendancePage: React.FC = () => {
-  const [teams, setTeams] = useState<Team[]>([]);
+const ProgramTrackerAttendancePage: React.FC = () => {
+  const router = useRouter();
+  const { communityId, teamId } = router.query;
   const [selectedTeam, setSelectedTeam] = useState<TeamWithChildren | null>(
     null
   );
   const [workshopDetails, setWorkshopDetails] = useState<WorkshopInfo[]>([]);
   const [attendance, setAttendance] = useState<Record<number, string>>({});
+  const [communityName, setCommunityName] = useState<string | null>(null);
+  const [teamName, setTeamName] = useState<string | null>(null);
   const [isLoadingTeam, setIsLoadingTeam] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [isSavingAttendance, setIsSavingAttendance] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
 
+  const breadcrumbs = [
+    { label: "Program tracker", path: "/program-tracker" },
+    {
+      label: `${communityName}`,
+      path: `/program-tracker/${communityId}/teams`,
+    },
+    {
+      label: `${teamName || "Unknown Team"}`,
+      path: `/program-tracker/${communityId}/teams/${teamId}`,
+    },
+  ];
+
+  // Fetch team details when teamId changes
   useEffect(() => {
-    const fetchTeams = async () => {
-      setIsLoading(true);
-      try {
-        const fetchedTeams = await getTeams('active');
-        setTeams(fetchedTeams);
-      } catch (error) {
-        console.error("Failed to fetch teams:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    if (teamId) {
+      const fetchTeamById = async () => {
+        setIsLoadingTeam(true);
+        try {
+          const numericTeamId = Number(teamId);
+          if (isNaN(numericTeamId)) {
+            throw new Error("Invalid team ID");
+          }
+          const teamDetails = await getTeamById(numericTeamId);
+          setSelectedTeam(teamDetails); // Set the fetched team as selectedTeam
+          setTeamName(teamDetails.name);
+        } catch (error) {
+          console.error("Failed to fetch team details:", error);
+        } finally {
+          setIsLoadingTeam(false);
+        }
+      };
 
-    fetchTeams();
-  }, []);
-
-  const handleTeamChange = async (value: string | number) => {
-    const selectedId = typeof value === "string" ? parseInt(value, 10) : value;
-    const selected = teams.find((team) => team.id === selectedId);
-
-    if (selected) {
-      setIsLoadingTeam(true);
-      try {
-        const teamDetails = await getTeamById(selected.id);
-        const workshops = await getWorkshopsByTeam(selected.id);
-        setSelectedTeam(teamDetails);
-        setWorkshopDetails(workshops);
-      } catch (error) {
-        console.error("Failed to fetch team details:", error);
-      } finally {
-        setIsLoadingTeam(false);
-      }
+      fetchTeamById();
     }
-  };
+  }, [teamId]);
+
+  useEffect(() => {
+    // Retrieve and parse state from localStorage
+    const storedState = localStorage.getItem("linkCardState");
+    if (storedState) {
+      const { communityName, teamName } = JSON.parse(storedState);
+      setCommunityName(communityName);
+      setTeamName(teamName);
+    }
+  }, []);
 
   const handleAttendanceChange = (childId: number, status: string) => {
     setAttendance((prev) => ({
@@ -109,6 +118,7 @@ const AttendancePage: React.FC = () => {
         // });
         // setAttendance(initialAttendance);
       } catch (error) {
+        console.log(error);
       } finally {
         setIsSavingAttendance(false);
       }
@@ -144,32 +154,18 @@ const AttendancePage: React.FC = () => {
   const currentWorkshop = selectedTeam?.program.progress.current ?? 0;
 
   return (
-    <Layout>
-      {isLoading && <Loader loadingText="Loading teams" />}
+    <Layout breadcrumbs={breadcrumbs}>
       <>
-        <SelectInput
-          className="mb-5"
-          label="Select team"
-          value={selectedTeam?.id || ""}
-          onChange={handleTeamChange}
-        >
-          <option value="">Select a team</option>
-          {teams.map((team) => (
-            <option key={team.id} value={team.id}>
-              {team.name}
-            </option>
-          ))}
-        </SelectInput>
         {isLoadingTeam ? (
           <div className=" w-full mx-auto ">
-               {Array.from({ length: 12 }, (_, i) => (
-        <SkeletonLoader
-          key={i}
-          type="stepper"
-          index={i}
-          totalItems={12} 
-        />
-      ))}
+            {Array.from({ length: 12 }, (_, i) => (
+              <SkeletonLoader
+                key={i}
+                type="stepper"
+                index={i}
+                totalItems={12}
+              />
+            ))}
           </div>
         ) : (
           selectedTeam && (
@@ -191,4 +187,4 @@ const AttendancePage: React.FC = () => {
   );
 };
 
-export default AttendancePage;
+export default ProgramTrackerAttendancePage;

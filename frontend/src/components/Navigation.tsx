@@ -1,12 +1,11 @@
-// components/Navigation.tsx
-import React, { useState } from 'react';
-import NavLink from './NavLink';
+import React, { useState } from "react";
+import NavLink from "./NavLink";
 
 const Navigation: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => {
-    setIsOpen(prevState => !prevState);
+    setIsOpen((prevState) => !prevState);
   };
 
   return (
@@ -15,16 +14,16 @@ const Navigation: React.FC = () => {
         <div className="flex items-center justify-between">
           {/* Logo and Title */}
           <div className="flex-shrink-0">
-            <NavLink href="/" className="text-white font-bold text-xl">
+            <NavLink href="/program-tracker" className="text-white font-bold text-xl">
               Digital Lions
             </NavLink>
           </div>
 
           {/* Desktop Navigation Links */}
           <div className="hidden md:flex space-x-4">
-            <NavLink href="/communities">Community</NavLink>
-            {/* <NavLink href="/teams" includeSourceMenu={true}>Teams info</NavLink> */}
-            <NavLink href="/attendance">Attendance</NavLink>
+            <NavLink href="/program-tracker">Program tracker</NavLink>
+            <NavLink href="/communities">Communities / teams</NavLink>
+            <NavLink href="/users">Users</NavLink>
           </div>
 
           {/* Mobile Hamburger Menu Button */}
@@ -62,13 +61,18 @@ const Navigation: React.FC = () => {
         {/* Mobile Menu Links */}
         {isOpen && (
           <div className="md:hidden mt-4 space-y-2">
-            <NavLink href="/communities" onClick={toggleMenu}>
-              Community
+            <NavLink href="/program-tracker" onClick={toggleMenu}>
+              Program tracker
             </NavLink>
-            {/* <NavLink href="/teams" includeSourceMenu={true} onClick={toggleMenu}>
-              Teams info
-            </NavLink> */}
-            <NavLink href="/attendance" onClick={toggleMenu}>Attendance</NavLink>
+
+            <NavLink href="/communities" onClick={toggleMenu}>
+              Communities / teams
+            </NavLink>
+
+            <NavLink href="/users" onClick={toggleMenu}>
+              Users
+            </NavLink>
+
           </div>
         )}
       </div>

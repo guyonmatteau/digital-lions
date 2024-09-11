@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import TextInput from "@/components/TextInput";
 import CustomButton from "@/components/CustomButton";
 import getCommunities from "@/api/services/communities/getCommunities";
-import Loader from "@/components/Loader";
 import createCommunity from "@/api/services/communities/createCommunity";
 import LinkCard from "@/components/LinkCard";
 import Layout from "@/components/Layout";

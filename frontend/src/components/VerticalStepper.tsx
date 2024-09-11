@@ -5,6 +5,7 @@ import { TeamWithChildren } from "@/types/teamWithChildren.interface";
 import { WorkshopInfo } from "@/types/workshopInfo.interface";
 import { AttendanceRecord } from "@/types/workshopAttendance.interface";
 import { AttendanceStatus } from "@/types/attendanceStatus.enum";
+import { Child } from "@/types/child.interface";
 
 interface VerticalStepperProps {
   workshops: string[];
@@ -13,7 +14,7 @@ interface VerticalStepperProps {
   onSaveAttendance: () => void;
   teamDetails: TeamWithChildren;
   workshopDetails: WorkshopInfo[];
-  childs: any;
+  childs: Child[];
   animationDuration?: number;
   isSavingAttendance: boolean;
   isSaved: boolean;
@@ -28,7 +29,6 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
   childs,
   animationDuration = 1,
   isSavingAttendance,
-  teamDetails,
   isSaved,
 }) => {
   const [checked, setChecked] = useState(0);
@@ -98,7 +98,7 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
   useEffect(() => {
     if (workshopDetails.length > 0) {
       const newAttendanceData: AttendanceRecord[] = childs.map(
-        (child: any) => ({
+        (child: Child) => ({
           child_id: child.id,
           attendance: "",
         })
@@ -129,7 +129,6 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
         const isCurrent =
           index === currentWorkshop && checked === currentWorkshop;
         const isPrevious = index < currentWorkshop;
-        const isNext = index > currentWorkshop;
         const isOpen = index === openIndex && isCurrent;
 
         return (
@@ -229,7 +228,7 @@ const VerticalStepper: React.FC<VerticalStepperProps> = ({
                       No children in current workshop
                     </h3>
                   ) : (
-                    childs.map((entry: any) => {
+                    childs.map((entry: Child) => {
                       const { id, first_name, last_name } = entry;
                       const attendanceEntry = attendanceData.find(
                         (e) => e.child_id === id

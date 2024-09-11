@@ -87,11 +87,6 @@ const TeamsPage: React.FC = () => {
     setTeamName(value);
   };
 
-  interface SimpleTeam {
-    name: string;
-    community_id: number;
-  }
-
   const handleAddTeam = async () => {
     if (teamName.trim() === "") return;
     setIsAddingTeam(true);
@@ -154,7 +149,7 @@ const TeamsPage: React.FC = () => {
                 </h1>
                 <ToggleSwitch onChange={handleToggleChange} />
               </div>
-              {teams.map((team) => (
+              {filteredTeams.map((team) => (
                 <LinkCard
                   key={team.id}
                   title={team.name}
