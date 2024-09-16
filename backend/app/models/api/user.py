@@ -17,8 +17,8 @@ class UserValidators:
 class UserPostIn(BaseModel, CreateProperties, UserValidators):
     """API payload model for POST /users."""
 
-    first_name: str
-    last_name: str = Field(default=None)
+    first_name: str | None = Field(default=None)
+    last_name: str | None = Field(default=None)
     email_address: EmailStr
     password: str = Field(description="Plain user password")
     role: str | None = Field(default=None, description="User role on platform")
@@ -39,6 +39,15 @@ class UserPostLoginIn(BaseModel):
 
     email_address: EmailStr
     password: str
+
+class UserPostInviteIn(BaseModel):
+    """API payload model for inviting a new user to the platform via /users/invite-user."""
+
+    email_address: EmailStr
+
+    # multiple scopes
+    role: str
+    scope: str
 
 
 class UserBase(SQLModel):

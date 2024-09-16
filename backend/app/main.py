@@ -3,17 +3,27 @@ import logging.config
 from contextlib import asynccontextmanager
 from typing import Any
 
+import yaml
 from core.settings import get_settings
-from database.session import init_db
+from database.session import get_engine, init_db
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from models.api.user import UserPostIn
 from routers import children, communities, health, teams, users
+from services.user import UserService
+from sqlmodel import Session
 
 logging_conf = "logging.conf"
 logging.config.fileConfig(logging_conf, disable_existing_loggers=False)  # type: ignore
 logger = logging.getLogger(__name__)
 logger.info("Logging configuration: %s", logging_conf)
+
+
+def get_config(path: str) -> dict:
+    """Get configuration from a yaml file."""
+    with open(path) as file:
+        return yaml.safe_load(file)
 
 
 @asynccontextmanager
@@ -22,8 +32,22 @@ async def lifespan(app: FastAPI):
 
     logger.info("Starting db client...")
     init_db()
-    # logger.info("Running migrations...")
-    # run_migrations()
+
+    path = "../config/app.yml"
+    logger.info(f"Loading config from {path}")
+
+    conf = get_config(path=path)
+    user_service = UserService(session=Session(bind=get_engine()))
+
+    # admin users are added on startup if they do not exist
+    # since the app is private
+    logger.info("Adding admins to database")
+    for admin in conf["database"]["admins"]:
+        if not user_service.get_by_email(admin):
+            logger.info(f"Admin with email {admin} does not exist yet, adding.")
+            user = UserPostIn(email_address=admin, password="password")
+            user_service.create(user)
+
     yield
 
 

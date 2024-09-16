@@ -1,3 +1,7 @@
+# database admins that are inserted on startup
+database:
+  admins:
+    - a.lohmeijer@hotmail.com
 user:
   roles:
     - admin

@@ -4,8 +4,15 @@ from core import exceptions
 from core.auth import APIKeyDependency, BearerTokenDependency
 from core.dependencies import UserServiceDependency
 from fastapi import APIRouter, HTTPException, status
-from models.api.generic import RecordCreated
-from models.api.user import UserGetByIdOut, UserPatchIn, UserPostIn, UserPostLoginIn
+from models.api.generic import Message, RecordCreated
+from models.api.user import (
+    UserGetByIdOut,
+    UserPatchIn,
+    UserPostIn,
+    UserPostInviteIn,
+    UserPostLoginIn,
+)
+from pydantic import EmailStr
 
 logger = logging.getLogger()
 
@@ -80,3 +87,27 @@ async def update_user(
         return user_service.update(user_id=user_id, user=user)
     except exceptions.UserNotFoundException as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
+
+
+@router.post(
+    "/reset-password",
+    response_model=Message,
+    summary="Email user a link to reset password",
+)
+async def reset_password(
+    email_address: EmailStr,
+    user_service: UserServiceDependency,
+):
+    try:
+        user_service.forgot_password(email_address=email_address)
+    except exceptions.UserNotFoundException as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
+
+
+@router.post("/invite-user", response_model=Message, summary="Invite new user to platform.")
+async def invite_user(user: UserPostInviteIn, user_service: UserServiceDependency):
+    try:
+        user_service.invite_user(user=user)
+    except:
+        pass
+

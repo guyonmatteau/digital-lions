@@ -45,6 +45,15 @@ class UserService(BaseService, AbstractService):
             logger.error(msg)
             raise exceptions.UserNotFoundException(msg)
 
+    def get_by_email(self, email_address: str) -> User | None:
+        """Get a User from the table by email address."""
+        try:
+            return self.users.where([("email_address", email_address)])
+        except exceptions.ItemNotFoundException:
+            msg = f"User with email {email_address} not found."
+            logger.error(msg)
+            raise exceptions.UserNotFoundException(msg)
+
     def update(self, user_id: int, user: UserUpdate) -> UserGetByIdOut:
         """Update a user."""
 
@@ -76,13 +85,13 @@ class UserService(BaseService, AbstractService):
 
         # todo get jwt
         jwt = None
+
         return jwt
 
     def forgot(self, email_address: str) -> Message:
         """Send forgot password email to user."""
-        if not self.users.where([("email_address", email_address)]):
+        if not self.get_by_email(email_address):
             raise exceptions.UserNotFoundException(f"User with email {email_address} not found.")
-        pass
 
     def _hash_password(self, password: str, salt: bytes = None) -> [bytes, bytes]:
         """Hash password. If salt is not provided (i.e. during user creation),
