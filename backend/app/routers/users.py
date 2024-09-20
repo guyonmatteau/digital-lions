@@ -16,7 +16,11 @@ from pydantic import EmailStr
 
 logger = logging.getLogger()
 
-router = APIRouter(prefix="/users", dependencies=[APIKeyDependency, BearerTokenDependency])
+router = APIRouter(
+    # TODO the BearerTokenDependency is not for /login endpoint
+    prefix="/users",
+    dependencies=[APIKeyDependency, BearerTokenDependency],
+)
 
 
 @router.post(
@@ -44,7 +48,7 @@ async def login(user: UserPostLoginIn, user_service: UserServiceDependency):
     summary="List all users",
 )
 async def get_users(user_service: UserServiceDependency):
-    return user_service.read_all()
+    return user_service.get_all()
 
 
 @router.post(
@@ -58,6 +62,19 @@ async def create_user(user: UserPostIn, user_service: UserServiceDependency):
         return user_service.create(user)
     except exceptions.UserEmailAlreadyExistsException as exc:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc))
+
+
+@router.delete(
+    "/{user_id}",
+    response_model=Message,
+    status_code=status.HTTP_200_OK,
+    summary="Delete a user by ID",
+)
+async def delete_user(user_id: int, user_service: UserServiceDependency):
+    try:
+        return user_service.delete(user_id=user_id)
+    except exceptions.UserNotFoundException as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
 
 
 @router.get(
@@ -99,7 +116,7 @@ async def reset_password(
     user_service: UserServiceDependency,
 ):
     try:
-        user_service.forgot_password(email_address=email_address)
+        return user_service.reset_password(email_address=email_address)
     except exceptions.UserNotFoundException as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
 
@@ -107,7 +124,9 @@ async def reset_password(
 @router.post("/invite-user", response_model=Message, summary="Invite new user to platform.")
 async def invite_user(user: UserPostInviteIn, user_service: UserServiceDependency):
     try:
-        user_service.invite_user(user=user)
-    except:
-        pass
-
+        return user_service.invite_user(user=user)
+    except exceptions.UserAlreadyRegisteredException as exc:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc))
+    except Exception as exc:
+        logger.error(f"Error inviting user: {exc}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -115,6 +115,10 @@ class User(SQLModel, MetadataColumns, table=True):
     id: int | None = Field(default=None, primary_key=True)
     hashed_password: bytes = Field(description="Hashed password in bytes")
     salt: bytes = Field(description="Random byte string with which the password is encrypted")
+    is_registered: bool = Field(
+        default=False,
+        description="Flag to indicate if the user has completed registration",
+    )
 
 
 class Program(SQLModel, table=False):

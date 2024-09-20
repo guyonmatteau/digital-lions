@@ -100,7 +100,8 @@ class BearerTokenHandler(HTTPBearer):
             return self.jwt_token_decoded
 
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid authorization code."
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authorization code.",
         )
 
     def _verify_jwt(self, token: str) -> dict[str, Any] | None:

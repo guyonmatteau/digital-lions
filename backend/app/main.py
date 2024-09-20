@@ -43,7 +43,7 @@ async def lifespan(app: FastAPI):
     # since the app is private
     logger.info("Adding admins to database")
     for admin in conf["database"]["admins"]:
-        if not user_service.get_by_email(admin):
+        if not user_service._get_user_by_email(admin):
             logger.info(f"Admin with email {admin} does not exist yet, adding.")
             user = UserPostIn(email_address=admin, password="password")
             user_service.create(user)

@@ -25,6 +25,9 @@ class Settings(BaseSettings):
     ALLOWED_METHODS: str = "GET, POST, PATCH, PUT, DELETE, OPTIONS"
     ALLOWED_HEADERS: str = "Content-Type, Authorization"
 
+    # emails
+    RESEND_API_KEY: str
+
     def model_post_init(self, __context) -> None:
         """Post init hook."""
         self.ALLOWED_METHODS = self.ALLOWED_METHODS.split(",")
