@@ -32,7 +32,7 @@ jobs:
         run: |
           poetry run python -m pytest tests -vvv --cov=app 
 
-  deploy:
+  deploy_stg:
     name: Deploy Backend to Railway
     environment: staging
     needs: [test] 

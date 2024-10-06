@@ -15,9 +15,7 @@ config = context.config
 section = config.config_ini_section
 
 settings = get_settings()
-POSTGRES_URL = os.environ.get("POSTGRES_DATABASE_URL_PROD") or os.environ.get(
-    "POSTGRES_DATABASE_URL"
-)
+POSTGRES_URL = os.environ.get("POSTGRES_DATABASE_URL")
 config.set_main_option(
     "sqlalchemy.url",
     POSTGRES_URL,

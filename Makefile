@@ -8,6 +8,13 @@ backend:
 frontend:
 	docker compose up --build frontend
 
+# deploy to railway dev
+frontend.deploy:
+	railway up --service frontend
+
+backend.deploy:
+	railway up --service backend
+
 db: 
 	docker compose up --build db
 

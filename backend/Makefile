@@ -24,7 +24,7 @@ lint:
 	poetry run ruff check app
 
 format: lint
-	poetry run black app;
+	poetry run black app
 	poetry run ruff format app
 
 # Railway database service vars
