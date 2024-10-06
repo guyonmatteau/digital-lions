@@ -10,35 +10,15 @@ from models.api.user import (
     UserPatchIn,
     UserPostIn,
     UserPostInviteIn,
-    UserPostLoginIn,
 )
 from pydantic import EmailStr
 
 logger = logging.getLogger()
 
 router = APIRouter(
-    # TODO the BearerTokenDependency is not for /login endpoint
     prefix="/users",
     dependencies=[APIKeyDependency, BearerTokenDependency],
 )
-
-
-@router.post(
-    "/login",
-    response_model=UserGetByIdOut,
-    status_code=status.HTTP_200_OK,
-    summary="Login user",
-)
-async def login(user: UserPostLoginIn, user_service: UserServiceDependency):
-    try:
-        return user_service.login(user=user)
-    except exceptions.UserNotFoundException as exc:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
-    except exceptions.UserUnauthorizedException as exc:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=str(exc),
-        )
 
 
 @router.get(

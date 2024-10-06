@@ -28,3 +28,6 @@ db.wipe:
 
 db.ip: 
 	docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' postgres
+
+key: 
+	openssl rand -hex 32
