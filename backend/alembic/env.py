@@ -6,8 +6,8 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 from sqlmodel import SQLModel
 
-from app.core.settings import get_settings
-from app.database import schema
+from core.settings import get_settings
+from database import schema
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
