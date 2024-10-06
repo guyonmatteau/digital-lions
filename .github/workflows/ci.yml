@@ -33,7 +33,7 @@ jobs:
           poetry run python -m pytest tests -vvv --cov=app 
 
   deploy:
-    name: Deploy to Railway
+    name: Deploy Backend to Railway
     environment: staging
     needs: [test] 
     runs-on: ubuntu-latest
@@ -44,7 +44,7 @@ jobs:
         run: npm i -g @railway/cli
 
       - name: Deploy
-        run: railway up
+        run: railway up --service backend
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
