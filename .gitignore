@@ -51,5 +51,4 @@ node_modules
 *.sw?
 
 *.tsbuildinfo
-*.json
 token.sh
