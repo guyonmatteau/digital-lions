@@ -1,7 +1,12 @@
-name: App Deployment
+name: Deploy Backend
 
 on:
+  workflow_dispatch:
   push:
+    branches:
+      - main
+    paths:
+      - backend/**
 
 jobs:
   test:
@@ -43,8 +48,15 @@ jobs:
       - name: Install Railway
         run: npm i -g @railway/cli
 
-      - name: Deploy
+      - name: Deploy Backend
         run: railway up --service backend
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
+      - name: Deploy Frontend
+        run: railway up --service frontend
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
+
 
