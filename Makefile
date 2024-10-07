@@ -12,9 +12,8 @@ frontend:
 frontend.deploy:
 	railway up --service frontend-dev --environment dev
 
-# there is a bug in Railway that results in backend having the same name as in staging
 backend.deploy:
-	railway up --service backend-staging --environment dev
+	railway up --service backend-dev --environment dev
 
 db: 
 	docker compose up --build db

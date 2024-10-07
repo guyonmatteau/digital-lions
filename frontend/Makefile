@@ -1,4 +1,4 @@
 .PHONY: deploy
 
 deploy:
-	cd ..; railway up --service frontend
+	cd ..; railway up --service frontend-dev --environment dev
