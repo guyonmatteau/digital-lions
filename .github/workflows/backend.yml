@@ -49,14 +49,7 @@ jobs:
         run: npm i -g @railway/cli
 
       - name: Deploy Backend
-        run: railway up --service backend
+        run: railway up --service backend-staging --environment staging
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-
-      - name: Deploy Frontend
-        run: railway up --service frontend
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-
-
 
